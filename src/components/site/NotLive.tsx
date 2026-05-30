@@ -5,7 +5,7 @@ export default function NotLive({
   slug,
   name,
 }: {
-  variant: "missing" | "pending" | "suspended";
+  variant: "missing" | "pending" | "suspended" | "expired";
   slug: string;
   name?: string;
 }) {
@@ -21,6 +21,10 @@ export default function NotLive({
     suspended: {
       title: "الموقع موقوف مؤقتاً",
       body: `${name || "هذا المكتب"} موقوف حالياً. يرجى التواصل مع الإدارة.`,
+    },
+    expired: {
+      title: "انتهى الاشتراك",
+      body: `انتهى اشتراك ${name || "هذا المكتب"}. يُرجى تجديد الاشتراك لإعادة تفعيل الموقع.`,
     },
   }[variant];
 

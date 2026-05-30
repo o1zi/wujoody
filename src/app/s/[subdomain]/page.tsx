@@ -67,17 +67,21 @@ async function loadOffice(slug: string) {
   const admin = createAdminClient();
   const { data: sub } = await admin
     .from("subscriptions")
-    .select("plan")
+    .select("plan, status, ends_at")
     .eq("office_id", office.id)
     .eq("status", "active")
     .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle();
 
+  // Close the site the moment the subscription lapses (don't wait for the daily cron).
+  const expired = !!sub?.ends_at && new Date(sub.ends_at).getTime() <= Date.now();
+  const live = office.status === "active" && !expired;
+
   const caps = await getPlanCaps(sub?.plan);
   const content = clampMedia(mergeContent(row?.content), caps);
   content.contact.mapQuery = await resolveMapQuery(content.contact.mapQuery);
-  return { office, content };
+  return { office, content, live, expired };
 }
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
@@ -89,7 +93,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   const title = `${data.content.brand.ar} · ${data.office.name}`;
   const description = data.content.hero.subtitle;
   const logo = data.content.brand.logo;
-  const indexable = data.office.status === "active";
+  const indexable = data.live;
 
   return {
     title,
@@ -120,8 +124,9 @@ export default async function TenantSite({ params }: { params: Params }) {
   const data = await loadOffice(subdomain);
 
   if (!data) return <NotLive variant="missing" slug={subdomain} />;
-  if (data.office.status !== "active") {
-    return <NotLive variant={data.office.status} slug={subdomain} name={data.office.name} />;
+  if (!data.live) {
+    const variant = data.expired ? "expired" : data.office.status === "pending" ? "pending" : "suspended";
+    return <NotLive variant={variant} slug={subdomain} name={data.office.name} />;
   }
 
   return (
