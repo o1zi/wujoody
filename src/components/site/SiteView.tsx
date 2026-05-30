@@ -93,8 +93,10 @@ export default function SiteView({ content, slug }: { content: SiteContent; slug
   const accent = ACCENTS[content.theme.accent] ?? ACCENTS.bronze;
   const { brand } = content;
   const m = content.media;
-  const customFrames = m?.bgMode === "frames" && m.frames && m.frames.length > 0 ? m.frames : null;
-  const bgMedia = !customFrames ? (m?.bgVideo ?? null) : null;
+  const isSolid = m?.bgMode === "solid";
+  const solidColor = m?.solid === "white" ? "white" : "black";
+  const customFrames = !isSolid && m?.bgMode === "frames" && m.frames && m.frames.length > 0 ? m.frames : null;
+  const bgMedia = !isSolid && !customFrames ? (m?.bgVideo ?? null) : null;
   const bgIsVideo = !!bgMedia && /\.(mp4|webm|mov|m4v|ogg|ogv)(\?|$)/i.test(bgMedia);
   const jsonLd = {
     "@context": "https://schema.org",
@@ -120,7 +122,10 @@ export default function SiteView({ content, slug }: { content: SiteContent; slug
   const snHref = sn ? (/^https?:\/\//i.test(sn) ? sn : `https://www.snapchat.com/add/${sn.replace(/^@/, "")}`) : null;
 
   return (
-    <div style={{ ["--accent" as string]: accent.hex, ["--accent-rgb" as string]: accent.rgb }}>
+    <div
+      className={isSolid && solidColor === "white" ? "theme-light" : undefined}
+      style={{ ["--accent" as string]: accent.hex, ["--accent-rgb" as string]: accent.rgb }}
+    >
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       {customFrames ? (
         <script
@@ -178,7 +183,9 @@ export default function SiteView({ content, slug }: { content: SiteContent; slug
 
       {/* CINEMATIC BACKGROUND */}
       <div className="bg-stage">
-        {bgMedia ? (
+        {isSolid ? (
+          <div className={`bg-solid bg-solid-${solidColor}`} />
+        ) : bgMedia ? (
           bgIsVideo ? (
             // Native autoplay loop video — fast, smooth, SEO-friendly (no client processing).
             <video className="bg-video" id="bgVideo" src={bgMedia} autoPlay muted loop playsInline preload="auto" />

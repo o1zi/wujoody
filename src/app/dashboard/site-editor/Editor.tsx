@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { SiteContent } from "@/lib/site-content";
+import type { PlanCaps } from "@/lib/plans";
 import { BG_PRESETS } from "@/lib/bg-presets";
 import { Button, Alert } from "@/components/ui";
 
@@ -48,11 +49,14 @@ export default function Editor({
   officeId,
   initial,
   siteUrl,
+  caps,
 }: {
   officeId: string;
   initial: SiteContent;
   siteUrl: string | null;
+  caps: PlanCaps;
 }) {
+  const presets = Number.isFinite(caps.presetLimit) ? BG_PRESETS.slice(0, caps.presetLimit) : BG_PRESETS;
   const [c, setC] = useState<SiteContent>(initial);
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<{ kind: "success" | "error"; text: string } | null>(null);
@@ -336,36 +340,79 @@ export default function Editor({
       </Section>
 
       <Section title="خلفية الموقع">
+        {/* Background type chooser (gated by plan) */}
         <div>
           <span className="mb-2 block text-xs text-muted">نوع الخلفية</span>
-          <div className="grid gap-2 sm:grid-cols-2">
+          <div className="grid gap-2 sm:grid-cols-3">
             <button
               type="button"
-              onClick={() => set("media.bgMode", "video")}
-              className={`rounded-lg border p-3 text-right ${c.media?.bgMode !== "frames" ? "border-accent" : "border-border"}`}
+              onClick={() => set("media.bgMode", "solid")}
+              className={`rounded-lg border p-3 text-right ${c.media?.bgMode === "solid" || caps.solidOnly ? "border-accent" : "border-border"}`}
             >
-              <div className="text-sm font-medium">فيديو طبيعي ⚡</div>
-              <div className="mt-1 text-xs text-muted">يعمل تلقائياً ومتكرر. الأسرع والأفضل لـSEO.</div>
+              <div className="text-sm font-medium">لون ثابت</div>
+              <div className="mt-1 text-xs text-muted">أبيض أو أسود أنيق. الأسرع.</div>
             </button>
-            <button
-              type="button"
-              onClick={() => set("media.bgMode", "frames")}
-              className={`rounded-lg border p-3 text-right ${c.media?.bgMode === "frames" ? "border-accent" : "border-border"}`}
-            >
-              <div className="text-sm font-medium">حركة مع التمرير (مثل أوتاد)</div>
-              <div className="mt-1 text-xs text-muted">يُقطّع فيديوك لإطارات. أنعم تأثير، لكن تحميل أثقل (يؤثر على SEO).</div>
-            </button>
+            {!caps.solidOnly && (
+              <button
+                type="button"
+                onClick={() => set("media.bgMode", "video")}
+                className={`rounded-lg border p-3 text-right ${c.media?.bgMode === "video" ? "border-accent" : "border-border"}`}
+              >
+                <div className="text-sm font-medium">فيديو طبيعي ⚡</div>
+                <div className="mt-1 text-xs text-muted">يعمل تلقائياً ومتكرر.</div>
+              </button>
+            )}
+            {!caps.solidOnly && caps.presets && (
+              <button
+                type="button"
+                onClick={() => set("media.bgMode", "frames")}
+                className={`rounded-lg border p-3 text-right ${c.media?.bgMode === "frames" ? "border-accent" : "border-border"}`}
+              >
+                <div className="text-sm font-medium">حركة مع التمرير</div>
+                <div className="mt-1 text-xs text-muted">إطارات سينمائية مثل أوتاد.</div>
+              </button>
+            )}
           </div>
+          {caps.solidOnly && (
+            <p className="mt-2 text-xs text-amber-300">
+              خلفيات الفيديو متاحة في الباقة الاحترافية وبريميوم. رقِّ باقتك لتفعيلها.
+            </p>
+          )}
         </div>
 
-        {c.media?.bgMode === "frames" ? (
+        {/* SOLID mode (also the only option for Basic) */}
+        {caps.solidOnly || c.media?.bgMode === "solid" ? (
+          <div>
+            <span className="mb-2 block text-xs text-muted">لون الخلفية</span>
+            <div className="flex gap-2">
+              {(["black", "white"] as const).map((col) => (
+                <button
+                  key={col}
+                  type="button"
+                  onClick={() =>
+                    setC((prev) => deepSet(deepSet(prev, "media.bgMode", "solid"), "media.solid", col))
+                  }
+                  className={`flex items-center gap-2 rounded-lg border px-4 py-2.5 text-sm ${
+                    c.media?.solid === col && c.media?.bgMode === "solid" ? "border-accent" : "border-border"
+                  }`}
+                >
+                  <span
+                    className="h-5 w-5 rounded-full border border-border"
+                    style={{ background: col === "white" ? "#f3f2ef" : "#06070A" }}
+                  />
+                  {col === "white" ? "أبيض" : "أسود"}
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : c.media?.bgMode === "frames" ? (
           <>
             <div>
               <span className="mb-2 block text-xs text-muted">
-                اختر خلفية جاهزة بحركة التمرير (إطارات مُعدّة مسبقاً — لا تستهلك مساحة)
+                اختر خلفية جاهزة بحركة التمرير (لا تستهلك مساحة)
               </span>
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                {BG_PRESETS.map((p) => {
+                {presets.map((p) => {
                   const selected = !!c.media?.frames && c.media.frames[0] === p.frames[0];
                   return (
                     <button
@@ -387,41 +434,42 @@ export default function Editor({
               </div>
             </div>
 
-            <p className="text-xs text-muted">
-              أو ارفع فيديو ليُحوَّل إلى إطارات داخل متصفحك — <b>16 إطاراً/ثانية بدقة عالية بلا إفساد للجودة</b>
-              (مثل أوتاد). يُفضَّل mp4 قصير (5–12 ثانية) لأن عدد الإطارات = المدة × 16. بعد التحويل اضغط حفظ.
-            </p>
-            {c.media.frames && c.media.frames.length > 0 ? (
-              <div className="flex items-center gap-3">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={c.media.frames[0]} alt="" className="h-20 w-32 rounded-lg border border-border object-cover" />
-                <div className="flex-1 text-xs text-muted">{c.media.frames.length} إطاراً جاهزة</div>
-                <button type="button" className="text-xs text-red-400" onClick={() => set("media.frames", null)}>
-                  إزالة
-                </button>
-              </div>
-            ) : null}
-            <label className="block">
-              <span className="mb-1 block text-xs text-muted">
-                {extracting ? extractInfo || "جارٍ المعالجة…" : "رفع فيديو وتحويله لإطارات"}
-              </span>
-              <input
-                type="file"
-                accept="video/mp4,video/webm,video/*"
-                disabled={extracting}
-                className="block w-full text-xs text-muted file:mr-3 file:rounded-md file:border-0 file:bg-surface-2 file:px-3 file:py-1.5 file:text-foreground"
-                onChange={(e) => e.target.files?.[0] && convertAndUploadFrames(e.target.files[0])}
-              />
-            </label>
+            {caps.upload ? (
+              <>
+                <p className="text-xs text-muted">
+                  أو ارفع فيديو ليُحوَّل إلى إطارات داخل متصفحك — <b>16 إطاراً/ثانية بدقة عالية</b> (مثل أوتاد).
+                  يُفضَّل mp4 قصير (5–12 ثانية). بعد التحويل اضغط حفظ.
+                </p>
+                {c.media.frames && c.media.frames.length > 0 && c.media.frames[0].includes("/storage/") ? (
+                  <div className="flex items-center gap-3">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={c.media.frames[0]} alt="" className="h-20 w-32 rounded-lg border border-border object-cover" />
+                    <div className="flex-1 text-xs text-muted">{c.media.frames.length} إطاراً (مرفوعة)</div>
+                  </div>
+                ) : null}
+                <label className="block">
+                  <span className="mb-1 block text-xs text-muted">
+                    {extracting ? extractInfo || "جارٍ المعالجة…" : "رفع فيديو وتحويله لإطارات"}
+                  </span>
+                  <input
+                    type="file"
+                    accept="video/mp4,video/webm,video/*"
+                    disabled={extracting}
+                    className="block w-full text-xs text-muted file:mr-3 file:rounded-md file:border-0 file:bg-surface-2 file:px-3 file:py-1.5 file:text-foreground"
+                    onChange={(e) => e.target.files?.[0] && convertAndUploadFrames(e.target.files[0])}
+                  />
+                </label>
+              </>
+            ) : (
+              <p className="text-xs text-amber-300">رفع فيديو خاص وتحويله لإطارات متاح في باقة بريميوم.</p>
+            )}
           </>
         ) : (
           <>
             <div>
-              <span className="mb-2 block text-xs text-muted">
-                اختر خلفية جاهزة (موصى به — لا تستهلك مساحة تخزين)
-              </span>
+              <span className="mb-2 block text-xs text-muted">اختر خلفية جاهزة (لا تستهلك مساحة)</span>
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                {BG_PRESETS.map((p) => {
+                {presets.map((p) => {
                   const selected = c.media?.bgVideo === p.src;
                   return (
                     <button
@@ -442,36 +490,41 @@ export default function Editor({
               </div>
             </div>
 
-            <p className="text-xs text-muted">
-              أو ارفع خلفية خاصة بك (تُحفظ في تخزين مكتبك). الأفضل ملف <b>mp4/WebM</b> خفيف وقصير
-              (أقل من ~5MB)، أو صورة/GIF.
-            </p>
-            {c.media?.bgVideo ? (
-              <div className="flex items-center gap-3">
-                {/\.(mp4|webm|mov|m4v|ogg|ogv)(\?|$)/i.test(c.media.bgVideo) ? (
-                  <video src={c.media.bgVideo} muted className="h-20 w-32 rounded-lg border border-border object-cover" />
-                ) : (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={c.media.bgVideo} alt="" className="h-20 w-32 rounded-lg border border-border object-cover" />
-                )}
-                <div className="flex-1 text-xs text-muted" dir="ltr">{c.media.bgVideo.split("/").pop()}</div>
-                <button type="button" className="text-xs text-red-400" onClick={() => set("media.bgVideo", null)}>
-                  إزالة
-                </button>
-              </div>
-            ) : null}
-            <label className="block">
-              <span className="mb-1 block text-xs text-muted">
-                {uploadingVideo ? "جارٍ الرفع…" : "رفع خلفية (فيديو / صورة / GIF)"}
-              </span>
-              <input
-                type="file"
-                accept="video/mp4,video/webm,video/*,image/gif,image/*"
-                disabled={uploadingVideo}
-                className="block w-full text-xs text-muted file:mr-3 file:rounded-md file:border-0 file:bg-surface-2 file:px-3 file:py-1.5 file:text-foreground"
-                onChange={(e) => e.target.files?.[0] && uploadVideo(e.target.files[0])}
-              />
-            </label>
+            {caps.upload ? (
+              <>
+                <p className="text-xs text-muted">
+                  أو ارفع خلفية خاصة بك (تُحفظ في تخزين مكتبك). الأفضل <b>mp4/WebM</b> خفيف (أقل من ~5MB) أو صورة/GIF.
+                </p>
+                {c.media?.bgVideo && c.media.bgVideo.includes("/storage/") ? (
+                  <div className="flex items-center gap-3">
+                    {/\.(mp4|webm|mov|m4v|ogg|ogv)(\?|$)/i.test(c.media.bgVideo) ? (
+                      <video src={c.media.bgVideo} muted className="h-20 w-32 rounded-lg border border-border object-cover" />
+                    ) : (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={c.media.bgVideo} alt="" className="h-20 w-32 rounded-lg border border-border object-cover" />
+                    )}
+                    <div className="flex-1 text-xs text-muted" dir="ltr">{c.media.bgVideo.split("/").pop()}</div>
+                    <button type="button" className="text-xs text-red-400" onClick={() => set("media.bgVideo", null)}>
+                      إزالة
+                    </button>
+                  </div>
+                ) : null}
+                <label className="block">
+                  <span className="mb-1 block text-xs text-muted">
+                    {uploadingVideo ? "جارٍ الرفع…" : "رفع خلفية (فيديو / صورة / GIF)"}
+                  </span>
+                  <input
+                    type="file"
+                    accept="video/mp4,video/webm,video/*,image/gif,image/*"
+                    disabled={uploadingVideo}
+                    className="block w-full text-xs text-muted file:mr-3 file:rounded-md file:border-0 file:bg-surface-2 file:px-3 file:py-1.5 file:text-foreground"
+                    onChange={(e) => e.target.files?.[0] && uploadVideo(e.target.files[0])}
+                  />
+                </label>
+              </>
+            ) : (
+              <p className="text-xs text-amber-300">رفع خلفية خاصة بك متاح في باقة بريميوم.</p>
+            )}
           </>
         )}
       </Section>

@@ -4,8 +4,9 @@ export type SiteContent = {
   theme: { accent: "bronze" | "terracotta" | "azure" | "sage" };
   media: {
     bgVideo: string | null;
-    bgMode: "video" | "frames";
+    bgMode: "video" | "frames" | "solid";
     frames: string[] | null;
+    solid: "white" | "black";
   };
   brand: { ar: string; en: string; logo: string | null };
   coordinates: { lat: string; lng: string; label: string };
@@ -61,7 +62,7 @@ export type SiteContent = {
 
 export const defaultContent: SiteContent = {
   theme: { accent: "bronze" },
-  media: { bgVideo: null, bgMode: "video", frames: null },
+  media: { bgVideo: null, bgMode: "video", frames: null, solid: "black" },
   brand: { ar: "أوتاد", en: "AWTAD", logo: null },
   coordinates: { lat: "24.7136°N", lng: "46.6753°E", label: "RIYADH · KSA" },
   hero: {
@@ -157,6 +158,34 @@ export const defaultContent: SiteContent = {
     contact: true,
   },
 };
+
+import type { PlanCaps } from "./plans";
+
+export function isPresetUrl(u?: string | null): boolean {
+  return !!u && u.startsWith("/backgrounds/");
+}
+export function isUploadedUrl(u?: string | null): boolean {
+  return !!u && u.includes("/storage/v1/object/public/site-media/");
+}
+
+// Enforce a plan's background capabilities on the content (used at render time
+// so downgraded offices can't keep features they no longer pay for).
+export function clampMedia(c: SiteContent, caps: PlanCaps): SiteContent {
+  const m = c.media;
+  let allowed = true;
+
+  if (caps.solidOnly) {
+    allowed = m.bgMode === "solid";
+  } else if (m.bgMode === "frames" && m.frames && m.frames.length) {
+    allowed = isPresetUrl(m.frames[0]) ? caps.presets : caps.upload;
+  } else if (m.bgVideo) {
+    allowed = isPresetUrl(m.bgVideo) ? caps.presets : caps.upload;
+  }
+  // default built-in frame background (no custom media) stays allowed for non-basic.
+
+  if (allowed) return c;
+  return { ...c, media: { ...m, bgMode: "solid", bgVideo: null, frames: null } };
+}
 
 // Deep-merge stored content over defaults so partial edits still render fully.
 export function mergeContent(stored: unknown): SiteContent {

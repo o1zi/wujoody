@@ -47,11 +47,11 @@ export default async function SubscriptionPage() {
         (<span dir="ltr" className="mono">{ctx.email}</span>) ليُربط الدفع بمكتبك تلقائياً.
       </div>
 
-      <div className="mt-6 grid gap-6 md:grid-cols-2">
-        {PLANS.map((p, i) => {
+      <div className="mt-6 grid gap-6 md:grid-cols-3">
+        {PLANS.map((p) => {
           const isCurrent = isActive && current?.plan === p.code;
           return (
-            <div key={p.code} className={`rounded-2xl border bg-surface p-7 ${i === 1 ? "border-accent" : "border-border"}`}>
+            <div key={p.code} className={`rounded-2xl border bg-surface p-7 ${p.highlight ? "border-accent" : "border-border"}`}>
               <h3 className="text-lg font-semibold">{p.name}</h3>
               <div className="mt-3 flex items-end gap-2">
                 <span className="text-3xl font-bold">{p.price}</span>

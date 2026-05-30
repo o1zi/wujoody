@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getSessionContext } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { mergeContent } from "@/lib/site-content";
+import { getPlanCaps } from "@/lib/plans";
 import { tenantUrl } from "@/lib/urls";
 import Editor from "./Editor";
 
@@ -24,8 +25,18 @@ export default async function SiteEditorPage() {
     .eq("office_id", ctx.office.id)
     .maybeSingle();
 
+  const { data: sub } = await supabase
+    .from("subscriptions")
+    .select("plan")
+    .eq("office_id", ctx.office.id)
+    .eq("status", "active")
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
   const content = mergeContent(row?.content);
+  const caps = getPlanCaps(sub?.plan);
   const siteUrl = ctx.office.status === "active" ? tenantUrl(ctx.office.slug) : null;
 
-  return <Editor officeId={ctx.office.id} initial={content} siteUrl={siteUrl} />;
+  return <Editor officeId={ctx.office.id} initial={content} siteUrl={siteUrl} caps={caps} />;
 }

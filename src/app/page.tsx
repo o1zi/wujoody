@@ -97,15 +97,15 @@ export default function HomePage() {
       <section id="pricing" className="relative mx-auto max-w-5xl px-6 py-16">
         <h2 className="text-center text-3xl font-bold">باقات الاشتراك</h2>
         <p className="mt-3 text-center text-muted">اختر ما يناسب مكتبك. الدفع آمن عبر سلة.</p>
-        <div className="mt-10 grid gap-6 md:grid-cols-2">
-          {PLANS.map((p, i) => (
+        <div className="mt-10 grid gap-6 md:grid-cols-3">
+          {PLANS.map((p) => (
             <div
               key={p.code}
-              className={`rounded-2xl border bg-surface p-8 ${i === 1 ? "border-accent" : "border-border"}`}
+              className={`rounded-2xl border bg-surface p-8 ${p.highlight ? "border-accent" : "border-border"}`}
             >
-              {i === 1 && (
+              {p.highlight && (
                 <div className="mono mb-3 inline-block rounded-full bg-accent/15 px-3 py-1 text-xs text-accent">
-                  الأكثر توفيراً
+                  الأكثر شيوعاً
                 </div>
               )}
               <h3 className="text-xl font-semibold">{p.name}</h3>

@@ -216,6 +216,19 @@ button{font-family:inherit;cursor:pointer}
 .glass-bar .dot.g{background:#27c93f}
 .glass-body{padding:clamp(28px,4vw,56px)}
 @media(max-width:760px){.glass-body{padding:24px 18px}}
+
+/* ---------- solid backgrounds (Basic plan) ---------- */
+.bg-solid{position:absolute;inset:0}
+.bg-solid-black{background:#06070A}
+.bg-solid-white{background:#f3f2ef}
+/* light theme: flip non-card text to dark so it reads on a white background */
+.theme-light .hero-mark,.theme-light .hero-sub,.theme-light .scrollcue,
+.theme-light .brand .ar,.theme-light .nav a,.theme-light .menu-btn span{color:#0E1116}
+.theme-light .menu-btn span{background:#0E1116}
+.theme-light .rail .coord,.theme-light .hud .stat-lbl,.theme-light .hud .pct{color:rgba(14,17,22,.6)}
+.theme-light .dots button{border-color:rgba(14,17,22,.3)}
+.theme-light .foot{background:linear-gradient(to bottom,rgba(243,242,239,.4),rgba(243,242,239,.95));color:#0E1116}
+.theme-light .foot .tag,.theme-light .foot .col a{color:rgba(14,17,22,.7)}
 /* keep light-themed inner elements readable on the dark glass card */
 .glass-card .svc-grid{border-top-color:rgba(255,255,255,.14);border-right-color:rgba(255,255,255,.14)}
 .glass-card .svc{border-bottom-color:rgba(255,255,255,.14);border-left-color:rgba(255,255,255,.14)}

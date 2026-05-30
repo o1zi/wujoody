@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import { createClient } from "@/lib/supabase/server";
-import { mergeContent } from "@/lib/site-content";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { mergeContent, clampMedia } from "@/lib/site-content";
+import { getPlanCaps } from "@/lib/plans";
 import { tenantUrl } from "@/lib/urls";
 import SiteView from "@/components/site/SiteView";
 import NotLive from "@/components/site/NotLive";
@@ -23,7 +25,21 @@ async function loadOffice(slug: string) {
     .eq("office_id", office.id)
     .maybeSingle();
 
-  return { office, content: mergeContent(row?.content) };
+  // Read the active plan (admin client — subscriptions aren't anon-readable) to
+  // enforce background capabilities at render.
+  const admin = createAdminClient();
+  const { data: sub } = await admin
+    .from("subscriptions")
+    .select("plan")
+    .eq("office_id", office.id)
+    .eq("status", "active")
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  const caps = getPlanCaps(sub?.plan);
+  const content = clampMedia(mergeContent(row?.content), caps);
+  return { office, content };
 }
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
