@@ -1,0 +1,161 @@
+// Shape of an office site's editable content + sensible defaults (from the Awtad template).
+
+export type SiteContent = {
+  theme: { accent: "bronze" | "terracotta" | "azure" | "sage" };
+  media: {
+    bgVideo: string | null;
+    bgMode: "video" | "frames";
+    frames: string[] | null;
+  };
+  brand: { ar: string; en: string };
+  coordinates: { lat: string; lng: string; label: string };
+  hero: {
+    eyebrow: string;
+    subtitle: string;
+    meta: { value: string; label: string }[];
+  };
+  about: {
+    lead: string;
+    body: string;
+    side: { k: string; v: string }[];
+  };
+  services: {
+    title: string;
+    lead: string;
+    items: { title: string; desc: string }[];
+  };
+  stats: { value: string; suffix: string; label: string; en: string }[];
+  process: { title: string; desc: string }[];
+  projects: {
+    items: { tag: string; title: string; meta: string; image: string | null }[];
+  };
+  team: {
+    items: { name: string; role: string; roleEn: string; image: string | null }[];
+  };
+  testimonials: { quote: string; name: string; role: string }[];
+  contact: {
+    phone: string;
+    phoneNote: string;
+    email: string;
+    emailNote: string;
+    office: string;
+    officeNote: string;
+    social: string;
+    socialNote: string;
+    whatsapp: string;
+    tiktok: string;
+    snapchat: string;
+  };
+};
+
+export const defaultContent: SiteContent = {
+  theme: { accent: "bronze" },
+  media: { bgVideo: null, bgMode: "video", frames: null },
+  brand: { ar: "أوتاد", en: "AWTAD" },
+  coordinates: { lat: "24.7136°N", lng: "46.6753°E", label: "RIYADH · KSA" },
+  hero: {
+    eyebrow: "ENGINEERING CONSULTANCY — EST. 2008 · RIYADH",
+    subtitle:
+      "نُهندِس الرسوخ، ونبني الطموح. مكتب استشاراتٍ هندسية متكامل — من الفكرة الأولى إلى تسليم المفتاح.",
+    meta: [
+      { value: "09", label: "خدمات هندسية" },
+      { value: "240+", label: "مشروع منجز" },
+      { value: "17", label: "عاماً من الخبرة" },
+    ],
+  },
+  about: {
+    lead: "كل بناءٍ عظيم يبدأ من وتدٍ راسخ. نحن نضع ذلك الوتد — هندسةً دقيقة، وتصميماً يحترم المكان، وإشرافاً لا يساوم على الجودة.",
+    body: "تأسس المكتب ليجمع التخصصات الهندسية كافة تحت سقفٍ واحد. نرافق عملاءنا من الدراسة الأولى للأرض، مروراً بالتصميم والترخيص، وصولاً إلى الإشراف على التنفيذ وتسليم المشروع جاهزاً.",
+    side: [
+      { k: "EST.", v: "تأسس عام 2008 في مدينة الرياض" },
+      { k: "LICENSE", v: "مكتب معتمد لدى الهيئة السعودية للمهندسين" },
+      { k: "TEAM", v: "فريق متعدد التخصصات من المهندسين والمصممين" },
+      { k: "SCOPE", v: "مشاريع سكنية · تجارية · حكومية · صناعية" },
+    ],
+  },
+  services: {
+    title: "خدماتٌ هندسية متكاملة، تحت سقفٍ واحد.",
+    lead: "تخصصات تعمل بتناغم لتختصر عليك تعدد الجهات، وتضمن انسجام التصميم مع التنفيذ.",
+    items: [
+      { title: "التصميم المعماري", desc: "تصاميم تستجيب للسياق والوظيفة، من الفكرة الأولى إلى الواجهات والتفاصيل." },
+      { title: "التصميم الإنشائي", desc: "أنظمة إنشائية آمنة واقتصادية، محسوبة بدقة وفق أحدث الأكواد." },
+      { title: "الأنظمة الكهروميكانيكية", desc: "تصميم متكامل للكهرباء والميكانيكا والسباكة والتكييف (MEP)." },
+      { title: "الإشراف على التنفيذ", desc: "متابعة ميدانية تضمن مطابقة المنفّذ للمصمَّم جودةً وزمناً وتكلفة." },
+      { title: "إدارة المشاريع", desc: "تخطيط وجدولة وضبط للموارد، يحفظ المشروع ضمن النطاق والميزانية." },
+      { title: "التصميم الداخلي والديكور", desc: "فراغات داخلية تُترجم الهوية، بمواد وإضاءة مدروسة حتى آخر تفصيل." },
+      { title: "الاستشارات الهندسية", desc: "دراسات جدوى فنية، وحلول هندسية للمشاكل المعقدة، ورأي خبير محايد." },
+      { title: "النمذجة الهندسية BIM", desc: "نمذجة معلومات البناء ثلاثية الأبعاد لتنسيق دقيق بين كل التخصصات." },
+      { title: "الاستدامة وكفاءة الطاقة", desc: "حلول خضراء تقلّل استهلاك الطاقة وتدعم متطلبات الاستدامة." },
+    ],
+  },
+  stats: [
+    { value: "17", suffix: "+", label: "عاماً من الخبرة", en: "YEARS" },
+    { value: "240", suffix: "+", label: "مشروعاً منجزاً", en: "PROJECTS" },
+    { value: "1.8", suffix: "M", label: "متر مربع مُصمَّم", en: "SQ. METERS" },
+    { value: "96", suffix: "%", label: "رضا العملاء", en: "SATISFACTION" },
+  ],
+  process: [
+    { title: "الدراسة والتحليل", desc: "قراءة الموقع والاحتياج والميزانية، وصياغة رؤية واضحة للمشروع." },
+    { title: "التصميم والهندسة", desc: "تطوير التصاميم المعمارية والإنشائية والكهروميكانيكية بتناغمٍ تام." },
+    { title: "الترخيص والتنسيق", desc: "إنهاء التراخيص والمستندات، وتنسيق المقاولين والموردين." },
+    { title: "الإشراف والتسليم", desc: "إشراف ميداني دقيق حتى التسليم النهائي وضمان جودة التنفيذ." },
+  ],
+  projects: {
+    items: [
+      { tag: "MIXED-USE", title: "برج أوتاد التجاري", meta: "RIYADH · 2024", image: null },
+      { tag: "RESIDENTIAL", title: "فيلا الواحة", meta: "DIRIYAH · 2023", image: null },
+      { tag: "GOVERNMENT", title: "المجمّع الإداري الحكومي", meta: "JEDDAH · 2022", image: null },
+      { tag: "INDUSTRIAL", title: "مصنع المنطقة الثانية", meta: "DAMMAM · 2021", image: null },
+    ],
+  },
+  team: {
+    items: [
+      { name: "م. عبدالعزيز الراشد", role: "الشريك المؤسس · رئيس مجلس الإدارة", roleEn: "FOUNDING PARTNER", image: null },
+      { name: "م. ليان الحمد", role: "مديرة التصميم المعماري", roleEn: "HEAD OF ARCHITECTURE", image: null },
+      { name: "م. فهد العتيبي", role: "رئيس الهندسة الإنشائية", roleEn: "STRUCTURAL LEAD", image: null },
+      { name: "م. سارة المطيري", role: "مديرة إدارة المشاريع", roleEn: "PROJECTS DIRECTOR", image: null },
+    ],
+  },
+  testimonials: [
+    { quote: "تعاملنا معهم من الفكرة حتى التسليم. الالتزام بالجودة والمواعيد كان مذهلاً، والإشراف الميداني وفّر علينا الكثير.", name: "عبدالله الدوسري", role: "مالك مشروع — برج تجاري، الرياض" },
+    { quote: "دقة التصميم الإنشائي والتنسيق بين التخصصات جعلت التنفيذ سلساً بلا مفاجآت. شركاء حقيقيون لا مجرّد مكتب.", name: "نورة القحطاني", role: "مديرة تطوير عقاري — جدة" },
+    { quote: "حوّلوا فكرة بسيطة إلى مبنى نفخر به كل يوم. فريق يستمع، ويقترح، ويُنفّذ بإتقان.", name: "سعود المالكي", role: "عميل سكني — الدمام" },
+  ],
+  contact: {
+    phone: "+966 11 000 0000",
+    phoneNote: "الأحد – الخميس · 8ص – 5م",
+    email: "hello@awtad.sa",
+    emailNote: "للاستفسارات والعروض",
+    office: "Riyadh · KSA",
+    officeNote: "طريق الملك فهد، الرياض",
+    social: "@awtad.sa",
+    socialNote: "تابعنا على المنصات",
+    whatsapp: "",
+    tiktok: "",
+    snapchat: "",
+  },
+};
+
+// Deep-merge stored content over defaults so partial edits still render fully.
+export function mergeContent(stored: unknown): SiteContent {
+  if (!stored || typeof stored !== "object") return defaultContent;
+  const s = stored as Record<string, unknown>;
+  const d = defaultContent;
+  const pick = <T,>(key: keyof SiteContent, fallback: T): T =>
+    (s[key] !== undefined && s[key] !== null ? (s[key] as T) : fallback);
+  return {
+    theme: { ...d.theme, ...(pick("theme", {}) as object) },
+    media: { ...d.media, ...(pick("media", {}) as object) },
+    brand: { ...d.brand, ...(pick("brand", {}) as object) },
+    coordinates: { ...d.coordinates, ...(pick("coordinates", {}) as object) },
+    hero: { ...d.hero, ...(pick("hero", {}) as object) },
+    about: { ...d.about, ...(pick("about", {}) as object) },
+    services: { ...d.services, ...(pick("services", {}) as object) },
+    stats: pick("stats", d.stats),
+    process: pick("process", d.process),
+    projects: { ...d.projects, ...(pick("projects", {}) as object) },
+    team: { ...d.team, ...(pick("team", {}) as object) },
+    testimonials: pick("testimonials", d.testimonials),
+    contact: { ...d.contact, ...(pick("contact", {}) as object) },
+  };
+}
