@@ -307,6 +307,7 @@ export default function Editor({
       </div>
 
       <Section title="الهوية واللون">
+        {image("شعار المكتب (يظهر في الشريط العلوي وكـ favicon)", "brand.logo")}
         {text("اسم المكتب (عربي)", "brand.ar")}
         {text("الاسم (لاتيني)", "brand.en", "ltr")}
         <div>
@@ -633,6 +634,39 @@ export default function Editor({
           {text("العنوان", "contact.officeNote")}
           {text("حساب التواصل", "contact.social", "ltr")}
           {text("ملاحظة التواصل", "contact.socialNote")}
+        </div>
+        <div>
+          {text("خريطة جوجل (عنوان المكتب أو إحداثيات مثل 24.71,46.67)", "contact.mapQuery", "ltr")}
+          <p className="mt-1 text-xs text-muted">تظهر خريطة جوجل في قسم التواصل. اتركها فارغة لإخفائها.</p>
+        </div>
+      </Section>
+
+      <Section title="الأقسام الظاهرة">
+        <p className="text-xs text-muted">تحكّم في إظهار أو إخفاء أقسام موقعك.</p>
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          {([
+            ["about", "من نحن"],
+            ["services", "الخدمات"],
+            ["stats", "الأرقام"],
+            ["process", "المنهجية"],
+            ["projects", "المشاريع"],
+            ["team", "الفريق"],
+            ["testimonials", "الآراء"],
+            ["contact", "التواصل"],
+          ] as const).map(([key, label]) => {
+            const on = c.visible?.[key] !== false;
+            return (
+              <button
+                key={key}
+                type="button"
+                onClick={() => set(`visible.${key}`, !on)}
+                className={`flex items-center justify-between rounded-lg border px-3 py-2 text-sm ${on ? "border-accent" : "border-border text-muted"}`}
+              >
+                <span>{label}</span>
+                <span className={`mono text-xs ${on ? "text-accent" : "text-muted"}`}>{on ? "ظاهر" : "مخفي"}</span>
+              </button>
+            );
+          })}
         </div>
       </Section>
 

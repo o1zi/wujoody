@@ -7,7 +7,7 @@ export type SiteContent = {
     bgMode: "video" | "frames";
     frames: string[] | null;
   };
-  brand: { ar: string; en: string };
+  brand: { ar: string; en: string; logo: string | null };
   coordinates: { lat: string; lng: string; label: string };
   hero: {
     eyebrow: string;
@@ -45,13 +45,24 @@ export type SiteContent = {
     whatsapp: string;
     tiktok: string;
     snapchat: string;
+    mapQuery: string;
+  };
+  visible: {
+    about: boolean;
+    services: boolean;
+    stats: boolean;
+    process: boolean;
+    projects: boolean;
+    team: boolean;
+    testimonials: boolean;
+    contact: boolean;
   };
 };
 
 export const defaultContent: SiteContent = {
   theme: { accent: "bronze" },
   media: { bgVideo: null, bgMode: "video", frames: null },
-  brand: { ar: "أوتاد", en: "AWTAD" },
+  brand: { ar: "أوتاد", en: "AWTAD", logo: null },
   coordinates: { lat: "24.7136°N", lng: "46.6753°E", label: "RIYADH · KSA" },
   hero: {
     eyebrow: "ENGINEERING CONSULTANCY — EST. 2008 · RIYADH",
@@ -133,6 +144,17 @@ export const defaultContent: SiteContent = {
     whatsapp: "",
     tiktok: "",
     snapchat: "",
+    mapQuery: "",
+  },
+  visible: {
+    about: true,
+    services: true,
+    stats: true,
+    process: true,
+    projects: true,
+    team: true,
+    testimonials: true,
+    contact: true,
   },
 };
 
@@ -157,5 +179,6 @@ export function mergeContent(stored: unknown): SiteContent {
     team: { ...d.team, ...(pick("team", {}) as object) },
     testimonials: pick("testimonials", d.testimonials),
     contact: { ...d.contact, ...(pick("contact", {}) as object) },
+    visible: { ...d.visible, ...(pick("visible", {}) as object) },
   };
 }

@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import type { SiteContent } from "@/lib/site-content";
+import { tenantUrl } from "@/lib/urls";
 import ContactForm from "./ContactForm";
+import ProjectsGallery from "./ProjectsGallery";
 
 const ACCENTS: Record<string, { hex: string; rgb: string }> = {
   bronze: { hex: "#C2974E", rgb: "194,151,78" },
@@ -51,8 +53,6 @@ const SVG_PATHS = [
   "M12 21c5-3 7-7 7-11a7 7 0 0 0-14 0c0 4 2 8 7 11zM12 12c0-3 2-5 4-5",
 ];
 
-const PROJ_SHAPES = ["big", "tall", "wide", "wide"];
-
 function SocialBtn({ href, label, children }: { href: string; label: string; children: ReactNode }) {
   return (
     <a
@@ -96,6 +96,22 @@ export default function SiteView({ content, slug }: { content: SiteContent; slug
   const customFrames = m?.bgMode === "frames" && m.frames && m.frames.length > 0 ? m.frames : null;
   const bgMedia = !customFrames ? (m?.bgVideo ?? null) : null;
   const bgIsVideo = !!bgMedia && /\.(mp4|webm|mov|m4v|ogg|ogv)(\?|$)/i.test(bgMedia);
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ProfessionalService",
+    name: brand.ar,
+    description: content.hero.subtitle,
+    url: tenantUrl(slug),
+    telephone: content.contact.phone,
+    email: content.contact.email,
+    image: brand.logo || content.projects.items.find((p) => p.image)?.image || undefined,
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: content.contact.office,
+      addressCountry: "SA",
+    },
+  };
+
   const waNumber = (content.contact.whatsapp || content.contact.phone || "").replace(/\D/g, "");
   const waHref = waNumber.length >= 8 ? `https://wa.me/${waNumber}` : null;
   const tk = (content.contact.tiktok || "").trim();
@@ -105,6 +121,7 @@ export default function SiteView({ content, slug }: { content: SiteContent; slug
 
   return (
     <div style={{ ["--accent" as string]: accent.hex, ["--accent-rgb" as string]: accent.rgb }}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       {customFrames ? (
         <script
           dangerouslySetInnerHTML={{ __html: `window.__BG_FRAMES__=${JSON.stringify(customFrames)};` }}
@@ -187,11 +204,18 @@ export default function SiteView({ content, slug }: { content: SiteContent; slug
 
       <header className="topbar" id="topbar">
         <a className="brand" href="#" data-goto="hero">
-          <span className="ar">
-            {brand.ar}
-            <span style={{ color: "var(--accent)" }}>.</span>
-          </span>
-          <span className="en">{brand.en}</span>
+          {brand.logo ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={brand.logo} alt={brand.ar} style={{ height: 38, width: "auto", display: "block" }} />
+          ) : (
+            <>
+              <span className="ar">
+                {brand.ar}
+                <span style={{ color: "var(--accent)" }}>.</span>
+              </span>
+              <span className="en">{brand.en}</span>
+            </>
+          )}
         </a>
         <nav className="nav" id="nav">
           <a href="#" data-goto="about">من نحن</a>
@@ -258,7 +282,7 @@ export default function SiteView({ content, slug }: { content: SiteContent; slug
         </section>
 
         {/* ABOUT */}
-        <section className="sec" id="about" data-screen-label="من نحن">
+        <section className="sec" id="about" data-screen-label="من نحن" style={{ display: content.visible.about === false ? "none" : undefined }}>
           <div className="wrap">
             <div className="glass-card reveal">
               <MacBar />
@@ -287,7 +311,7 @@ export default function SiteView({ content, slug }: { content: SiteContent; slug
         </section>
 
         {/* SERVICES */}
-        <section className="sec" id="services" data-screen-label="الخدمات">
+        <section className="sec" id="services" data-screen-label="الخدمات" style={{ display: content.visible.services === false ? "none" : undefined }}>
           <div className="wrap">
             <div className="glass-card reveal">
               <MacBar />
@@ -323,7 +347,7 @@ export default function SiteView({ content, slug }: { content: SiteContent; slug
         </section>
 
         {/* STATS */}
-        <section className="sec" id="stats" data-screen-label="الأرقام والإنجازات">
+        <section className="sec" id="stats" data-screen-label="الأرقام والإنجازات" style={{ display: content.visible.stats === false ? "none" : undefined }}>
           <div className="wrap">
             <div className="glass-card reveal">
               <MacBar />
@@ -354,7 +378,7 @@ export default function SiteView({ content, slug }: { content: SiteContent; slug
         </section>
 
         {/* PROCESS */}
-        <section className="sec" id="process" data-screen-label="منهجية العمل">
+        <section className="sec" id="process" data-screen-label="منهجية العمل" style={{ display: content.visible.process === false ? "none" : undefined }}>
           <div className="wrap">
             <div className="glass-card reveal">
               <MacBar />
@@ -380,7 +404,7 @@ export default function SiteView({ content, slug }: { content: SiteContent; slug
         </section>
 
         {/* PROJECTS */}
-        <section className="sec" id="projects" data-screen-label="المشاريع / أعمالنا">
+        <section className="sec" id="projects" data-screen-label="المشاريع / أعمالنا" style={{ display: content.visible.projects === false ? "none" : undefined }}>
           <div className="wrap">
             <div className="eyebrow mono reveal">
               <span className="ln"></span>
@@ -390,23 +414,12 @@ export default function SiteView({ content, slug }: { content: SiteContent; slug
               <h2 className="sec-title reveal" data-d="1" style={{ marginBottom: 0 }}>مشاريع تحكي الرسوخ.</h2>
               <p className="sec-lead reveal" data-d="2">نماذج من أعمالنا عبر القطاعات.</p>
             </div>
-            <div className="proj-grid reveal" data-d="2">
-              {content.projects.items.map((pr, i) => (
-                <div className={`proj ${PROJ_SHAPES[i % PROJ_SHAPES.length]}`} key={i}>
-                  <span className="tag mono">{pr.tag}</span>
-                  <Slot src={pr.image} label="صورة المشروع" />
-                  <div className="cap">
-                    <h3>{pr.title}</h3>
-                    <span className="meta mono">{pr.meta}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <ProjectsGallery items={content.projects.items} />
           </div>
         </section>
 
         {/* TEAM */}
-        <section className="sec" id="team" data-screen-label="فريق العمل">
+        <section className="sec" id="team" data-screen-label="فريق العمل" style={{ display: content.visible.team === false ? "none" : undefined }}>
           <div className="wrap">
             <div className="eyebrow mono reveal">
               <span className="ln"></span>
@@ -432,7 +445,7 @@ export default function SiteView({ content, slug }: { content: SiteContent; slug
         </section>
 
         {/* TESTIMONIALS */}
-        <section className="sec" id="voices" data-screen-label="آراء العملاء">
+        <section className="sec" id="voices" data-screen-label="آراء العملاء" style={{ display: content.visible.testimonials === false ? "none" : undefined }}>
           <div className="wrap">
             <div className="glass-card reveal">
               <MacBar />
@@ -467,7 +480,7 @@ export default function SiteView({ content, slug }: { content: SiteContent; slug
         </section>
 
         {/* CONTACT */}
-        <section className="sec" id="contact" data-screen-label="تواصل معنا">
+        <section className="sec" id="contact" data-screen-label="تواصل معنا" style={{ display: content.visible.contact === false ? "none" : undefined }}>
           <div className="wrap">
             <div className="glass-card reveal">
               <MacBar />
@@ -489,6 +502,19 @@ export default function SiteView({ content, slug }: { content: SiteContent; slug
                     <div className="it"><span className="k mono">SOCIAL</span><span className="v">{content.contact.social}<small>{content.contact.socialNote}</small></span></div>
                   </div>
                 </div>
+                {content.contact.mapQuery ? (
+                  <div style={{ marginTop: 28, borderRadius: 12, overflow: "hidden", border: "1px solid rgba(255,255,255,.14)" }}>
+                    <iframe
+                      title="موقع المكتب"
+                      src={`https://www.google.com/maps?q=${encodeURIComponent(content.contact.mapQuery)}&output=embed`}
+                      width="100%"
+                      height="320"
+                      style={{ border: 0, display: "block", filter: "grayscale(0.3) contrast(1.05)" }}
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                    />
+                  </div>
+                ) : null}
               </div>
             </div>
           </div>

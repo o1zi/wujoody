@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import crypto from "crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { sendEmail, emailLayout } from "@/lib/email";
 import { verifySallaWebhook, isPaidEvent, extractProductId, type SallaEvent } from "@/lib/salla";
 import { getPlanByProductId, PLANS } from "@/lib/plans";
 
@@ -92,6 +93,16 @@ export async function POST(request: NextRequest) {
 
   // Go live.
   await admin.from("offices").update({ status: "active" }).eq("id", officeId);
+
+  // Payment confirmation email (no-op if Resend isn't configured).
+  await sendEmail({
+    to: email,
+    subject: "تم تفعيل اشتراكك ✓",
+    html: emailLayout(
+      "تم تفعيل موقع مكتبك ✓",
+      `تم استلام دفعتك بنجاح وتفعيل اشتراك باقة «${plan.name}». موقعك الآن يعمل. يمكنك تعديل محتواه من لوحة التحكم.`,
+    ),
+  });
 
   return NextResponse.json({ ok: true, activated: officeId });
 }
