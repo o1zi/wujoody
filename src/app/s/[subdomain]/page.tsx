@@ -10,6 +10,43 @@ import NotLive from "@/components/site/NotLive";
 
 type Params = Promise<{ subdomain: string }>;
 
+function extractCoords(s: string): string | null {
+  let m = s.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+  if (m) return `${m[1]},${m[2]}`;
+  m = s.match(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/);
+  if (m) return `${m[1]},${m[2]}`;
+  m = s.match(/\/(?:search|place|dir)\/(-?\d+\.\d+),\+?\s*(-?\d+\.\d+)/);
+  if (m) return `${m[1]},${m[2]}`;
+  m = s.match(/[?&]q=(-?\d+\.\d+),\+?\s*(-?\d+\.\d+)/);
+  if (m) return `${m[1]},${m[2]}`;
+  m = s.match(/(-?\d{1,3}\.\d{4,}),\+(-?\d{1,3}\.\d{4,})/);
+  if (m) return `${m[1]},${m[2]}`;
+  return null;
+}
+
+// Turn whatever the office entered into something embeddable:
+// coords stay as-is, a plain address stays as-is, and a Google Maps link
+// (incl. short maps.app.goo.gl) is resolved to coordinates. Returns "" if not embeddable.
+async function resolveMapQuery(q: string): Promise<string> {
+  const v = (q || "").trim();
+  if (!v) return "";
+  if (/^-?\d{1,3}\.\d+\s*,\s*-?\d{1,3}\.\d+$/.test(v)) return v.replace(/\s+/g, "");
+  if (/^https?:\/\//i.test(v)) {
+    try {
+      const res = await fetch(v, {
+        redirect: "follow",
+        headers: { "User-Agent": "Mozilla/5.0" },
+        next: { revalidate: 86400 },
+      });
+      // Coordinates live in the resolved URL (e.g. /maps/search/LAT,+LNG).
+      return extractCoords(res.url) ?? "";
+    } catch {
+      return "";
+    }
+  }
+  return v; // plain address / place name
+}
+
 async function loadOffice(slug: string) {
   const supabase = await createClient();
   const { data: office } = await supabase
@@ -39,6 +76,7 @@ async function loadOffice(slug: string) {
 
   const caps = getPlanCaps(sub?.plan);
   const content = clampMedia(mergeContent(row?.content), caps);
+  content.contact.mapQuery = await resolveMapQuery(content.contact.mapQuery);
   return { office, content };
 }
 

@@ -689,8 +689,10 @@ export default function Editor({
           {text("ملاحظة التواصل", "contact.socialNote")}
         </div>
         <div>
-          {text("خريطة جوجل (عنوان المكتب أو إحداثيات مثل 24.71,46.67)", "contact.mapQuery", "ltr")}
-          <p className="mt-1 text-xs text-muted">تظهر خريطة جوجل في قسم التواصل. اتركها فارغة لإخفائها.</p>
+          {text("خريطة جوجل (رابط مشاركة، أو إحداثيات 24.71,46.67، أو عنوان)", "contact.mapQuery", "ltr")}
+          <p className="mt-1 text-xs text-muted">
+            يمكنك لصق رابط المشاركة من تطبيق خرائط جوجل مباشرةً، وسنحوّله لموقع دقيق. اتركها فارغة لإخفاء الخريطة.
+          </p>
         </div>
       </Section>
 

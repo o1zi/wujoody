@@ -513,7 +513,7 @@ export default function SiteView({ content, slug }: { content: SiteContent; slug
                   <div style={{ marginTop: 28, borderRadius: 12, overflow: "hidden", border: "1px solid rgba(255,255,255,.14)" }}>
                     <iframe
                       title="موقع المكتب"
-                      src={`https://www.google.com/maps?q=${encodeURIComponent(content.contact.mapQuery)}&output=embed`}
+                      src={`https://www.google.com/maps?q=${encodeURIComponent(content.contact.mapQuery)}&z=15&output=embed`}
                       width="100%"
                       height="320"
                       style={{ border: 0, display: "block", filter: "grayscale(0.3) contrast(1.05)" }}
