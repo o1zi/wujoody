@@ -75,3 +75,12 @@ export async function savePlan(
 export async function logoutToLogin() {
   redirect("/login");
 }
+
+// Save the editable landing-page content.
+export async function saveLanding(content: unknown) {
+  await assertSuperAdmin();
+  const admin = createAdminClient();
+  await admin.from("app_settings").upsert({ key: "landing", value: content, updated_at: new Date().toISOString() }, { onConflict: "key" });
+  revalidatePath("/");
+  revalidatePath("/super-admin/landing");
+}
