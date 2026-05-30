@@ -16,7 +16,10 @@ function getSubdomain(host: string, rootDomain: string): string | null {
 export async function proxy(request: NextRequest) {
   const { nextUrl: url } = request;
   const host = (request.headers.get("host") || "").toLowerCase();
-  const rootDomain = (process.env.NEXT_PUBLIC_ROOT_DOMAIN || "localhost:3000").toLowerCase();
+  const rootDomain = (process.env.NEXT_PUBLIC_ROOT_DOMAIN || "localhost:3000")
+    .toLowerCase()
+    .replace(/^https?:\/\//, "")
+    .replace(/\/+$/, "");
   const subdomain = getSubdomain(host, rootDomain);
 
   // Base response that also carries refreshed Supabase auth cookies.

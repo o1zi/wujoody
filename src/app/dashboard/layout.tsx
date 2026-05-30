@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getSessionContext } from "@/lib/auth";
+import { tenantLabel } from "@/lib/urls";
 
 const STATUS_LABEL: Record<string, { text: string; cls: string }> = {
   active: { text: "مُفعّل", cls: "bg-emerald-500/15 text-emerald-300" },
@@ -32,7 +33,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
           <div className="mt-5 rounded-xl border border-border p-3.5">
             <div className="text-sm font-medium">{office.name}</div>
             <div className="mono mt-1 text-xs text-muted" dir="ltr">
-              {office.slug}.{process.env.NEXT_PUBLIC_ROOT_DOMAIN}
+              {tenantLabel(office.slug)}
             </div>
             {status && (
               <span className={`mt-2 inline-block rounded-full px-2.5 py-0.5 text-xs ${status.cls}`}>

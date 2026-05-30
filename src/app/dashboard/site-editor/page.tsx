@@ -2,11 +2,8 @@ import { redirect } from "next/navigation";
 import { getSessionContext } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { mergeContent } from "@/lib/site-content";
+import { tenantUrl } from "@/lib/urls";
 import Editor from "./Editor";
-
-const APP_PROTO = (process.env.NEXT_PUBLIC_APP_URL || "http://localhost").startsWith("https")
-  ? "https"
-  : "http";
 
 export default async function SiteEditorPage() {
   const ctx = await getSessionContext();
@@ -28,10 +25,7 @@ export default async function SiteEditorPage() {
     .maybeSingle();
 
   const content = mergeContent(row?.content);
-  const siteUrl =
-    ctx.office.status === "active"
-      ? `${APP_PROTO}://${ctx.office.slug}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`
-      : null;
+  const siteUrl = ctx.office.status === "active" ? tenantUrl(ctx.office.slug) : null;
 
   return <Editor officeId={ctx.office.id} initial={content} siteUrl={siteUrl} />;
 }

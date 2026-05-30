@@ -1,10 +1,7 @@
 import Link from "next/link";
 import { getSessionContext } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
-
-const APP_PROTO = (process.env.NEXT_PUBLIC_APP_URL || "http://localhost").startsWith("https")
-  ? "https"
-  : "http";
+import { tenantUrl, tenantLabel } from "@/lib/urls";
 
 export default async function DashboardHome() {
   const ctx = await getSessionContext();
@@ -25,9 +22,7 @@ export default async function DashboardHome() {
     subEndsAt = data?.ends_at ?? null;
   }
 
-  const siteUrl = office
-    ? `${APP_PROTO}://${office.slug}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`
-    : null;
+  const siteUrl = office ? tenantUrl(office.slug) : null;
   const isLive = office?.status === "active";
 
   return (
@@ -43,7 +38,7 @@ export default async function DashboardHome() {
           </div>
           {isLive && siteUrl ? (
             <a href={siteUrl} target="_blank" rel="noreferrer" className="mono mt-3 inline-block text-sm text-accent hover:underline" dir="ltr">
-              {office!.slug}.{process.env.NEXT_PUBLIC_ROOT_DOMAIN} ↗
+              {tenantLabel(office!.slug)} ↗
             </a>
           ) : (
             <Link href="/dashboard/subscription" className="mt-3 inline-block text-sm text-accent hover:underline">
