@@ -3,6 +3,7 @@
 // Feature icons are fixed in code and mapped by index.
 
 export type LandingContent = {
+  media: { bgMode: "video" | "frames" | "solid"; bgVideo: string | null; frames: string[] | null; solid: "white" | "black" };
   brand: { ar: string; en: string };
   hero: { eyebrow: string; subtitle: string; meta: { value: string; label: string }[] };
   features: { title: string; lead: string; items: { title: string; desc: string }[] };
@@ -13,6 +14,7 @@ export type LandingContent = {
 };
 
 export const defaultLanding: LandingContent = {
+  media: { bgMode: "video", bgVideo: null, frames: null, solid: "black" },
   brand: { ar: "وجود", en: "WUJOOD" },
   hero: {
     eyebrow: "ENGINEERING OFFICES — SAAS PLATFORM · RIYADH",
@@ -63,6 +65,7 @@ export function mergeLanding(stored: unknown): LandingContent {
   const obj = <T,>(k: keyof LandingContent, fb: T): T =>
     s[k] && typeof s[k] === "object" && !Array.isArray(s[k]) ? ({ ...(fb as object), ...(s[k] as object) } as T) : fb;
   return {
+    media: { ...d.media, ...(obj("media", d.media) as object) },
     brand: obj("brand", d.brand),
     hero: { ...d.hero, ...(obj("hero", d.hero) as object) },
     features: { ...d.features, ...(obj("features", d.features) as object) },

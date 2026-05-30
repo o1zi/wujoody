@@ -25,9 +25,20 @@ function MacBar() {
 export default async function HomePage() {
   const [plans, c] = await Promise.all([getPlans(), getLanding()]);
 
+  const m = c.media;
+  const isSolid = m.bgMode === "solid";
+  const solidColor = m.solid === "white" ? "white" : "black";
+  const customFrames = !isSolid && m.bgMode === "frames" && m.frames && m.frames.length > 0 ? m.frames : null;
+  const bgMedia = !isSolid && !customFrames ? m.bgVideo : null;
+  const bgIsVideo = !!bgMedia && /\.(mp4|webm|mov|m4v|ogg|ogv)(\?|$)/i.test(bgMedia);
+  const lightClass = isSolid && solidColor === "white" ? "theme-light" : undefined;
+
   return (
-    <>
+    <div className={lightClass}>
       <link rel="stylesheet" href="/site-template/site.css" />
+      {customFrames ? (
+        <script dangerouslySetInnerHTML={{ __html: `window.__BG_FRAMES__=${JSON.stringify(customFrames)};` }} />
+      ) : null}
 
       <div className="loader" id="loader">
         <div className="mk">
@@ -41,7 +52,18 @@ export default async function HomePage() {
       </div>
 
       <div className="bg-stage">
-        <canvas className="bg-video" id="bgCanvas"></canvas>
+        {isSolid ? (
+          <div className={`bg-solid bg-solid-${solidColor}`} />
+        ) : bgMedia ? (
+          bgIsVideo ? (
+            <video className="bg-video" id="bgVideo" src={bgMedia} autoPlay muted loop playsInline preload="auto" />
+          ) : (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img className="bg-video" id="bgImage" src={bgMedia} alt="" />
+          )
+        ) : (
+          <canvas className="bg-video" id="bgCanvas"></canvas>
+        )}
         <div className="bg-grid"></div>
         <div className="bg-tint"></div>
         <div className="bg-grain"></div>
@@ -272,6 +294,6 @@ export default async function HomePage() {
       </footer>
 
       <Script src="/site-template/scroll-engine.js" strategy="afterInteractive" />
-    </>
+    </div>
   );
 }

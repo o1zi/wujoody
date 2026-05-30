@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import type { LandingContent } from "@/lib/landing-content";
+import { BG_PRESETS } from "@/lib/bg-presets";
 import { saveLanding } from "../actions";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -67,6 +68,70 @@ export default function LandingEditor({ initial }: { initial: LandingContent }) 
         <div className="grid grid-cols-2 gap-3">
           {text("الاسم (عربي)", "brand.ar")}
           {text("الاسم (لاتيني)", "brand.en", "ltr")}
+        </div>
+      </Section>
+
+      <Section title="خلفية الصفحة">
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => setC((p) => deepSet(deepSet(deepSet(p, "media.bgMode", "video"), "media.bgVideo", null), "media.frames", null))}
+            className={`rounded-lg border px-3 py-2 text-sm ${c.media.bgMode !== "solid" && !c.media.bgVideo && !c.media.frames ? "border-accent" : "border-border"}`}
+          >
+            الافتراضية (بناء)
+          </button>
+          <button
+            type="button"
+            onClick={() => setC((p) => deepSet(deepSet(p, "media.bgMode", "solid"), "media.solid", "black"))}
+            className={`rounded-lg border px-3 py-2 text-sm ${c.media.bgMode === "solid" && c.media.solid === "black" ? "border-accent" : "border-border"}`}
+          >
+            أسود
+          </button>
+          <button
+            type="button"
+            onClick={() => setC((p) => deepSet(deepSet(p, "media.bgMode", "solid"), "media.solid", "white"))}
+            className={`rounded-lg border px-3 py-2 text-sm ${c.media.bgMode === "solid" && c.media.solid === "white" ? "border-accent" : "border-border"}`}
+          >
+            أبيض
+          </button>
+        </div>
+
+        <div>
+          <span className="mb-2 block text-xs text-muted">فيديو متحرك (يعمل تلقائياً)</span>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            {BG_PRESETS.map((p) => (
+              <button
+                key={`v-${p.id}`}
+                type="button"
+                onClick={() => setC((prev) => deepSet(deepSet(deepSet(prev, "media.bgVideo", p.src), "media.bgMode", "video"), "media.frames", null))}
+                className={`overflow-hidden rounded-lg border text-right ${c.media.bgVideo === p.src ? "border-accent ring-1 ring-accent" : "border-border"}`}
+              >
+                <video src={p.src} muted playsInline preload="metadata" className="h-16 w-full object-cover" />
+                <div className="px-2 py-1 text-xs">{p.name}</div>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <span className="mb-2 block text-xs text-muted">حركة مع التمرير (إطارات)</span>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            {BG_PRESETS.map((p) => {
+              const sel = !!c.media.frames && c.media.frames[0] === p.frames[0];
+              return (
+                <button
+                  key={`f-${p.id}`}
+                  type="button"
+                  onClick={() => setC((prev) => deepSet(deepSet(deepSet(prev, "media.frames", p.frames), "media.bgMode", "frames"), "media.bgVideo", null))}
+                  className={`overflow-hidden rounded-lg border text-right ${sel ? "border-accent ring-1 ring-accent" : "border-border"}`}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={p.frames[0]} alt="" className="h-16 w-full object-cover" />
+                  <div className="px-2 py-1 text-xs">{p.name}</div>
+                </button>
+              );
+            })}
+          </div>
         </div>
       </Section>
 
