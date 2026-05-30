@@ -676,6 +676,8 @@ export default function Editor({
           </div>
           {text("تيك توك (اسم المستخدم أو الرابط)", "contact.tiktok", "ltr")}
           {text("سناب شات (اسم المستخدم أو الرابط)", "contact.snapchat", "ltr")}
+          {text("إنستقرام (اسم المستخدم أو الرابط)", "contact.instagram", "ltr")}
+          {text("لينكدإن (الرابط أو المعرّف)", "contact.linkedin", "ltr")}
           <p className="text-xs text-muted">تظهر كأزرار عائمة على يسار الموقع. اتركها فارغة لإخفائها.</p>
         </div>
         <div className="grid grid-cols-2 gap-3">

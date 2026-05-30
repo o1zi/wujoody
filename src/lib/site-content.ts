@@ -46,6 +46,8 @@ export type SiteContent = {
     whatsapp: string;
     tiktok: string;
     snapchat: string;
+    instagram: string;
+    linkedin: string;
     mapQuery: string;
   };
   visible: {
@@ -145,6 +147,8 @@ export const defaultContent: SiteContent = {
     whatsapp: "",
     tiktok: "",
     snapchat: "",
+    instagram: "",
+    linkedin: "",
     mapQuery: "",
   },
   visible: {
