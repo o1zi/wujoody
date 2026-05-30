@@ -16,7 +16,7 @@ function frameList(id: string, count: number): string[] {
 }
 
 const RAW: Raw[] = [
-  // { id: "hero1", name: "خلفية الهبوط ١", src: "/landing-backgrounds/hero1.mp4", frameCount: 0 },
+  { id: "landing1", name: "خلفية الهبوط ١", src: "/landing-backgrounds/272512_medium.mp4", frameCount: 216 },
 ];
 
 export const LANDING_PRESETS: ResolvedPreset[] = RAW.map((p) => ({ ...p, frames: frameList(p.id, p.frameCount) }));
