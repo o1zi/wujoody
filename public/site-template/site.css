@@ -245,6 +245,31 @@ button{font-family:inherit;cursor:pointer}
 .glass-card .cinfo .it .v{color:#fff}
 .glass-card .cinfo .it .v small{color:rgba(255,255,255,.6)}
 
+/* ---------- pricing (landing) ---------- */
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:34px}
+.price-card{position:relative;display:flex;flex-direction:column;border-radius:14px;padding:26px 22px;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12)}
+.price-card.featured{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent),0 24px 60px rgba(0,0,0,.4)}
+.price-badge{position:absolute;top:-11px;right:22px;background:var(--accent);color:#0E1116;
+  font-size:10px;letter-spacing:.1em;padding:4px 10px;border-radius:20px}
+.price-card h3{font-size:20px;margin-bottom:14px}
+.price-amount{display:flex;align-items:baseline;gap:8px;margin-bottom:18px}
+.price-amount b{font-family:"Readex Pro";font-size:40px;font-weight:600;line-height:1}
+.price-amount span{font-size:13px;color:rgba(255,255,255,.6)}
+.price-feats{list-style:none;padding:0;margin:0 0 22px;display:flex;flex-direction:column;gap:10px}
+.price-feats li{position:relative;padding-right:22px;font-size:14px;color:rgba(255,255,255,.78);line-height:1.5}
+.price-feats li::before{content:"✓";position:absolute;right:0;color:var(--accent);font-weight:700}
+.price-cta{margin-top:auto;display:block;text-align:center;background:var(--accent);color:#0E1116;
+  font-weight:500;padding:12px;border-radius:10px;transition:.3s}
+.price-cta:hover{background:#fff}
+
+/* hero / CTA buttons (landing) */
+.hero-cta{display:flex;flex-wrap:wrap;gap:14px;justify-content:center}
+.btn-ghost{display:inline-flex;align-items:center;padding:16px 28px;border-radius:10px;font-size:16px;
+  border:1px solid var(--line-light);color:#fff;transition:.3s}
+.btn-ghost:hover{background:rgba(255,255,255,.06)}
+@media(max-width:860px){.pricing-grid{grid-template-columns:1fr}}
+
 /* ---------- ABOUT ---------- */
 .about-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:64px;align-items:start}
 .about-lead{font-family:"Readex Pro";font-weight:400;font-size:clamp(22px,2.7vw,38px);line-height:1.3;
