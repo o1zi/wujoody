@@ -3,7 +3,7 @@ import crypto from "crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendEmail, emailLayout } from "@/lib/email";
 import { verifySallaWebhook, isPaidEvent, extractProductId, type SallaEvent } from "@/lib/salla";
-import { getPlanByProductId, PLANS } from "@/lib/plans";
+import { getPlanByProductId, getPlans } from "@/lib/plans-server";
 
 export const runtime = "nodejs";
 
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
   const email = pickEmail(data);
   const orderId = data.id != null ? String(data.id) : null;
   const productId = extractProductId(evt);
-  const plan = (productId && getPlanByProductId(productId)) || PLANS[0];
+  const plan = (productId ? await getPlanByProductId(productId) : undefined) || (await getPlans())[0];
 
   if (!email) {
     return NextResponse.json({ ok: true, warning: "no email on order" });

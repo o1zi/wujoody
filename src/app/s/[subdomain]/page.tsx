@@ -3,7 +3,7 @@ import Script from "next/script";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { mergeContent, clampMedia } from "@/lib/site-content";
-import { getPlanCaps } from "@/lib/plans";
+import { getPlanCaps } from "@/lib/plans-server";
 import { tenantUrl } from "@/lib/urls";
 import SiteView from "@/components/site/SiteView";
 import NotLive from "@/components/site/NotLive";
@@ -74,7 +74,7 @@ async function loadOffice(slug: string) {
     .limit(1)
     .maybeSingle();
 
-  const caps = getPlanCaps(sub?.plan);
+  const caps = await getPlanCaps(sub?.plan);
   const content = clampMedia(mergeContent(row?.content), caps);
   content.contact.mapQuery = await resolveMapQuery(content.contact.mapQuery);
   return { office, content };

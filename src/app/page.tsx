@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { PLANS } from "@/lib/plans";
+import { getPlans } from "@/lib/plans-server";
 
 const FEATURES = [
   { t: "نطاق فرعي خاص", d: "موقع مكتبك على نطاقٍ فرعي مستقل من المنصة، جاهز فور الاشتراك." },
@@ -16,7 +16,8 @@ const STEPS = [
   { n: "03", t: "عدّل وانطلق", d: "خصّص محتوى موقعك من اللوحة، وموقعك يصبح حياً فوراً." },
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  const plans = await getPlans();
   return (
     <div className="relative overflow-hidden">
       <div
@@ -98,7 +99,7 @@ export default function HomePage() {
         <h2 className="text-center text-3xl font-bold">باقات الاشتراك</h2>
         <p className="mt-3 text-center text-muted">اختر ما يناسب مكتبك. الدفع آمن عبر سلة.</p>
         <div className="mt-10 grid gap-6 md:grid-cols-3">
-          {PLANS.map((p) => (
+          {plans.map((p) => (
             <div
               key={p.code}
               className={`rounded-2xl border bg-surface p-8 ${p.highlight ? "border-accent" : "border-border"}`}

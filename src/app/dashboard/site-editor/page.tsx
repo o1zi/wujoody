@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { getSessionContext } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { mergeContent } from "@/lib/site-content";
-import { getPlanCaps } from "@/lib/plans";
+import { getPlanCaps } from "@/lib/plans-server";
 import { tenantUrl } from "@/lib/urls";
 import Editor from "./Editor";
 
@@ -35,7 +35,7 @@ export default async function SiteEditorPage() {
     .maybeSingle();
 
   const content = mergeContent(row?.content);
-  const caps = getPlanCaps(sub?.plan);
+  const caps = await getPlanCaps(sub?.plan);
   const siteUrl = ctx.office.status === "active" ? tenantUrl(ctx.office.slug) : null;
 
   return <Editor officeId={ctx.office.id} initial={content} siteUrl={siteUrl} caps={caps} />;

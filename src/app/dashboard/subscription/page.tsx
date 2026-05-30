@@ -2,12 +2,13 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getSessionContext } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
-import { PLANS } from "@/lib/plans";
+import { getPlans } from "@/lib/plans-server";
 
 export default async function SubscriptionPage() {
   const ctx = await getSessionContext();
   if (!ctx) redirect("/login");
 
+  const plans = await getPlans();
   let current: { plan: string; status: string; ends_at: string | null } | null = null;
   if (ctx.office) {
     const supabase = await createClient();
@@ -32,7 +33,7 @@ export default async function SubscriptionPage() {
         <div className="mt-6 rounded-2xl border border-emerald-500/40 bg-emerald-500/10 p-6">
           <div className="text-lg font-semibold text-emerald-300">اشتراكك نشط ✓</div>
           <p className="mt-1 text-sm text-emerald-200/80">
-            الباقة: {PLANS.find((p) => p.code === current?.plan)?.name || current?.plan}
+            الباقة: {plans.find((p) => p.code === current?.plan)?.name || current?.plan}
             {current?.ends_at && ` — ينتهي في ${new Date(current.ends_at).toLocaleDateString("ar-SA")}`}
           </p>
         </div>
@@ -48,7 +49,7 @@ export default async function SubscriptionPage() {
       </div>
 
       <div className="mt-6 grid gap-6 md:grid-cols-3">
-        {PLANS.map((p) => {
+        {plans.map((p) => {
           const isCurrent = isActive && current?.plan === p.code;
           return (
             <div key={p.code} className={`rounded-2xl border bg-surface p-7 ${p.highlight ? "border-accent" : "border-border"}`}>

@@ -1,11 +1,13 @@
-// Subscription tiers. Each maps to a product/payment link in your Salla store.
-// `caps` controls feature gating (enforced in the editor and at render time).
+// Plan TYPES + a code fallback. The source of truth is the `plans` table in
+// the DB (see supabase/plans.sql); these fallbacks are used only if the table
+// is missing/empty. The capability LOGIC stays in code; only the values come
+// from the DB. This file is import-safe from client components (types only).
 
 export type PlanCaps = {
-  solidOnly: boolean; // background limited to a solid white/black color
-  presets: boolean; // can pick ready-made background clips
-  presetLimit: number; // how many presets are usable (Infinity = all)
-  upload: boolean; // can upload own video/image/frames
+  solidOnly: boolean;
+  presets: boolean;
+  presetLimit: number; // Infinity = all
+  upload: boolean;
 };
 
 export type Plan = {
@@ -22,7 +24,9 @@ export type Plan = {
   highlight?: boolean;
 };
 
-export const PLANS: Plan[] = [
+export const DEFAULT_CAPS: PlanCaps = { solidOnly: false, presets: true, presetLimit: Infinity, upload: true };
+
+export const FALLBACK_PLANS: Plan[] = [
   {
     code: "basic",
     name: "الأساسية",
@@ -82,19 +86,25 @@ export const PLANS: Plan[] = [
   },
 ];
 
-const DEFAULT_CAPS: PlanCaps = { solidOnly: false, presets: true, presetLimit: Infinity, upload: true };
-
-export function getPlan(code: string): Plan | undefined {
-  return PLANS.find((p) => p.code === code);
-}
-
-export function getPlanByProductId(productId: string): Plan | undefined {
-  return PLANS.find((p) => p.sallaProductId === String(productId));
-}
-
-// Capabilities for a plan code. Unknown/legacy codes get the most permissive
-// caps so existing offices don't lose features unexpectedly.
-export function getPlanCaps(code: string | null | undefined): PlanCaps {
-  if (!code) return DEFAULT_CAPS;
-  return getPlan(code)?.caps ?? DEFAULT_CAPS;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function normalizePlan(row: any): Plan {
+  const caps = row.caps || {};
+  return {
+    code: row.code,
+    name: row.name,
+    price: Number(row.price),
+    currency: row.currency || "SAR",
+    period: row.period || "شهرياً",
+    durationDays: row.duration_days ?? 30,
+    paymentLink: row.payment_link || "",
+    sallaProductId: row.salla_product_id || "",
+    features: Array.isArray(row.features) ? row.features : [],
+    highlight: !!row.highlight,
+    caps: {
+      solidOnly: !!caps.solidOnly,
+      presets: caps.presets !== false,
+      presetLimit: caps.presetLimit == null ? Infinity : Number(caps.presetLimit),
+      upload: caps.upload !== false,
+    },
+  };
 }
