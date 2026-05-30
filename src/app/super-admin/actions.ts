@@ -80,7 +80,10 @@ export async function logoutToLogin() {
 export async function saveLanding(content: unknown) {
   await assertSuperAdmin();
   const admin = createAdminClient();
-  await admin.from("app_settings").upsert({ key: "landing", value: content, updated_at: new Date().toISOString() }, { onConflict: "key" });
+  const { error } = await admin
+    .from("app_settings")
+    .upsert({ key: "landing", value: content, updated_at: new Date().toISOString() }, { onConflict: "key" });
+  if (error) throw new Error(error.message);
   revalidatePath("/");
   revalidatePath("/super-admin/landing");
 }

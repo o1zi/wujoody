@@ -44,6 +44,7 @@ export default function LandingEditor({ initial }: { initial: LandingContent }) 
   const [c, setC] = useState<LandingContent>(initial);
   const [pending, start] = useTransition();
   const [saved, setSaved] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
   const set = (path: string, v: unknown) => setC((p) => deepSet(p, path, v));
 
   const text = (label: string, path: string, dir?: "ltr" | "rtl") => (
@@ -60,10 +61,15 @@ export default function LandingEditor({ initial }: { initial: LandingContent }) 
   );
 
   function save() {
+    setErr(null);
     start(async () => {
-      await saveLanding(c);
-      setSaved(true);
-      setTimeout(() => setSaved(false), 2500);
+      try {
+        await saveLanding(c);
+        setSaved(true);
+        setTimeout(() => setSaved(false), 2500);
+      } catch {
+        setErr("تعذّر الحفظ — شغّل ملف settings.sql في Supabase أولاً.");
+      }
     });
   }
 
@@ -193,10 +199,14 @@ export default function LandingEditor({ initial }: { initial: LandingContent }) 
       </Section>
 
       <div className="fixed bottom-0 left-0 right-0 border-t border-border bg-surface/95 backdrop-blur">
-        <div className="mx-auto flex max-w-3xl items-center justify-between px-6 py-3.5">
-          <a href="/" target="_blank" rel="noreferrer" className="text-sm text-accent hover:underline">
-            معاينة الصفحة ↗
-          </a>
+        <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-6 py-3.5">
+          {err ? (
+            <span className="text-sm text-red-400">{err}</span>
+          ) : (
+            <a href="/" target="_blank" rel="noreferrer" className="text-sm text-accent hover:underline">
+              معاينة الصفحة ↗
+            </a>
+          )}
           <button
             onClick={save}
             disabled={pending}
