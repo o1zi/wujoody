@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { sendEmail, emailLayout } from "@/lib/email";
 
 export const runtime = "nodejs";
 
@@ -25,7 +26,7 @@ export async function POST(request: NextRequest) {
   // Only accept leads for an existing, active office.
   const { data: office } = await admin
     .from("offices")
-    .select("id, status")
+    .select("id, name, status, owner_id")
     .eq("slug", slug)
     .maybeSingle();
 
@@ -43,6 +44,23 @@ export async function POST(request: NextRequest) {
 
   if (error) {
     return NextResponse.json({ error: "could not save" }, { status: 500 });
+  }
+
+  // Notify the office owner by email (no-op if Resend isn't configured).
+  const { data: owner } = await admin
+    .from("profiles")
+    .select("email")
+    .eq("id", office.owner_id)
+    .maybeSingle();
+  if (owner?.email) {
+    await sendEmail({
+      to: owner.email,
+      subject: `طلب تواصل جديد — ${office.name}`,
+      html: emailLayout(
+        "وصلك طلب تواصل جديد",
+        `<b>الاسم:</b> ${name}<br/><b>التواصل:</b> ${contact}<br/><b>الرسالة:</b><br/>${(message || "—").replace(/</g, "&lt;")}<br/><br/>راجع رسائلك من لوحة التحكم.`,
+      ),
+    });
   }
 
   return NextResponse.json({ ok: true });
