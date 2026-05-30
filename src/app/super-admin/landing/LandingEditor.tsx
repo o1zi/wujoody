@@ -3,7 +3,12 @@
 import { useState, useTransition } from "react";
 import type { LandingContent } from "@/lib/landing-content";
 import { BG_PRESETS } from "@/lib/bg-presets";
+import { LANDING_PRESETS } from "@/lib/landing-presets";
 import { saveLanding } from "../actions";
+
+// Prefer landing-specific clips; fall back to the shared office library while empty.
+const PRESETS = LANDING_PRESETS.length ? LANDING_PRESETS : BG_PRESETS;
+const FRAME_PRESETS = PRESETS.filter((p) => p.frames.length > 0);
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function deepSet<T>(obj: T, path: string, value: unknown): T {
@@ -99,7 +104,7 @@ export default function LandingEditor({ initial }: { initial: LandingContent }) 
         <div>
           <span className="mb-2 block text-xs text-muted">فيديو متحرك (يعمل تلقائياً)</span>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-            {BG_PRESETS.map((p) => (
+            {PRESETS.map((p) => (
               <button
                 key={`v-${p.id}`}
                 type="button"
@@ -116,7 +121,7 @@ export default function LandingEditor({ initial }: { initial: LandingContent }) 
         <div>
           <span className="mb-2 block text-xs text-muted">حركة مع التمرير (إطارات)</span>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-            {BG_PRESETS.map((p) => {
+            {FRAME_PRESETS.map((p) => {
               const sel = !!c.media.frames && c.media.frames[0] === p.frames[0];
               return (
                 <button
