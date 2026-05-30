@@ -2,12 +2,12 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { getSessionContext } from "@/lib/auth";
+import { getSessionContext, isAllowedSuperAdmin } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 async function assertSuperAdmin() {
   const ctx = await getSessionContext();
-  if (ctx?.profile?.role !== "super_admin") throw new Error("forbidden");
+  if (!isAllowedSuperAdmin(ctx?.email, ctx?.profile?.role)) throw new Error("forbidden");
 }
 
 export async function setOfficeStatus(officeId: string, status: "active" | "pending" | "suspended") {

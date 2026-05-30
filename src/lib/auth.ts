@@ -1,5 +1,19 @@
 import { createClient } from "@/lib/supabase/server";
 
+// Only these emails may access the super-admin area (in addition to having the
+// super_admin role). Configurable via SUPER_ADMIN_EMAILS (comma-separated).
+const SUPER_ADMIN_ALLOWLIST = (process.env.SUPER_ADMIN_EMAILS || "ziyadadmin@gmail.com")
+  .split(",")
+  .map((e) => e.trim().toLowerCase())
+  .filter(Boolean);
+
+export function isAllowedSuperAdmin(
+  email: string | null | undefined,
+  role: string | null | undefined,
+): boolean {
+  return role === "super_admin" && !!email && SUPER_ADMIN_ALLOWLIST.includes(email.toLowerCase());
+}
+
 export type Office = {
   id: string;
   name: string;

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { getSessionContext } from "@/lib/auth";
+import { getSessionContext, isAllowedSuperAdmin } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { tenantLabel } from "@/lib/urls";
 
@@ -71,7 +71,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
               )}
             </Link>
           ))}
-          {ctx.profile?.role === "super_admin" && (
+          {isAllowedSuperAdmin(ctx.email, ctx.profile?.role) && (
             <Link
               href="/super-admin"
               className="mt-1 rounded-lg px-3 py-2 text-sm text-accent transition hover:bg-surface-2"

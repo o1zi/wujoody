@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { getSessionContext } from "@/lib/auth";
+import { getSessionContext, isAllowedSuperAdmin } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { tenantUrl, tenantLabel } from "@/lib/urls";
 
 export default async function DashboardHome() {
   const ctx = await getSessionContext();
-  if (ctx?.profile?.role === "super_admin") redirect("/super-admin");
+  if (isAllowedSuperAdmin(ctx?.email, ctx?.profile?.role)) redirect("/super-admin");
   const office = ctx?.office ?? null;
 
   let subStatus: string | null = null;

@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { getSessionContext } from "@/lib/auth";
+import { getSessionContext, isAllowedSuperAdmin } from "@/lib/auth";
 
 export default async function SuperAdminLayout({ children }: { children: React.ReactNode }) {
   const ctx = await getSessionContext();
   if (!ctx) redirect("/login");
-  if (ctx.profile?.role !== "super_admin") redirect("/dashboard");
+  if (!isAllowedSuperAdmin(ctx.email, ctx.profile?.role)) redirect("/dashboard");
 
   return (
     <div className="min-h-dvh">
