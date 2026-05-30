@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getSessionContext } from "@/lib/auth";
+import { createClient } from "@/lib/supabase/server";
 import { tenantLabel } from "@/lib/urls";
 
 const STATUS_LABEL: Record<string, { text: string; cls: string }> = {
@@ -16,10 +17,22 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const office = ctx.office;
   const status = office ? STATUS_LABEL[office.status] : null;
 
+  let newLeads = 0;
+  if (office) {
+    const supabase = await createClient();
+    const { count } = await supabase
+      .from("leads")
+      .select("id", { count: "exact", head: true })
+      .eq("office_id", office.id)
+      .eq("status", "new");
+    newLeads = count ?? 0;
+  }
+
   const nav = [
-    { href: "/dashboard", label: "نظرة عامة" },
-    { href: "/dashboard/site-editor", label: "محرّر الموقع" },
-    { href: "/dashboard/subscription", label: "الاشتراك" },
+    { href: "/dashboard", label: "نظرة عامة", badge: 0 },
+    { href: "/dashboard/leads", label: "الرسائل", badge: newLeads },
+    { href: "/dashboard/site-editor", label: "محرّر الموقع", badge: 0 },
+    { href: "/dashboard/subscription", label: "الاشتراك", badge: 0 },
   ];
 
   return (
@@ -48,9 +61,14 @@ export default async function DashboardLayout({ children }: { children: React.Re
             <Link
               key={n.href}
               href={n.href}
-              className="rounded-lg px-3 py-2 text-sm text-muted transition hover:bg-surface-2 hover:text-foreground"
+              className="flex items-center justify-between rounded-lg px-3 py-2 text-sm text-muted transition hover:bg-surface-2 hover:text-foreground"
             >
-              {n.label}
+              <span>{n.label}</span>
+              {n.badge > 0 && (
+                <span className="rounded-full bg-accent px-2 py-0.5 text-xs font-medium text-[#0b0d10]">
+                  {n.badge}
+                </span>
+              )}
             </Link>
           ))}
           {ctx.profile?.role === "super_admin" && (

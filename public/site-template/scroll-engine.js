@@ -204,13 +204,7 @@
     setInterval(function () { show(idx + 1); }, 7000);
   })();
 
-  /* ---------- contact form ---------- */
-  var form = document.getElementById('contactForm');
-  form && form.addEventListener('submit', function (ev) {
-    ev.preventDefault(); var btn = form.querySelector('.btn');
-    btn.innerHTML = '<span class="ar">تم الاستلام ✓</span>'; btn.style.background = 'var(--accent)'; btn.style.color = '#0E1116';
-    setTimeout(function () { form.reset(); btn.innerHTML = '<span>أرسل الطلب</span><span class="mono">→</span>'; btn.style.background = ''; btn.style.color = ''; }, 2600);
-  });
+  /* contact form is now handled by the React ContactForm component (real submission) */
 
   /* ---------- start ---------- */
   function start() {

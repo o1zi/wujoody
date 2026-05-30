@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import type { SiteContent } from "@/lib/site-content";
+import ContactForm from "./ContactForm";
 
 const ACCENTS: Record<string, { hex: string; rgb: string }> = {
   bronze: { hex: "#C2974E", rgb: "194,151,78" },
@@ -88,7 +89,7 @@ function MacBar() {
   );
 }
 
-export default function SiteView({ content }: { content: SiteContent }) {
+export default function SiteView({ content, slug }: { content: SiteContent; slug: string }) {
   const accent = ACCENTS[content.theme.accent] ?? ACCENTS.bronze;
   const { brand } = content;
   const m = content.media;
@@ -479,12 +480,7 @@ export default function SiteView({ content }: { content: SiteContent }) {
                   <div>
                     <h2 className="sec-title" style={{ fontSize: "clamp(30px,4vw,52px)", marginBottom: 18 }}>لديك مشروع؟<br />لنضع له وتداً.</h2>
                     <p className="sec-lead" style={{ marginBottom: 34 }}>أخبرنا عن فكرتك، وسيتواصل معك أحد مهندسينا خلال يوم عمل واحد.</p>
-                    <form className="form" id="contactForm">
-                      <div className="fld"><label className="mono">الاسم — NAME</label><input type="text" placeholder="اسمك الكريم" required /></div>
-                      <div className="fld"><label className="mono">البريد / الجوال — CONTACT</label><input type="text" placeholder="بريدك أو رقم جوالك" required /></div>
-                      <div className="fld"><label className="mono">عن المشروع — PROJECT</label><textarea rows={3} placeholder="نوع المشروع، الموقع، ونبذة مختصرة"></textarea></div>
-                      <button className="btn" type="submit"><span>أرسل الطلب</span><span className="mono">→</span></button>
-                    </form>
+                    <ContactForm slug={slug} />
                   </div>
                   <div className="cinfo">
                     <div className="it"><span className="k mono">PHONE</span><span className="v">{content.contact.phone}<small>{content.contact.phoneNote}</small></span></div>

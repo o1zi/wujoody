@@ -48,7 +48,7 @@ export default async function TenantSite({ params }: { params: Params }) {
     <>
       {/* eslint-disable-next-line @next/next/no-css-tags */}
       <link rel="stylesheet" href="/site-template/site.css" />
-      <SiteView content={data.content} />
+      <SiteView content={data.content} slug={data.office.slug} />
       <Script src="/site-template/scroll-engine.js" strategy="afterInteractive" />
     </>
   );

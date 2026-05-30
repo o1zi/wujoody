@@ -60,6 +60,17 @@ create table if not exists public.site_content (
   updated_at  timestamptz not null default now()
 );
 
+create table if not exists public.leads (
+  id          uuid primary key default gen_random_uuid(),
+  office_id   uuid not null references public.offices(id) on delete cascade,
+  name        text,
+  contact     text,
+  message     text,
+  status      text not null default 'new',
+  created_at  timestamptz not null default now()
+);
+create index if not exists leads_office_idx on public.leads(office_id, created_at desc);
+
 create table if not exists public.salla_events (
   id          bigint generated always as identity primary key,
   event       text,
@@ -143,6 +154,15 @@ alter table public.profiles      enable row level security;
 alter table public.subscriptions enable row level security;
 alter table public.site_content  enable row level security;
 alter table public.salla_events  enable row level security;
+alter table public.leads         enable row level security;
+
+drop policy if exists leads_read_own on public.leads;
+create policy leads_read_own on public.leads
+  for select using (office_id = public.current_office_id() or public.is_super_admin());
+drop policy if exists leads_update_own on public.leads;
+create policy leads_update_own on public.leads
+  for update using (office_id = public.current_office_id() or public.is_super_admin())
+  with check (office_id = public.current_office_id() or public.is_super_admin());
 
 -- ----- profiles -----
 drop policy if exists profiles_select_own on public.profiles;
