@@ -30,19 +30,48 @@ export default function ProjectsGallery({ items }: { items: Item[] }) {
               />
             ) : (
               <div
-                className="mono"
                 style={{
                   position: "absolute",
                   inset: 0,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  background: "linear-gradient(135deg, rgba(20,24,32,.6), rgba(40,46,58,.4))",
-                  color: "rgba(255,255,255,.4)",
-                  fontSize: 12,
+                  overflow: "hidden",
+                  background: "linear-gradient(135deg, rgba(18,22,30,.92), rgba(38,44,56,.6))",
                 }}
               >
-                صورة المشروع
+                <div
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    opacity: 0.13,
+                    backgroundImage:
+                      "linear-gradient(var(--accent) 1px, transparent 1px), linear-gradient(90deg, var(--accent) 1px, transparent 1px)",
+                    backgroundSize: "24px 24px",
+                  }}
+                />
+                <div
+                  style={{
+                    position: "absolute",
+                    width: 200,
+                    height: 200,
+                    borderRadius: "50%",
+                    background: "radial-gradient(circle, rgba(var(--accent-rgb),.2), transparent 70%)",
+                  }}
+                />
+                <svg
+                  width="52"
+                  height="52"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="var(--accent)"
+                  strokeWidth="1.1"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  style={{ position: "relative", opacity: 0.85 }}
+                >
+                  <path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6" />
+                </svg>
               </div>
             )}
             <div className="cap">

@@ -11,7 +11,7 @@ const ACCENTS: Record<string, { hex: string; rgb: string }> = {
   sage: { hex: "#8FA66E", rgb: "143,166,110" },
 };
 
-function Slot({ src, label }: { src: string | null; label: string }) {
+function Slot({ src, label, kind = "image" }: { src: string | null; label: string; kind?: "person" | "project" | "image" }) {
   if (src) {
     return (
       <img
@@ -21,6 +21,11 @@ function Slot({ src, label }: { src: string | null; label: string }) {
       />
     );
   }
+  // Elegant empty state: blueprint grid + accent glow + icon (no bare gray box).
+  const icon =
+    kind === "person"
+      ? "M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 20.5a8 8 0 0 1 16 0"
+      : "M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6";
   return (
     <div
       style={{
@@ -29,14 +34,42 @@ function Slot({ src, label }: { src: string | null; label: string }) {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "linear-gradient(135deg, rgba(20,24,32,.6), rgba(40,46,58,.4))",
-        color: "rgba(255,255,255,.4)",
-        fontSize: 12,
-        letterSpacing: ".1em",
+        overflow: "hidden",
+        background: "linear-gradient(135deg, rgba(18,22,30,.92), rgba(38,44,56,.6))",
       }}
-      className="mono"
     >
-      {label}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          opacity: 0.13,
+          backgroundImage:
+            "linear-gradient(var(--accent) 1px, transparent 1px), linear-gradient(90deg, var(--accent) 1px, transparent 1px)",
+          backgroundSize: "22px 22px",
+        }}
+      />
+      <div
+        style={{
+          position: "absolute",
+          width: 180,
+          height: 180,
+          borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(var(--accent-rgb),.22), transparent 70%)",
+        }}
+      />
+      <svg
+        width="46"
+        height="46"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="var(--accent)"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        style={{ position: "relative", opacity: 0.85 }}
+      >
+        <path d={icon} />
+      </svg>
     </div>
   );
 }
@@ -438,7 +471,7 @@ export default function SiteView({ content, slug }: { content: SiteContent; slug
                 <div className="member reveal" data-d={i || undefined} key={i}>
                   <div className="ph">
                     <span className="n mono">{String(i + 1).padStart(2, "0")}</span>
-                    <Slot src={m.image} label="صورة" />
+                    <Slot src={m.image} label={m.name} kind="person" />
                   </div>
                   <h3>{m.name}</h3>
                   <div className="role">
@@ -516,7 +549,8 @@ export default function SiteView({ content, slug }: { content: SiteContent; slug
                       src={`https://www.google.com/maps?q=${encodeURIComponent(content.contact.mapQuery)}&z=15&output=embed`}
                       width="100%"
                       height="320"
-                      style={{ border: 0, display: "block", filter: "grayscale(0.3) contrast(1.05)" }}
+                      // CSS-only dark map (no API key): invert + hue-rotate keeps water/greens natural.
+                      style={{ border: 0, display: "block", filter: "invert(0.92) hue-rotate(180deg) brightness(0.95) contrast(0.9) saturate(0.8)" }}
                       loading="lazy"
                       referrerPolicy="no-referrer-when-downgrade"
                     />
