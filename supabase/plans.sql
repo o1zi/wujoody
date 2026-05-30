@@ -35,17 +35,17 @@ create policy plans_admin_write on public.plans
 -- Seed / update the three tiers.
 insert into public.plans (code, name, price, period, duration_days, features, payment_link, salla_product_id, caps, highlight, sort_order, active)
 values
-  ('basic', 'الأساسية', 99, 'شهرياً', 30,
+  ('basic', 'الأساسية', 249, 'شهرياً', 30,
    '["موقع مكتب كامل بنطاق فرعي","خلفية أنيقة (بيضاء أو سوداء)","محرّر محتوى متكامل","صندوق رسائل العملاء + إشعار بريدي","تحسين الظهور في جوجل (SEO)","أزرار تواصل (واتساب/تيك توك/سناب)"]'::jsonb,
    'https://salla.sa/your-store/checkout/REPLACE_BASIC', 'REPLACE_BASIC_PRODUCT_ID',
    '{"solidOnly":true,"presets":false,"presetLimit":0,"upload":false}'::jsonb, false, 1, true),
 
-  ('pro', 'الاحترافية', 199, 'شهرياً', 30,
+  ('pro', 'الاحترافية', 499, 'شهرياً', 30,
    '["كل مزايا الأساسية","٥ خلفيات فيديو سينمائية جاهزة","خلفية تتحرك مع التمرير","خريطة موقع المكتب (جوجل)","معرض مشاريع بنقر للتكبير"]'::jsonb,
    'https://salla.sa/your-store/checkout/REPLACE_PRO', 'REPLACE_PRO_PRODUCT_ID',
    '{"solidOnly":false,"presets":true,"presetLimit":5,"upload":false}'::jsonb, true, 2, true),
 
-  ('premium', 'بريميوم', 349, 'شهرياً', 30,
+  ('premium', 'بريميوم', 899, 'شهرياً', 30,
    '["كل مزايا الاحترافية","جميع خلفيات الفيديو الجاهزة","رفع فيديو/صور خلفية خاصة بك","تحويل فيديوك لحركة مع التمرير","أولوية في الدعم الفني","نطاق مخصّص (قريباً)"]'::jsonb,
    'https://salla.sa/your-store/checkout/REPLACE_PREMIUM', 'REPLACE_PREMIUM_PRODUCT_ID',
    '{"solidOnly":false,"presets":true,"presetLimit":null,"upload":true}'::jsonb, false, 3, true)

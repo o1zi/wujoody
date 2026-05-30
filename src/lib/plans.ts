@@ -30,7 +30,7 @@ export const FALLBACK_PLANS: Plan[] = [
   {
     code: "basic",
     name: "الأساسية",
-    price: 99,
+    price: 249,
     currency: "SAR",
     period: "شهرياً",
     durationDays: 30,
@@ -49,7 +49,7 @@ export const FALLBACK_PLANS: Plan[] = [
   {
     code: "pro",
     name: "الاحترافية",
-    price: 199,
+    price: 499,
     currency: "SAR",
     period: "شهرياً",
     durationDays: 30,
@@ -68,7 +68,7 @@ export const FALLBACK_PLANS: Plan[] = [
   {
     code: "premium",
     name: "بريميوم",
-    price: 349,
+    price: 899,
     currency: "SAR",
     period: "شهرياً",
     durationDays: 30,
