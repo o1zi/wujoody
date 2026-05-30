@@ -11,11 +11,14 @@ export default async function SuperAdminLayout({ children }: { children: React.R
     <div className="min-h-dvh">
       <header className="border-b border-border bg-surface">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-5">
             <Link href="/super-admin" className="text-lg font-bold">
               إدارة المنصة<span className="text-accent">.</span>
             </Link>
-            <span className="mono rounded-full bg-accent/15 px-2.5 py-0.5 text-xs text-accent">SUPER ADMIN</span>
+            <nav className="hidden items-center gap-4 sm:flex">
+              <Link href="/super-admin" className="text-sm text-muted hover:text-foreground">المكاتب</Link>
+              <Link href="/super-admin/plans" className="text-sm text-muted hover:text-foreground">الباقات</Link>
+            </nav>
           </div>
           <div className="flex items-center gap-4">
             <Link href="/dashboard" className="text-sm text-muted hover:text-foreground">

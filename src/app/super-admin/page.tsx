@@ -1,5 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/admin";
-import { setOfficeStatus } from "./actions";
+import { getPlans } from "@/lib/plans-server";
+import OfficeActions from "./OfficeActions";
 
 const STATUS: Record<string, { text: string; cls: string }> = {
   active: { text: "مُفعّل", cls: "bg-emerald-500/15 text-emerald-300" },
@@ -10,12 +11,14 @@ const STATUS: Record<string, { text: string; cls: string }> = {
 export default async function SuperAdminPage() {
   const admin = createAdminClient();
 
-  const [{ data: offices }, { data: profiles }, { data: subs }, { data: events }] = await Promise.all([
+  const [{ data: offices }, { data: profiles }, { data: subs }, { data: events }, plans] = await Promise.all([
     admin.from("offices").select("id, name, slug, status, owner_id, created_at").order("created_at", { ascending: false }),
     admin.from("profiles").select("id, email, office_id, role"),
     admin.from("subscriptions").select("office_id, plan, status, ends_at, created_at").order("created_at", { ascending: false }),
     admin.from("salla_events").select("id, event, created_at").order("created_at", { ascending: false }).limit(10),
+    getPlans(),
   ]);
+  const planOptions = plans.map((p) => ({ code: p.code, name: p.name }));
 
   const ownerEmail = new Map<string, string>();
   (profiles ?? []).forEach((p) => {
@@ -65,22 +68,11 @@ export default async function SuperAdminPage() {
                     <span className={`rounded-full px-2.5 py-0.5 text-xs ${st.cls}`}>{st.text}</span>
                   </td>
                   <td className="px-4 py-3">
-                    <div className="flex gap-1.5">
-                      {o.status !== "active" && (
-                        <form action={setOfficeStatus.bind(null, o.id, "active")}>
-                          <button className="rounded-md border border-emerald-500/40 px-2.5 py-1 text-xs text-emerald-300 hover:bg-emerald-500/10">
-                            تفعيل
-                          </button>
-                        </form>
-                      )}
-                      {o.status !== "suspended" && (
-                        <form action={setOfficeStatus.bind(null, o.id, "suspended")}>
-                          <button className="rounded-md border border-red-500/40 px-2.5 py-1 text-xs text-red-300 hover:bg-red-500/10">
-                            إيقاف
-                          </button>
-                        </form>
-                      )}
-                    </div>
+                    <OfficeActions
+                      office={{ id: o.id, status: o.status }}
+                      currentPlan={sub?.plan ?? null}
+                      plans={planOptions}
+                    />
                   </td>
                 </tr>
               );
