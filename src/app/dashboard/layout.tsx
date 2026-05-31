@@ -56,6 +56,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const nav = [
     { href: "/dashboard", label: "نظرة عامة", badge: 0 },
     { href: "/dashboard/leads", label: "الرسائل", badge: newLeads },
+    { href: "/dashboard/notifications", label: "الإشعارات", badge: 0 },
     ...(caps.upload ? [{ href: "/dashboard/analytics", label: "التحليلات", badge: 0 }] : []),
     { href: "/dashboard/site-editor", label: "محرّر الموقع", badge: 0 },
     ...(caps.blog ? [{ href: "/dashboard/blog", label: "المدوّنة", badge: 0 }] : []),

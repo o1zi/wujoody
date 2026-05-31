@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendEmail, emailLayout } from "@/lib/email";
+import { sendTelegram } from "@/lib/telegram";
 
 export const runtime = "nodejs";
 
@@ -91,6 +92,21 @@ export async function POST(request: NextRequest) {
         `<b>الاسم:</b> ${name}<br/><b>التواصل:</b> ${contact}<br/><b>الرسالة:</b><br/>${(message || "—").replace(/</g, "&lt;")}<br/><br/>راجع رسائلك من لوحة التحكم.`,
       ),
     });
+  }
+
+  // Instant Telegram notification (best-effort; tolerant if the column is absent).
+  try {
+    const { data: tg } = await admin.from("offices").select("telegram_chat_id").eq("id", office.id).maybeSingle();
+    const chatId = (tg as { telegram_chat_id?: string } | null)?.telegram_chat_id;
+    if (chatId) {
+      const label = kind === "booking" ? "🗓️ حجز استشارة جديد" : "🔔 عميل جديد";
+      await sendTelegram(
+        chatId,
+        `${label} — ${office.name}\n\n<b>الاسم:</b> ${name}\n<b>التواصل:</b> ${contact}\n<b>التفاصيل:</b> ${message || "—"}`,
+      );
+    }
+  } catch {
+    // ignore notification failures
   }
 
   return NextResponse.json({ ok: true });

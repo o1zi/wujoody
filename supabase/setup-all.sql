@@ -125,6 +125,8 @@ alter table public.profiles add column if not exists phone text;
 alter table public.offices add column if not exists custom_domain text;
 alter table public.offices add column if not exists domain_status text not null default 'none';
 alter table public.offices add column if not exists onboarded boolean not null default false;
+alter table public.offices add column if not exists telegram_chat_id text;
+alter table public.offices add column if not exists telegram_link_token text;
 create unique index if not exists offices_custom_domain_key on public.offices(custom_domain) where custom_domain is not null;
 
 -- إعادة إنشاء الدالة لتخزين رقم الجوال من بيانات التسجيل (آمن لإعادة التشغيل).

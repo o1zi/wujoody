@@ -26,6 +26,8 @@ create table if not exists public.offices (
   custom_domain  text unique,
   domain_status  text not null default 'none', -- none | pending | verified
   onboarded   boolean not null default false,
+  telegram_chat_id   text,
+  telegram_link_token text,
   created_at  timestamptz not null default now()
 );
 create index if not exists offices_owner_idx on public.offices(owner_id);
