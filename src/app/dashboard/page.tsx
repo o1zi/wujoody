@@ -11,6 +11,7 @@ export default async function DashboardHome() {
 
   let subStatus: string | null = null;
   let subEndsAt: string | null = null;
+  let onboarded = true;
   if (office) {
     const supabase = await createClient();
     const { data } = await supabase
@@ -22,6 +23,9 @@ export default async function DashboardHome() {
       .maybeSingle();
     subStatus = data?.status ?? null;
     subEndsAt = data?.ends_at ?? null;
+
+    const { data: off } = await supabase.from("offices").select("onboarded").eq("id", office.id).maybeSingle();
+    onboarded = off?.onboarded !== false; // treat missing column as onboarded (no banner)
   }
 
   const siteUrl = office ? tenantUrl(office.slug) : null;
@@ -31,6 +35,19 @@ export default async function DashboardHome() {
     <div className="mx-auto max-w-4xl">
       <h1 className="text-2xl font-bold">أهلاً، {ctx?.profile?.full_name || "بك"} 👋</h1>
       <p className="mt-1 text-muted">هذه نظرة سريعة على حالة مكتبك وموقعك.</p>
+
+      {office && !onboarded && (
+        <Link
+          href="/dashboard/onboarding"
+          className="mt-6 flex items-center justify-between gap-4 rounded-2xl border border-accent/50 bg-accent/10 p-5 transition hover:bg-accent/15"
+        >
+          <div>
+            <div className="text-lg font-semibold">✨ جهّز موقعك في دقائق</div>
+            <p className="mt-1 text-sm text-muted">أكمل خطوات الإعداد السريع (الهوية، النصوص، التواصل) لإطلاق موقع مكتبك.</p>
+          </div>
+          <span className="shrink-0 rounded-xl bg-accent px-5 py-2.5 text-sm font-medium text-[#0b0d10]">ابدأ الإعداد ←</span>
+        </Link>
+      )}
 
       <div className="mt-8 grid gap-5 sm:grid-cols-2">
         <div className="rounded-2xl glass-panel p-6">

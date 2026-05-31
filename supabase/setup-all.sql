@@ -124,6 +124,7 @@ alter table public.profiles add column if not exists phone text;
 -- ---------- 3e) offices: النطاق الخاص (Pro) ----------
 alter table public.offices add column if not exists custom_domain text;
 alter table public.offices add column if not exists domain_status text not null default 'none';
+alter table public.offices add column if not exists onboarded boolean not null default false;
 create unique index if not exists offices_custom_domain_key on public.offices(custom_domain) where custom_domain is not null;
 
 -- إعادة إنشاء الدالة لتخزين رقم الجوال من بيانات التسجيل (آمن لإعادة التشغيل).

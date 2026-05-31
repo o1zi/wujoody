@@ -25,6 +25,7 @@ create table if not exists public.offices (
   status      public.office_status not null default 'pending',
   custom_domain  text unique,
   domain_status  text not null default 'none', -- none | pending | verified
+  onboarded   boolean not null default false,
   created_at  timestamptz not null default now()
 );
 create index if not exists offices_owner_idx on public.offices(owner_id);
