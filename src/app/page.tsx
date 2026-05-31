@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getPlans } from "@/lib/plans-server";
 import { getLanding } from "@/lib/landing-server";
+import { PAYMENT_METHODS } from "@/lib/payments";
 import CinematicRuntime from "@/components/site/CinematicRuntime";
 
 const FEATURE_ICONS = [
@@ -241,13 +242,59 @@ export default async function HomePage() {
           </div>
         </section>
 
+        <section className="sec" id="payments" data-screen-label="طرق الدفع">
+          <div className="wrap">
+            <div className="glass-card reveal">
+              <MacBar />
+              <div className="glass-body">
+                <div className="eyebrow mono">
+                  <span className="ln"></span>
+                  <span className="idx">04</span> طرق الدفع — <span className="en">PAYMENTS</span>
+                </div>
+                <h2 className="sec-title" style={{ marginBottom: 6 }}>ادفع بالطريقة التي تناسبك.</h2>
+                <p className="sec-lead" style={{ marginBottom: 28 }}>
+                  مدعومة عبر بوابة سلة الآمنة — بطاقات، محافظ رقمية، وتقسيط.
+                </p>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
+                  {PAYMENT_METHODS.map((p) => (
+                    <div
+                      key={p.id}
+                      style={{
+                        background: "#fff",
+                        color: "#0E1116",
+                        borderRadius: 10,
+                        padding: "0 18px",
+                        minHeight: 54,
+                        minWidth: 110,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontWeight: 600,
+                        fontSize: 15,
+                        boxShadow: "0 8px 24px rgba(0,0,0,.25)",
+                      }}
+                    >
+                      {p.logo ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={p.logo} alt={p.name} style={{ height: 26, width: "auto", display: "block" }} />
+                      ) : (
+                        <span>{p.name}</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <section className="sec" id="contact" data-screen-label="ابدأ الآن">
           <div className="wrap">
             <div className="glass-card reveal">
               <MacBar />
               <div className="glass-body" style={{ textAlign: "center" }}>
                 <div className="eyebrow mono" style={{ justifyContent: "center" }}>
-                  <span className="idx">04</span> ابدأ الآن — <span className="en">GET STARTED</span>
+                  <span className="idx">05</span> ابدأ الآن — <span className="en">GET STARTED</span>
                 </div>
                 <h2 className="sec-title" style={{ fontSize: "clamp(32px,5vw,64px)" }}>{c.cta.title}</h2>
                 <p className="sec-lead" style={{ margin: "0 auto 30px" }}>{c.cta.lead}</p>
