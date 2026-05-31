@@ -54,15 +54,15 @@ create policy plans_admin_write on public.plans
 insert into public.plans (code, name, price, period, duration_days, features, payment_link, salla_product_id, caps, highlight, sort_order, active)
 values
   ('basic', 'الأساسية', 249, 'شهرياً', 30,
-   '["موقع مكتب كامل بنطاق فرعي","خلفية أنيقة (بيضاء أو سوداء)","محرّر محتوى متكامل","صندوق رسائل العملاء + إشعار بريدي","تحسين الظهور في جوجل (SEO)","أزرار تواصل (واتساب/تيك توك/سناب)"]'::jsonb,
+   '["موقع احترافي بنطاق فرعي خاص","أنماط تصميم جاهزة + خط ولون قابلان للتخصيص","محرّر محتوى متكامل (من نحن، الخدمات، المشاريع، الفريق…)","نموذج تواصل + إشعار بريد وتيليجرام فوري","تحسين الظهور في جوجل (SEO + خريطة موقع)","أزرار تواصل (واتساب/تيك توك/سناب)"]'::jsonb,
    'https://salla.sa/your-store/checkout/REPLACE_BASIC', 'REPLACE_BASIC_PRODUCT_ID',
    '{"solidOnly":true,"presets":false,"presetLimit":0,"upload":false,"whatsapp":false,"booking":false,"blog":false,"projectDetails":false,"badges":false,"profilePdf":false,"customDomain":false,"crm":false,"aiContent":false,"aiMonthlyLimit":0,"monthlyReport":false,"sections":["about","services","stats","process","projects","team","testimonials","faq","contact"]}'::jsonb, false, 1, true),
   ('pro', 'الاحترافية', 499, 'شهرياً', 30,
-   '["كل مزايا الأساسية","٥ خلفيات فيديو سينمائية جاهزة","خلفية تتحرك مع التمرير","خريطة موقع المكتب (جوجل)","معرض مشاريع بنقر للتكبير"]'::jsonb,
+   '["كل مزايا الأساسية","خلفيات فيديو سينمائية + حركة مع التمرير + خريطة","وصول العملاء عبر واتساب فوراً + حجز استشارة","حاسبة تقدير التكلفة + صفحات مشاريع تفصيلية","شارات اعتماد + بروفايل المكتب PDF","مدوّنة للـSEO + ربط نطاقك الخاص (.com/.sa)"]'::jsonb,
    'https://salla.sa/your-store/checkout/REPLACE_PRO', 'REPLACE_PRO_PRODUCT_ID',
    '{"solidOnly":false,"presets":true,"presetLimit":5,"upload":false,"whatsapp":true,"booking":true,"blog":true,"projectDetails":true,"badges":true,"profilePdf":true,"customDomain":true,"crm":false,"aiContent":false,"aiMonthlyLimit":0,"monthlyReport":false,"sections":["about","services","stats","process","projects","team","testimonials","credentials","faq","booking","calculator","blog","contact"]}'::jsonb, true, 2, true),
   ('premium', 'بريميوم', 899, 'شهرياً', 30,
-   '["كل مزايا الاحترافية","جميع خلفيات الفيديو الجاهزة","رفع فيديو/صور خلفية خاصة بك","تحويل فيديوك لحركة مع التمرير","أولوية في الدعم الفني","نطاق مخصّص (قريباً)"]'::jsonb,
+   '["كل مزايا الاحترافية","رفع فيديو/صور خلفية خاصة بك","إدارة العملاء المحتملين (CRM) + تصدير CSV","كتابة محتوى موقعك بالذكاء الاصطناعي","تقرير أداء شهري بالبريد","أولوية في الدعم الفني"]'::jsonb,
    'https://salla.sa/your-store/checkout/REPLACE_PREMIUM', 'REPLACE_PREMIUM_PRODUCT_ID',
    '{"solidOnly":false,"presets":true,"presetLimit":null,"upload":true,"whatsapp":true,"booking":true,"blog":true,"projectDetails":true,"badges":true,"profilePdf":true,"customDomain":true,"crm":true,"aiContent":true,"aiMonthlyLimit":10,"monthlyReport":true,"sections":["about","services","stats","process","projects","team","testimonials","credentials","faq","booking","calculator","blog","contact"]}'::jsonb, false, 3, true)
 on conflict (code) do update set
