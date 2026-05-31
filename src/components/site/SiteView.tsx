@@ -320,7 +320,7 @@ export default function SiteView({ content, slug, caps }: { content: SiteContent
           <a href="#" data-goto="services">الخدمات</a>
           <a href="#" data-goto="projects">المشاريع</a>
           <a href="#" data-goto="team">الفريق</a>
-          {caps.blog && <a href={`${tenantUrl(slug)}/blog`}>المدوّنة</a>}
+          {caps.blog && content.visible.blog !== false && <a href={`${tenantUrl(slug)}/blog`}>المدوّنة</a>}
           <a className="cta" href="#" data-goto="contact">تواصل معنا</a>
         </nav>
         <button className="menu-btn" id="menuBtn" aria-label="القائمة">

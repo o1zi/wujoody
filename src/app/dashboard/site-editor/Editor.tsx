@@ -973,6 +973,7 @@ export default function Editor({
             ["credentials", "الاعتمادات"],
             ["faq", "الأسئلة الشائعة"],
             ["booking", "حجز استشارة"],
+            ["blog", "المدوّنة"],
             ["contact", "التواصل"],
           ] as const).map(([key, label]) => {
             const on = c.visible?.[key] !== false;

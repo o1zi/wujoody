@@ -36,7 +36,7 @@ export default async function BlogArticle({ params }: { params: Params }) {
   const ctx = await loadBlogContext(subdomain);
   if (!ctx) return <NotLive variant="missing" slug={subdomain} />;
   if (!ctx.live) return <NotLive variant="suspended" slug={subdomain} name={ctx.office.name} />;
-  if (!ctx.blogEnabled) notFound();
+  if (!ctx.blogEnabled || ctx.content.visible.blog === false) notFound();
 
   const post = await getPublishedPost(ctx.office.id, decodeURIComponent(slug));
   if (!post) notFound();

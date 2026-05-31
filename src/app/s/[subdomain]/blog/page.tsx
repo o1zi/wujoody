@@ -27,7 +27,7 @@ export default async function BlogList({ params }: { params: Params }) {
   const ctx = await loadBlogContext(subdomain);
   if (!ctx) return <NotLive variant="missing" slug={subdomain} />;
   if (!ctx.live) return <NotLive variant="suspended" slug={subdomain} name={ctx.office.name} />;
-  if (!ctx.blogEnabled) notFound();
+  if (!ctx.blogEnabled || ctx.content.visible.blog === false) notFound();
 
   const posts = await getPublishedPosts(ctx.office.id);
   const t = themeAttrs(ctx.content.theme);
