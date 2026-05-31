@@ -489,6 +489,18 @@ button{font-family:inherit;cursor:pointer}
 [data-font] .hero-mark,[data-font] .hero-sub,[data-font] .brand .ar,
 [data-font] .loader .mk,[data-font] .glass-card,[data-font] p{font-family:inherit}
 
+/* ---------- FAQ (الأسئلة الشائعة) ---------- */
+.faq{margin-top:10px}
+.faq-item{border-bottom:1px solid rgba(255,255,255,.12)}
+.faq-item summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;
+  gap:18px;padding:20px 2px;font-family:inherit;font-weight:600;
+  font-size:clamp(16px,2vw,20px);color:#fff}
+.faq-item summary::-webkit-details-marker{display:none}
+.faq-item summary::after{content:"+";flex:0 0 auto;color:var(--accent);font-size:26px;line-height:1;
+  transition:transform .3s var(--ease)}
+.faq-item[open] summary::after{transform:rotate(45deg)}
+.faq-a{padding:0 2px 22px;max-width:780px;line-height:1.75;color:rgba(255,255,255,.72)}
+
 /* Card corner radius */
 .glass-card{border-radius:var(--card-radius,16px)}
 

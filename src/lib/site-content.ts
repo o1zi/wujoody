@@ -41,6 +41,7 @@ export type SiteContent = {
     items: { name: string; role: string; roleEn: string; image: string | null }[];
   };
   testimonials: { quote: string; name: string; role: string }[];
+  faq: { items: { q: string; a: string }[] };
   contact: {
     phone: string;
     phoneNote: string;
@@ -65,6 +66,7 @@ export type SiteContent = {
     projects: boolean;
     team: boolean;
     testimonials: boolean;
+    faq: boolean;
     contact: boolean;
   };
 };
@@ -142,6 +144,15 @@ export const defaultContent: SiteContent = {
     { quote: "دقة التصميم الإنشائي والتنسيق بين التخصصات جعلت التنفيذ سلساً بلا مفاجآت. شركاء حقيقيون لا مجرّد مكتب.", name: "نورة القحطاني", role: "مديرة تطوير عقاري — جدة" },
     { quote: "حوّلوا فكرة بسيطة إلى مبنى نفخر به كل يوم. فريق يستمع، ويقترح، ويُنفّذ بإتقان.", name: "سعود المالكي", role: "عميل سكني — الدمام" },
   ],
+  faq: {
+    items: [
+      { q: "ما الخدمات التي يقدّمها المكتب؟", a: "نقدّم خدمات هندسية متكاملة: التصميم المعماري والإنشائي، الأنظمة الكهروميكانيكية، الإشراف على التنفيذ، وإدارة المشاريع — من الفكرة حتى التسليم." },
+      { q: "كم تستغرق مدة التصميم؟", a: "تختلف حسب حجم المشروع ونوعه. بعد الاجتماع الأول ودراسة المتطلبات نزوّدك بجدول زمني واضح بالمراحل والمواعيد." },
+      { q: "هل المكتب معتمد لدى الجهات الرسمية؟", a: "نعم، المكتب معتمد لدى الهيئة السعودية للمهندسين، ونلتزم بالأكواد والاشتراطات المعتمدة في المملكة." },
+      { q: "هل تشرفون على التنفيذ أم التصميم فقط؟", a: "نقدّم الخيارين: يمكنك الاكتفاء بالتصميم، أو إسناد الإشراف الميداني لنا لضمان مطابقة التنفيذ للمخططات جودةً وزمناً." },
+      { q: "كيف أبدأ مشروعي معكم؟", a: "تواصل معنا عبر النموذج أو واتساب، وسنحدّد اجتماعاً أولياً لفهم احتياجك وتقديم عرض واضح بالخدمات والتكلفة." },
+    ],
+  },
   contact: {
     phone: "+966 11 000 0000",
     phoneNote: "الأحد – الخميس · 8ص – 5م",
@@ -166,6 +177,7 @@ export const defaultContent: SiteContent = {
     projects: true,
     team: true,
     testimonials: true,
+    faq: true,
     contact: true,
   },
 };
@@ -218,6 +230,7 @@ export function mergeContent(stored: unknown): SiteContent {
     projects: { ...d.projects, ...(pick("projects", {}) as object) },
     team: { ...d.team, ...(pick("team", {}) as object) },
     testimonials: pick("testimonials", d.testimonials),
+    faq: { ...d.faq, ...(pick("faq", {}) as object) },
     contact: { ...d.contact, ...(pick("contact", {}) as object) },
     visible: { ...d.visible, ...(pick("visible", {}) as object) },
   };

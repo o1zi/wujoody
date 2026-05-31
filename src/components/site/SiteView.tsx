@@ -575,6 +575,31 @@ export default function SiteView({ content, slug }: { content: SiteContent; slug
           </div>
         </section>
 
+        {/* FAQ */}
+        {content.faq.items.length > 0 && (
+          <section className="sec" id="faq" data-screen-label="الأسئلة الشائعة" style={{ display: content.visible.faq === false ? "none" : undefined }}>
+            <div className="wrap">
+              <div className="glass-card reveal">
+                <MacBar />
+                <div className="glass-body">
+                  <div className="eyebrow mono">
+                    <span className="ln"></span>
+                    <span className="idx">08</span> الأسئلة الشائعة — <span className="en">FAQ</span>
+                  </div>
+                  <div className="faq">
+                    {content.faq.items.map((f, i) => (
+                      <details className="faq-item" key={i} open={i === 0}>
+                        <summary className="faq-q">{f.q}</summary>
+                        <div className="faq-a">{f.a}</div>
+                      </details>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* CONTACT */}
         <section className="sec" id="contact" data-screen-label="تواصل معنا" style={{ display: content.visible.contact === false ? "none" : undefined }}>
           <div className="wrap">
@@ -583,7 +608,7 @@ export default function SiteView({ content, slug }: { content: SiteContent; slug
               <div className="glass-body">
                 <div className="eyebrow mono">
                   <span className="ln"></span>
-                  <span className="idx">08</span> تواصل معنا — <span className="en">CONTACT</span>
+                  <span className="idx">09</span> تواصل معنا — <span className="en">CONTACT</span>
                 </div>
                 <div className="contact-grid">
                   <div>

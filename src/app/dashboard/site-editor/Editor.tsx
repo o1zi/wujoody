@@ -786,6 +786,21 @@ export default function Editor({
         />
       </Section>
 
+      <Section title="الأسئلة الشائعة">
+        <ListEditor
+          title="الأسئلة"
+          items={c.faq.items}
+          onChange={(v) => set("faq.items", v)}
+          empty={{ q: "", a: "" }}
+          render={(_, i) => (
+            <>
+              {text("السؤال", `faq.items.${i}.q`)}
+              {area("الإجابة", `faq.items.${i}.a`)}
+            </>
+          )}
+        />
+      </Section>
+
       <Section title="التواصل">
         <div className="space-y-3 rounded-lg glass-panel-2/40 p-3">
           <div>
@@ -827,6 +842,7 @@ export default function Editor({
             ["projects", "المشاريع"],
             ["team", "الفريق"],
             ["testimonials", "الآراء"],
+            ["faq", "الأسئلة الشائعة"],
             ["contact", "التواصل"],
           ] as const).map(([key, label]) => {
             const on = c.visible?.[key] !== false;
