@@ -915,6 +915,41 @@ export default function Editor({
         </Section>
       )}
 
+      {caps.sections.includes("calculator") && (
+        <Section title="حاسبة التكلفة">
+          <p className="text-xs text-muted">يدخل الزائر المساحة فيحصل على تقدير تقريبي حسب أسعارك. السعر لكل متر مربع.</p>
+          {text("جملة تعريفية", "calculator.lead")}
+          <div className="grid grid-cols-2 gap-3">
+            {text("العملة", "calculator.unit")}
+          </div>
+          {area("ملاحظة أسفل النتيجة", "calculator.note")}
+          <ListEditor
+            title="أنواع الخدمة (السعر لكل م²)"
+            items={c.calculator.types}
+            onChange={(v) => set("calculator.types", v)}
+            empty={{ name: "", price: 0 }}
+            render={(_, i) => (
+              <div className="grid grid-cols-[1fr_120px] gap-3">
+                {text("نوع الخدمة", `calculator.types.${i}.name`)}
+                {text("السعر/م²", `calculator.types.${i}.price`, "ltr")}
+              </div>
+            )}
+          />
+          <ListEditor
+            title="مستويات التشطيب (معامل الضرب)"
+            items={c.calculator.levels}
+            onChange={(v) => set("calculator.levels", v)}
+            empty={{ name: "", factor: 1 }}
+            render={(_, i) => (
+              <div className="grid grid-cols-[1fr_120px] gap-3">
+                {text("المستوى", `calculator.levels.${i}.name`)}
+                {text("المعامل (مثل 1.3)", `calculator.levels.${i}.factor`, "ltr")}
+              </div>
+            )}
+          />
+        </Section>
+      )}
+
       <Section title="الأسئلة الشائعة">
         <ListEditor
           title="الأسئلة"

@@ -5,6 +5,7 @@ import { fontByKey } from "@/lib/site-fonts";
 import { tenantUrl } from "@/lib/urls";
 import ContactForm from "./ContactForm";
 import BookingForm from "./BookingForm";
+import CostCalculator from "./CostCalculator";
 import ProjectsGallery from "./ProjectsGallery";
 
 const ACCENTS: Record<string, { hex: string; rgb: string }> = {
@@ -665,6 +666,24 @@ export default function SiteView({ content, slug, caps }: { content: SiteContent
                   <div style={{ maxWidth: 620 }}>
                     <BookingForm slug={slug} />
                   </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* COST CALCULATOR */}
+        {show("calculator") && content.calculator.types.some((t) => t.name) && (
+          <section className="sec" id="calculator" data-screen-label="حاسبة التكلفة">
+            <div className="wrap">
+              <div className="glass-card reveal">
+                <MacBar />
+                <div className="glass-body">
+                  <div className="eyebrow mono">
+                    <span className="ln"></span> حاسبة التكلفة — <span className="en">ESTIMATE</span>
+                  </div>
+                  {content.calculator.lead ? <p className="sec-lead" style={{ marginBottom: 24 }}>{content.calculator.lead}</p> : null}
+                  <CostCalculator calc={content.calculator} />
                 </div>
               </div>
             </div>

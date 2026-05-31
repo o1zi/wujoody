@@ -55,6 +55,13 @@ export type SiteContent = {
     clients: { name: string; logo: string | null }[];
   };
   faq: { items: { q: string; a: string }[] };
+  calculator: {
+    lead: string;
+    unit: string;
+    note: string;
+    types: { name: string; price: number }[]; // price per m²
+    levels: { name: string; factor: number }[]; // finishing multiplier
+  };
   contact: {
     phone: string;
     phoneNote: string;
@@ -82,6 +89,7 @@ export type SiteContent = {
     credentials: boolean;
     faq: boolean;
     booking: boolean;
+    calculator: boolean;
     blog: boolean;
     contact: boolean;
   };
@@ -179,6 +187,21 @@ export const defaultContent: SiteContent = {
       { q: "كيف أبدأ مشروعي معكم؟", a: "تواصل معنا عبر النموذج أو واتساب، وسنحدّد اجتماعاً أولياً لفهم احتياجك وتقديم عرض واضح بالخدمات والتكلفة." },
     ],
   },
+  calculator: {
+    lead: "احسب تقديراً أولياً لتكلفة خدمتك الهندسية بإدخال المساحة ونوع الخدمة.",
+    unit: "ر.س",
+    note: "هذا تقدير تقريبي غير مُلزم. للحصول على عرض دقيق تواصل معنا.",
+    types: [
+      { name: "تصميم معماري", price: 40 },
+      { name: "تصميم معماري + إنشائي", price: 75 },
+      { name: "تصميم + إشراف كامل", price: 130 },
+    ],
+    levels: [
+      { name: "أساسي", factor: 1 },
+      { name: "متميّز", factor: 1.3 },
+      { name: "فاخر", factor: 1.7 },
+    ],
+  },
   contact: {
     phone: "+966 11 000 0000",
     phoneNote: "الأحد – الخميس · 8ص – 5م",
@@ -206,6 +229,7 @@ export const defaultContent: SiteContent = {
     credentials: true,
     faq: true,
     booking: true,
+    calculator: true,
     blog: true,
     contact: true,
   },
@@ -261,6 +285,7 @@ export function mergeContent(stored: unknown): SiteContent {
     testimonials: pick("testimonials", d.testimonials),
     credentials: { ...d.credentials, ...(pick("credentials", {}) as object) },
     faq: { ...d.faq, ...(pick("faq", {}) as object) },
+    calculator: { ...d.calculator, ...(pick("calculator", {}) as object) },
     contact: { ...d.contact, ...(pick("contact", {}) as object) },
     visible: { ...d.visible, ...(pick("visible", {}) as object) },
   };

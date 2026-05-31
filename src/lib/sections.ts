@@ -11,6 +11,7 @@ export const SITE_SECTIONS: { key: string; label: string }[] = [
   { key: "credentials", label: "الاعتمادات" },
   { key: "faq", label: "الأسئلة الشائعة" },
   { key: "booking", label: "حجز استشارة" },
+  { key: "calculator", label: "حاسبة التكلفة" },
   { key: "blog", label: "المدوّنة" },
   { key: "contact", label: "التواصل" },
 ];

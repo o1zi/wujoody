@@ -60,11 +60,11 @@ values
   ('pro', 'الاحترافية', 499, 'شهرياً', 30,
    '["كل مزايا الأساسية","٥ خلفيات فيديو سينمائية جاهزة","خلفية تتحرك مع التمرير","خريطة موقع المكتب (جوجل)","معرض مشاريع بنقر للتكبير"]'::jsonb,
    'https://salla.sa/your-store/checkout/REPLACE_PRO', 'REPLACE_PRO_PRODUCT_ID',
-   '{"solidOnly":false,"presets":true,"presetLimit":5,"upload":false,"whatsapp":true,"booking":true,"blog":true,"projectDetails":true,"badges":true,"profilePdf":true,"customDomain":true,"crm":false,"aiContent":false,"aiMonthlyLimit":0,"monthlyReport":false,"sections":["about","services","stats","process","projects","team","testimonials","credentials","faq","booking","blog","contact"]}'::jsonb, true, 2, true),
+   '{"solidOnly":false,"presets":true,"presetLimit":5,"upload":false,"whatsapp":true,"booking":true,"blog":true,"projectDetails":true,"badges":true,"profilePdf":true,"customDomain":true,"crm":false,"aiContent":false,"aiMonthlyLimit":0,"monthlyReport":false,"sections":["about","services","stats","process","projects","team","testimonials","credentials","faq","booking","calculator","blog","contact"]}'::jsonb, true, 2, true),
   ('premium', 'بريميوم', 899, 'شهرياً', 30,
    '["كل مزايا الاحترافية","جميع خلفيات الفيديو الجاهزة","رفع فيديو/صور خلفية خاصة بك","تحويل فيديوك لحركة مع التمرير","أولوية في الدعم الفني","نطاق مخصّص (قريباً)"]'::jsonb,
    'https://salla.sa/your-store/checkout/REPLACE_PREMIUM', 'REPLACE_PREMIUM_PRODUCT_ID',
-   '{"solidOnly":false,"presets":true,"presetLimit":null,"upload":true,"whatsapp":true,"booking":true,"blog":true,"projectDetails":true,"badges":true,"profilePdf":true,"customDomain":true,"crm":true,"aiContent":true,"aiMonthlyLimit":10,"monthlyReport":true,"sections":["about","services","stats","process","projects","team","testimonials","credentials","faq","booking","blog","contact"]}'::jsonb, false, 3, true)
+   '{"solidOnly":false,"presets":true,"presetLimit":null,"upload":true,"whatsapp":true,"booking":true,"blog":true,"projectDetails":true,"badges":true,"profilePdf":true,"customDomain":true,"crm":true,"aiContent":true,"aiMonthlyLimit":10,"monthlyReport":true,"sections":["about","services","stats","process","projects","team","testimonials","credentials","faq","booking","calculator","blog","contact"]}'::jsonb, false, 3, true)
 on conflict (code) do update set
   name = excluded.name, price = excluded.price, period = excluded.period,
   duration_days = excluded.duration_days, features = excluded.features,
