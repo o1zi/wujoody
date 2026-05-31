@@ -16,7 +16,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       }}
     >
       {/* same template style (glass cards, fonts, accent) — no video, no grid */}
-      <link rel="stylesheet" href="/site-template/site.css" />
+      <link rel="stylesheet" href="/site-template/site.css" precedence="high" />
 
       <Link
         href="/"

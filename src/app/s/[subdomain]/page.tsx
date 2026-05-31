@@ -132,7 +132,7 @@ export default async function TenantSite({ params }: { params: Params }) {
   return (
     <>
       {/* eslint-disable-next-line @next/next/no-css-tags */}
-      <link rel="stylesheet" href="/site-template/site.css" />
+      <link rel="stylesheet" href="/site-template/site.css" precedence="high" />
       <SiteView content={data.content} slug={data.office.slug} />
       <CinematicRuntime />
     </>

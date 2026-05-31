@@ -35,7 +35,7 @@ export default async function HomePage() {
 
   return (
     <div className={lightClass}>
-      <link rel="stylesheet" href="/site-template/site.css" />
+      <link rel="stylesheet" href="/site-template/site.css" precedence="high" />
       {customFrames ? (
         <script dangerouslySetInnerHTML={{ __html: `window.__BG_FRAMES__=${JSON.stringify(customFrames)};` }} />
       ) : null}

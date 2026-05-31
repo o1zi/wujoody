@@ -16,16 +16,6 @@ export default function CinematicRuntime() {
     let destroyed = false;
     let destroy: (() => void) | undefined;
 
-    // Ensure the template stylesheet is present (Next can drop the page <link>
-    // during client navigation). Add one only if missing; remove it on leave.
-    let addedCss: HTMLLinkElement | null = null;
-    if (!document.querySelector('link[href="/site-template/site.css"]')) {
-      addedCss = document.createElement("link");
-      addedCss.rel = "stylesheet";
-      addedCss.href = "/site-template/site.css";
-      document.head.appendChild(addedCss);
-    }
-
     const run = () => {
       if (destroyed) return;
       if (window.__WUJOOD_ENGINE) destroy = window.__WUJOOD_ENGINE();
@@ -49,7 +39,6 @@ export default function CinematicRuntime() {
     return () => {
       destroyed = true;
       if (destroy) destroy();
-      if (addedCss && addedCss.parentNode) addedCss.parentNode.removeChild(addedCss);
     };
   }, []);
 
