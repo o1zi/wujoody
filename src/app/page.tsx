@@ -1,7 +1,7 @@
 import Link from "next/link";
-import Script from "next/script";
 import { getPlans } from "@/lib/plans-server";
 import { getLanding } from "@/lib/landing-server";
+import CinematicRuntime from "@/components/site/CinematicRuntime";
 
 const FEATURE_ICONS = [
   "M3 21h18M5 21V8l7-5 7 5v13M9 21v-5h6v5",
@@ -293,7 +293,7 @@ export default async function HomePage() {
         </div>
       </footer>
 
-      <Script src="/site-template/scroll-engine.js" strategy="afterInteractive" />
+      <CinematicRuntime />
     </div>
   );
 }
