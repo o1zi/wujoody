@@ -7,6 +7,7 @@ import type { PlanCaps } from "@/lib/plans";
 import { BG_PRESETS } from "@/lib/bg-presets";
 import { SITE_FONTS } from "@/lib/site-fonts";
 import { SITE_SECTIONS } from "@/lib/sections";
+import { SITE_PRESETS, type SitePreset } from "@/lib/site-presets";
 import { Button, Alert } from "@/components/ui";
 
 const CARD_STYLES: { key: NonNullable<SiteContent["theme"]["cardStyle"]>; label: string; hint: string }[] = [
@@ -116,6 +117,21 @@ export default function Editor({
   }
 
   const set = (path: string, value: unknown) => setC((prev) => deepSet(prev, path, value));
+
+  function applyPreset(p: SitePreset) {
+    setC((prev) => ({
+      ...prev,
+      theme: {
+        ...prev.theme,
+        font: p.font,
+        accentHex: p.accentHex,
+        cardStyle: p.cardStyle,
+        cardRadius: p.cardRadius,
+        cardTint: p.cardTint,
+      },
+      media: { ...prev.media, bgMode: "solid", solid: p.solid },
+    }));
+  }
 
   // Render helpers — called as functions (NOT <Comp/>) so the underlying DOM
   // node keeps identity across renders and inputs don't lose focus.
@@ -420,6 +436,30 @@ export default function Editor({
 
       <Section title="مظهر الموقع">
         <p className="text-xs text-muted">غيّر خط الموقع وشكل البطاقات ولون التمييز. تظهر التغييرات بعد الحفظ وتحديث الموقع.</p>
+
+        <div>
+          <span className="mb-2 block text-xs text-muted">أنماط جاهزة — طبّق مظهراً كاملاً بنقرة</span>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            {SITE_PRESETS.map((p) => {
+              const dark = p.solid === "black";
+              return (
+                <button
+                  key={p.key}
+                  type="button"
+                  onClick={() => applyPreset(p)}
+                  className="overflow-hidden rounded-xl border border-border text-right transition hover:border-accent"
+                >
+                  <div className="flex h-16 items-center justify-between px-3" style={{ background: dark ? "#06070A" : "#f3f2ef" }}>
+                    <span className="h-7 w-7 rounded-full" style={{ background: p.accentHex }} />
+                    <span className="text-sm font-semibold" style={{ color: dark ? "#fff" : "#0E1116" }}>أبجد</span>
+                  </div>
+                  <div className="px-3 py-2 text-xs">{p.label}</div>
+                </button>
+              );
+            })}
+          </div>
+          <p className="mt-2 text-xs text-muted">تطبيق نمط يضبط الخط واللون والبطاقات والخلفية — تقدر تعدّل أي تفصيل بعدها.</p>
+        </div>
 
         <label className="block">
           <span className="mb-1 block text-xs text-muted">خط الموقع</span>
