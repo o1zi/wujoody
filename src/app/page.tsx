@@ -262,21 +262,21 @@ export default async function HomePage() {
                       style={{
                         background: "#fff",
                         color: "#0E1116",
-                        borderRadius: 10,
-                        padding: "0 18px",
-                        minHeight: 54,
-                        minWidth: 110,
+                        borderRadius: 12,
+                        padding: "12px 22px",
+                        height: 74,
+                        minWidth: 128,
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
                         fontWeight: 600,
-                        fontSize: 15,
+                        fontSize: 16,
                         boxShadow: "0 8px 24px rgba(0,0,0,.25)",
                       }}
                     >
                       {p.logo ? (
                         // eslint-disable-next-line @next/next/no-img-element
-                        <img src={p.logo} alt={p.name} style={{ height: 26, width: "auto", display: "block" }} />
+                        <img src={p.logo} alt={p.name} style={{ height: 46, width: "auto", maxWidth: 110, objectFit: "contain", display: "block" }} />
                       ) : (
                         <span>{p.name}</span>
                       )}

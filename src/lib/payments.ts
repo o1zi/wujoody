@@ -12,6 +12,4 @@ export const PAYMENT_METHODS: PayMethod[] = [
   { id: "tabby", name: "tabby", logo: "/payments/Tabby.svg" },
   { id: "tamara", name: "tamara", logo: "/payments/Tamara.svg" },
   { id: "googlepay", name: "Google Pay", logo: "/payments/Google Pay-01.svg" },
-  { id: "amex", name: "American Express" },
-  { id: "sadad", name: "سداد" },
 ];
