@@ -534,6 +534,14 @@ button{font-family:inherit;cursor:pointer}
 .article-lead{font-size:17px;line-height:1.8;color:rgba(255,255,255,.8);margin:0 0 22px}
 .article-body{font-size:15.5px;line-height:1.95;color:rgba(255,255,255,.78);white-space:pre-line}
 
+/* ---------- WhatsApp secondary button (matches .btn language) ---------- */
+.btn-wa{display:inline-flex;align-items:center;gap:10px;justify-self:start;margin-top:14px;
+  padding:13px 24px;border-radius:2px;background:transparent;border:1px solid rgba(255,255,255,.22);
+  color:#fff;font-size:14px;font-weight:500;letter-spacing:.01em;text-decoration:none;transition:.3s}
+.btn-wa svg{color:#25D366;flex:0 0 auto}
+.btn-wa:hover{border-color:#25D366;background:rgba(37,211,102,.10);gap:14px}
+.theme-light .btn-wa{color:#0E1116;border-color:rgba(14,17,22,.2)}
+
 /* ---------- Booking form ---------- */
 .book-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 @media(max-width:560px){.book-row{grid-template-columns:1fr}}
