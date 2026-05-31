@@ -489,14 +489,16 @@ button{font-family:inherit;cursor:pointer}
 [data-font] .hero-mark,[data-font] .hero-sub,[data-font] .brand .ar,
 [data-font] .loader .mk,[data-font] .glass-card,[data-font] p{font-family:inherit}
 
-/* ---------- Project case-study modal (Pro) ---------- */
-.proj-modal{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.9);
+/* ---------- Project case-study modal (Pro) — frosted mac card ---------- */
+.proj-modal{position:fixed;inset:0;z-index:300;background:rgba(6,7,10,.6);
   -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
-  display:flex;align-items:flex-start;justify-content:center;padding:40px 16px;overflow-y:auto}
-.proj-study{position:relative;width:min(860px,100%);background:#0f141b;border:1px solid rgba(255,255,255,.12);
-  border-radius:18px;overflow:hidden;box-shadow:0 40px 120px rgba(0,0,0,.6)}
-.proj-x{position:absolute;top:16px;left:16px;z-index:2;width:42px;height:42px;border-radius:12px;
-  background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.22);color:#fff;font-size:20px}
+  display:flex;align-items:center;justify-content:center;padding:24px 16px}
+.proj-study{width:min(860px,100%);max-height:calc(100vh - 48px);display:flex;flex-direction:column;overflow:hidden}
+.proj-study .glass-bar{flex:0 0 auto}
+.proj-x{margin-inline-start:auto;width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:12px;line-height:1}
+.proj-x:hover{background:rgba(255,255,255,.16)}
+.proj-scroll{overflow-y:auto;-webkit-overflow-scrolling:touch}
 .proj-hero{width:100%;height:clamp(220px,38vh,420px);object-fit:cover;display:block}
 .proj-study-body{padding:clamp(22px,3vw,40px)}
 .proj-study-body .tag{display:inline-block;color:var(--accent);font-size:11px;letter-spacing:.2em;margin-bottom:10px}

@@ -95,35 +95,42 @@ export default function ProjectsGallery({ items, detailed = false }: { items: It
 
       {active && hasStudy(active) ? (
         <div className="proj-modal" onClick={() => setOpen(null)}>
-          <div className="proj-study" onClick={(e) => e.stopPropagation()}>
-            <button aria-label="إغلاق" className="proj-x" onClick={() => setOpen(null)}>✕</button>
-            {active.image ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img className="proj-hero" src={active.image} alt={active.title} />
-            ) : null}
-            <div className="proj-study-body">
-              <span className="tag mono">{active.tag}</span>
-              <h3>{active.title}</h3>
-              <span className="meta mono" dir="ltr">{active.meta}</span>
-              {active.details && active.details.length > 0 && (
-                <div className="proj-facts">
-                  {active.details.map((d, i) => (
-                    <div className="fact" key={i}>
-                      <span className="k mono">{d.k}</span>
-                      <span className="v">{d.v}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-              {active.body ? <p className="proj-text">{active.body}</p> : null}
-              {active.gallery && active.gallery.some(Boolean) && (
-                <div className="proj-gallery">
-                  {active.gallery.filter(Boolean).map((g, i) => (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img key={i} src={g as string} alt={`${active.title} ${i + 1}`} />
-                  ))}
-                </div>
-              )}
+          <div className="glass-card proj-study" onClick={(e) => e.stopPropagation()}>
+            <div className="glass-bar">
+              <span className="dot r"></span>
+              <span className="dot y"></span>
+              <span className="dot g"></span>
+              <button aria-label="إغلاق" className="proj-x" onClick={() => setOpen(null)}>✕</button>
+            </div>
+            <div className="proj-scroll">
+              {active.image ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img className="proj-hero" src={active.image} alt={active.title} />
+              ) : null}
+              <div className="glass-body proj-study-body">
+                <span className="tag mono">{active.tag}</span>
+                <h3>{active.title}</h3>
+                <span className="meta mono" dir="ltr">{active.meta}</span>
+                {active.details && active.details.length > 0 && (
+                  <div className="proj-facts">
+                    {active.details.map((d, i) => (
+                      <div className="fact" key={i}>
+                        <span className="k mono">{d.k}</span>
+                        <span className="v">{d.v}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {active.body ? <p className="proj-text">{active.body}</p> : null}
+                {active.gallery && active.gallery.some(Boolean) && (
+                  <div className="proj-gallery">
+                    {active.gallery.filter(Boolean).map((g, i) => (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img key={i} src={g as string} alt={`${active.title} ${i + 1}`} />
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
