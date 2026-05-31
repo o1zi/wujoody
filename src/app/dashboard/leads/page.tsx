@@ -25,14 +25,26 @@ export default async function LeadsPage() {
   }
 
   const supabase = await createClient();
-  const { data } = await supabase
+  const q1 = await supabase
     .from("leads")
     .select("id, name, contact, message, status, kind, created_at")
     .eq("office_id", ctx.office.id)
     .order("created_at", { ascending: false })
     .limit(200);
 
-  const leads = (data ?? []) as Lead[];
+  // Fallback if the `kind` column hasn't been added yet (setup-all.sql not run).
+  let rows = q1.data as Lead[] | null;
+  if (!rows) {
+    const q2 = await supabase
+      .from("leads")
+      .select("id, name, contact, message, status, created_at")
+      .eq("office_id", ctx.office.id)
+      .order("created_at", { ascending: false })
+      .limit(200);
+    rows = (q2.data ?? null) as Lead[] | null;
+  }
+
+  const leads = (rows ?? []) as Lead[];
   const newCount = leads.filter((l) => l.status === "new").length;
 
   return (

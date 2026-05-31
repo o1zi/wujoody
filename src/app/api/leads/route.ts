@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "office not available" }, { status: 404 });
   }
 
-  const { error } = await admin.from("leads").insert({
+  let { error } = await admin.from("leads").insert({
     office_id: office.id,
     name,
     contact,
@@ -59,6 +59,18 @@ export async function POST(request: NextRequest) {
     kind,
     status: "new",
   });
+
+  // Backward-compat: if the `kind` column hasn't been added yet (setup-all.sql
+  // not run), retry the insert without it so leads keep working.
+  if (error && (error.code === "42703" || /kind/i.test(error.message || ""))) {
+    ({ error } = await admin.from("leads").insert({
+      office_id: office.id,
+      name,
+      contact,
+      message,
+      status: "new",
+    }));
+  }
 
   if (error) {
     return NextResponse.json({ error: "could not save" }, { status: 500 });
