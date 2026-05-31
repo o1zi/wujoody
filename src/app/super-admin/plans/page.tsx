@@ -1,5 +1,5 @@
 import { createAdminClient } from "@/lib/supabase/admin";
-import { FALLBACK_PLANS } from "@/lib/plans";
+import { FALLBACK_PLANS, normalizePlan } from "@/lib/plans";
 import PlanEditor from "./PlanEditor";
 
 export default async function SuperAdminPlans() {
@@ -19,6 +19,7 @@ export default async function SuperAdminPlans() {
           active: !!p.active,
           paymentLink: p.payment_link || "",
           sallaProductId: p.salla_product_id || "",
+          sections: normalizePlan(p).caps.sections,
         }))
       : FALLBACK_PLANS.map((p) => ({
           code: p.code,
@@ -29,6 +30,7 @@ export default async function SuperAdminPlans() {
           active: true,
           paymentLink: p.paymentLink,
           sallaProductId: p.sallaProductId,
+          sections: p.caps.sections,
         }));
 
   return (

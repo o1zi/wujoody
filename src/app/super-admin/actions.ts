@@ -105,14 +105,21 @@ export async function savePlan(
     features?: string[];
     paymentLink?: string;
     sallaProductId?: string;
+    sections?: string[];
   },
 ) {
   await assertSuperAdmin();
   const admin = createAdminClient();
-  const { paymentLink, sallaProductId, ...rest } = patch;
+  const { paymentLink, sallaProductId, sections, ...rest } = patch;
   const row: Record<string, unknown> = { ...rest };
   if (paymentLink !== undefined) row.payment_link = paymentLink;
   if (sallaProductId !== undefined) row.salla_product_id = sallaProductId;
+  if (sections !== undefined) {
+    // Merge the allowed-sections list into the plan's caps jsonb.
+    const { data: existing } = await admin.from("plans").select("caps").eq("code", code).maybeSingle();
+    const caps = (existing?.caps as Record<string, unknown>) || {};
+    row.caps = { ...caps, sections };
+  }
   await admin.from("plans").update(row).eq("code", code);
   revalidatePath("/super-admin/plans");
   revalidatePath("/");

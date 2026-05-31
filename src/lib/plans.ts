@@ -3,6 +3,8 @@
 // is missing/empty. The capability LOGIC stays in code; only the values come
 // from the DB. This file is import-safe from client components (types only).
 
+import { SECTION_KEYS, STANDARD_SECTIONS } from "@/lib/sections";
+
 export type PlanCaps = {
   solidOnly: boolean;
   presets: boolean;
@@ -20,6 +22,7 @@ export type PlanCaps = {
   aiContent: boolean; // AI content generation — Premium
   aiMonthlyLimit: number; // max AI generations per office per month
   monthlyReport: boolean; // monthly performance email — Premium
+  sections: string[]; // which site sections this plan may use (see lib/sections)
 };
 
 export type Plan = {
@@ -40,6 +43,7 @@ export const DEFAULT_CAPS: PlanCaps = {
   solidOnly: false, presets: true, presetLimit: Infinity, upload: true,
   whatsapp: true, booking: true, blog: true, projectDetails: true, badges: true,
   profilePdf: true, customDomain: true, crm: true, aiContent: true, aiMonthlyLimit: 10, monthlyReport: true,
+  sections: [...SECTION_KEYS],
 };
 
 export const FALLBACK_PLANS: Plan[] = [
@@ -56,6 +60,7 @@ export const FALLBACK_PLANS: Plan[] = [
       solidOnly: true, presets: false, presetLimit: 0, upload: false,
       whatsapp: false, booking: false, blog: false, projectDetails: false, badges: false,
       profilePdf: false, customDomain: false, crm: false, aiContent: false, aiMonthlyLimit: 0, monthlyReport: false,
+      sections: [...STANDARD_SECTIONS],
     },
     features: [
       "موقع مكتب كامل بنطاق فرعي",
@@ -80,6 +85,7 @@ export const FALLBACK_PLANS: Plan[] = [
       solidOnly: false, presets: true, presetLimit: 5, upload: false,
       whatsapp: true, booking: true, blog: true, projectDetails: true, badges: true,
       profilePdf: true, customDomain: true, crm: false, aiContent: false, aiMonthlyLimit: 0, monthlyReport: false,
+      sections: [...SECTION_KEYS],
     },
     features: [
       "كل مزايا الأساسية",
@@ -104,6 +110,7 @@ export const FALLBACK_PLANS: Plan[] = [
       solidOnly: false, presets: true, presetLimit: Infinity, upload: true,
       whatsapp: true, booking: true, blog: true, projectDetails: true, badges: true,
       profilePdf: true, customDomain: true, crm: true, aiContent: true, aiMonthlyLimit: 10, monthlyReport: true,
+      sections: [...SECTION_KEYS],
     },
     features: [
       "كل مزايا الاحترافية",
@@ -119,6 +126,18 @@ export const FALLBACK_PLANS: Plan[] = [
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function normalizePlan(row: any): Plan {
   const caps = row.caps || {};
+  // Allowed sections: explicit list, else backward-compat default derived from
+  // the legacy badges/booking/blog flags.
+  let sections: string[];
+  if (Array.isArray(caps.sections)) {
+    sections = caps.sections.map(String).filter((s: string) => SECTION_KEYS.includes(s));
+  } else {
+    sections = [...STANDARD_SECTIONS];
+    if (caps.badges) sections.push("credentials");
+    if (caps.booking) sections.push("booking");
+    if (caps.blog) sections.push("blog");
+  }
+  const has = (k: string) => sections.includes(k);
   return {
     code: row.code,
     name: row.name,
@@ -136,16 +155,18 @@ export function normalizePlan(row: any): Plan {
       presetLimit: caps.presetLimit == null ? Infinity : Number(caps.presetLimit),
       upload: caps.upload !== false,
       whatsapp: !!caps.whatsapp,
-      booking: !!caps.booking,
-      blog: !!caps.blog,
+      // booking/blog/badges follow the allowed-sections list (single source).
+      booking: has("booking"),
+      blog: has("blog"),
+      badges: has("credentials"),
       projectDetails: !!caps.projectDetails,
-      badges: !!caps.badges,
       profilePdf: !!caps.profilePdf,
       customDomain: !!caps.customDomain,
       crm: !!caps.crm,
       aiContent: !!caps.aiContent,
       aiMonthlyLimit: caps.aiMonthlyLimit == null ? (caps.aiContent ? 10 : 0) : Number(caps.aiMonthlyLimit),
       monthlyReport: !!caps.monthlyReport,
+      sections,
     },
   };
 }

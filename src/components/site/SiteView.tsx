@@ -144,6 +144,9 @@ export default function SiteView({ content, slug, caps }: { content: SiteContent
   const cardStyle = content.theme.cardStyle ?? "glass";
   const cardRadius = CARD_RADIUS[content.theme.cardRadius ?? "soft"] ?? CARD_RADIUS.soft;
   const cardRgb = hexToRgb(content.theme.cardTint) ?? "16,20,28";
+  // A section renders only if the plan allows it AND the office hasn't hidden it.
+  const allowedSections = new Set(caps.sections);
+  const show = (k: string) => allowedSections.has(k) && (content.visible as Record<string, boolean>)[k] !== false;
   const { brand } = content;
   const m = content.media;
   const isSolid = m?.bgMode === "solid";
@@ -320,7 +323,7 @@ export default function SiteView({ content, slug, caps }: { content: SiteContent
           <a href="#" data-goto="services">الخدمات</a>
           <a href="#" data-goto="projects">المشاريع</a>
           <a href="#" data-goto="team">الفريق</a>
-          {caps.blog && content.visible.blog !== false && <a href={`${tenantUrl(slug)}/blog`}>المدوّنة</a>}
+          {show("blog") && <a href={`${tenantUrl(slug)}/blog`}>المدوّنة</a>}
           <a className="cta" href="#" data-goto="contact">تواصل معنا</a>
         </nav>
         <button className="menu-btn" id="menuBtn" aria-label="القائمة">
@@ -381,7 +384,7 @@ export default function SiteView({ content, slug, caps }: { content: SiteContent
         </section>
 
         {/* ABOUT */}
-        <section className="sec" id="about" data-screen-label="من نحن" style={{ display: content.visible.about === false ? "none" : undefined }}>
+        <section className="sec" id="about" data-screen-label="من نحن" style={{ display: show("about") ? undefined : "none" }}>
           <div className="wrap">
             <div className="glass-card reveal">
               <MacBar />
@@ -410,7 +413,7 @@ export default function SiteView({ content, slug, caps }: { content: SiteContent
         </section>
 
         {/* CREDENTIALS / TRUST BADGES (Pro) */}
-        {caps.badges && content.visible.credentials !== false &&
+        {show("credentials") &&
           (content.credentials.badges.length > 0 || content.credentials.clients.length > 0) && (
           <section className="sec" id="credentials" data-screen-label="الاعتمادات والثقة">
             <div className="wrap">
@@ -453,7 +456,7 @@ export default function SiteView({ content, slug, caps }: { content: SiteContent
         )}
 
         {/* SERVICES */}
-        <section className="sec" id="services" data-screen-label="الخدمات" style={{ display: content.visible.services === false ? "none" : undefined }}>
+        <section className="sec" id="services" data-screen-label="الخدمات" style={{ display: show("services") ? undefined : "none" }}>
           <div className="wrap">
             <div className="glass-card reveal">
               <MacBar />
@@ -489,7 +492,7 @@ export default function SiteView({ content, slug, caps }: { content: SiteContent
         </section>
 
         {/* STATS */}
-        <section className="sec" id="stats" data-screen-label="الأرقام والإنجازات" style={{ display: content.visible.stats === false ? "none" : undefined }}>
+        <section className="sec" id="stats" data-screen-label="الأرقام والإنجازات" style={{ display: show("stats") ? undefined : "none" }}>
           <div className="wrap">
             <div className="glass-card reveal">
               <MacBar />
@@ -520,7 +523,7 @@ export default function SiteView({ content, slug, caps }: { content: SiteContent
         </section>
 
         {/* PROCESS */}
-        <section className="sec" id="process" data-screen-label="منهجية العمل" style={{ display: content.visible.process === false ? "none" : undefined }}>
+        <section className="sec" id="process" data-screen-label="منهجية العمل" style={{ display: show("process") ? undefined : "none" }}>
           <div className="wrap">
             <div className="glass-card reveal">
               <MacBar />
@@ -546,7 +549,7 @@ export default function SiteView({ content, slug, caps }: { content: SiteContent
         </section>
 
         {/* PROJECTS */}
-        <section className="sec" id="projects" data-screen-label="المشاريع / أعمالنا" style={{ display: content.visible.projects === false ? "none" : undefined }}>
+        <section className="sec" id="projects" data-screen-label="المشاريع / أعمالنا" style={{ display: show("projects") ? undefined : "none" }}>
           <div className="wrap">
             <div className="eyebrow mono reveal">
               <span className="ln"></span>
@@ -561,7 +564,7 @@ export default function SiteView({ content, slug, caps }: { content: SiteContent
         </section>
 
         {/* TEAM */}
-        <section className="sec" id="team" data-screen-label="فريق العمل" style={{ display: content.visible.team === false ? "none" : undefined }}>
+        <section className="sec" id="team" data-screen-label="فريق العمل" style={{ display: show("team") ? undefined : "none" }}>
           <div className="wrap">
             <div className="eyebrow mono reveal">
               <span className="ln"></span>
@@ -587,7 +590,7 @@ export default function SiteView({ content, slug, caps }: { content: SiteContent
         </section>
 
         {/* TESTIMONIALS */}
-        <section className="sec" id="voices" data-screen-label="آراء العملاء" style={{ display: content.visible.testimonials === false ? "none" : undefined }}>
+        <section className="sec" id="voices" data-screen-label="آراء العملاء" style={{ display: show("testimonials") ? undefined : "none" }}>
           <div className="wrap">
             <div className="glass-card reveal">
               <MacBar />
@@ -622,8 +625,8 @@ export default function SiteView({ content, slug, caps }: { content: SiteContent
         </section>
 
         {/* FAQ */}
-        {content.faq.items.length > 0 && (
-          <section className="sec" id="faq" data-screen-label="الأسئلة الشائعة" style={{ display: content.visible.faq === false ? "none" : undefined }}>
+        {show("faq") && content.faq.items.length > 0 && (
+          <section className="sec" id="faq" data-screen-label="الأسئلة الشائعة">
             <div className="wrap">
               <div className="glass-card reveal">
                 <MacBar />
@@ -647,7 +650,7 @@ export default function SiteView({ content, slug, caps }: { content: SiteContent
         )}
 
         {/* BOOKING (Pro) */}
-        {caps.booking && content.visible.booking !== false && (
+        {show("booking") && (
           <section className="sec" id="booking" data-screen-label="احجز استشارة">
             <div className="wrap">
               <div className="glass-card reveal">
@@ -669,7 +672,7 @@ export default function SiteView({ content, slug, caps }: { content: SiteContent
         )}
 
         {/* CONTACT */}
-        <section className="sec" id="contact" data-screen-label="تواصل معنا" style={{ display: content.visible.contact === false ? "none" : undefined }}>
+        <section className="sec" id="contact" data-screen-label="تواصل معنا" style={{ display: show("contact") ? undefined : "none" }}>
           <div className="wrap">
             <div className="glass-card reveal">
               <MacBar />

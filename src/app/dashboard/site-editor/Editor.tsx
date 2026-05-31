@@ -6,6 +6,7 @@ import type { SiteContent } from "@/lib/site-content";
 import type { PlanCaps } from "@/lib/plans";
 import { BG_PRESETS } from "@/lib/bg-presets";
 import { SITE_FONTS } from "@/lib/site-fonts";
+import { SITE_SECTIONS } from "@/lib/sections";
 import { Button, Alert } from "@/components/ui";
 
 const CARD_STYLES: { key: NonNullable<SiteContent["theme"]["cardStyle"]>; label: string; hint: string }[] = [
@@ -960,23 +961,19 @@ export default function Editor({
       </Section>
 
       <Section title="الأقسام الظاهرة">
-        <p className="text-xs text-muted">تحكّم في إظهار أو إخفاء أقسام موقعك.</p>
+        <p className="text-xs text-muted">تحكّم في إظهار أو إخفاء أقسام موقعك. الأقسام غير المتاحة في باقتك تظهر مقفلة.</p>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-          {([
-            ["about", "من نحن"],
-            ["services", "الخدمات"],
-            ["stats", "الأرقام"],
-            ["process", "المنهجية"],
-            ["projects", "المشاريع"],
-            ["team", "الفريق"],
-            ["testimonials", "الآراء"],
-            ["credentials", "الاعتمادات"],
-            ["faq", "الأسئلة الشائعة"],
-            ["booking", "حجز استشارة"],
-            ["blog", "المدوّنة"],
-            ["contact", "التواصل"],
-          ] as const).map(([key, label]) => {
-            const on = c.visible?.[key] !== false;
+          {SITE_SECTIONS.map(({ key, label }) => {
+            const allowed = caps.sections.includes(key);
+            const on = (c.visible as Record<string, boolean>)[key] !== false;
+            if (!allowed) {
+              return (
+                <div key={key} className="flex items-center justify-between rounded-lg border border-border px-3 py-2 text-sm text-muted opacity-60" title="غير متاح في باقتك">
+                  <span>{label}</span>
+                  <span className="mono text-xs">🔒</span>
+                </div>
+              );
+            }
             return (
               <button
                 key={key}

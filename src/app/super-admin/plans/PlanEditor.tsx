@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { savePlan } from "../actions";
+import { SITE_SECTIONS } from "@/lib/sections";
 
 type PlanRow = {
   code: string;
@@ -12,6 +13,7 @@ type PlanRow = {
   active: boolean;
   paymentLink: string;
   sallaProductId: string;
+  sections: string[];
 };
 
 export default function PlanEditor({ plan }: { plan: PlanRow }) {
@@ -22,8 +24,13 @@ export default function PlanEditor({ plan }: { plan: PlanRow }) {
   const [features, setFeatures] = useState(plan.features.join("\n"));
   const [paymentLink, setPaymentLink] = useState(plan.paymentLink);
   const [sallaProductId, setSallaProductId] = useState(plan.sallaProductId);
+  const [sections, setSections] = useState<string[]>(plan.sections || []);
   const [pending, start] = useTransition();
   const [saved, setSaved] = useState(false);
+
+  function toggleSection(key: string) {
+    setSections((prev) => (prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]));
+  }
 
   function save() {
     start(async () => {
@@ -35,6 +42,7 @@ export default function PlanEditor({ plan }: { plan: PlanRow }) {
         features: features.split("\n").map((f) => f.trim()).filter(Boolean),
         paymentLink: paymentLink.trim(),
         sallaProductId: sallaProductId.trim(),
+        sections,
       });
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
@@ -68,6 +76,18 @@ export default function PlanEditor({ plan }: { plan: PlanRow }) {
         <span className="mb-1 block text-xs text-muted">رقم منتج سلة (Product ID)</span>
         <input className={input} dir="ltr" value={sallaProductId} onChange={(e) => setSallaProductId(e.target.value)} placeholder="1234567890" />
       </label>
+      <div className="mt-3">
+        <span className="mb-1 block text-xs text-muted">الأقسام المتاحة لهذه الباقة</span>
+        <div className="grid grid-cols-2 gap-1.5">
+          {SITE_SECTIONS.map((s) => (
+            <label key={s.key} className="flex items-center gap-2 rounded-md px-2 py-1 text-xs hover:bg-surface-2">
+              <input type="checkbox" checked={sections.includes(s.key)} onChange={() => toggleSection(s.key)} />
+              {s.label}
+            </label>
+          ))}
+        </div>
+      </div>
+
       <div className="mt-3 flex items-center gap-5">
         <label className="flex items-center gap-2 text-sm">
           <input type="checkbox" checked={highlight} onChange={(e) => setHighlight(e.target.checked)} /> مميّزة
