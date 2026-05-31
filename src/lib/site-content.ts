@@ -35,7 +35,15 @@ export type SiteContent = {
   stats: { value: string; suffix: string; label: string; en: string }[];
   process: { title: string; desc: string }[];
   projects: {
-    items: { tag: string; title: string; meta: string; image: string | null }[];
+    items: {
+      tag: string;
+      title: string;
+      meta: string;
+      image: string | null;
+      body?: string; // case-study description (Pro)
+      details?: { k: string; v: string }[]; // client/year/scope (Pro)
+      gallery?: (string | null)[]; // extra images (Pro)
+    }[];
   };
   team: {
     items: { name: string; role: string; roleEn: string; image: string | null }[];

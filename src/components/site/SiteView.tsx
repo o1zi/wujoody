@@ -554,7 +554,7 @@ export default function SiteView({ content, slug, caps }: { content: SiteContent
               <h2 className="sec-title reveal" data-d="1" style={{ marginBottom: 0 }}>مشاريع تحكي الرسوخ.</h2>
               <p className="sec-lead reveal" data-d="2">نماذج من أعمالنا عبر القطاعات.</p>
             </div>
-            <ProjectsGallery items={content.projects.items} />
+            <ProjectsGallery items={content.projects.items} detailed={caps.projectDetails} />
           </div>
         </section>
 

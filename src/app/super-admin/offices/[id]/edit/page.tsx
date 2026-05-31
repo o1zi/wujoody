@@ -50,7 +50,7 @@ export default async function SuperEditOffice({ params }: { params: Params }) {
           </h1>
         </div>
       </div>
-      <Editor officeId={office.id} initial={content} siteUrl={siteUrl} caps={caps} />
+      <Editor officeId={office.id} initial={content} siteUrl={siteUrl} caps={caps} slug={office.slug} />
     </div>
   );
 }

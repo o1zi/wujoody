@@ -4,11 +4,22 @@ import { useState } from "react";
 
 const SHAPES = ["big", "tall", "wide", "wide"];
 
-type Item = { tag: string; title: string; meta: string; image: string | null };
+type Item = {
+  tag: string;
+  title: string;
+  meta: string;
+  image: string | null;
+  body?: string;
+  details?: { k: string; v: string }[];
+  gallery?: (string | null)[];
+};
 
-export default function ProjectsGallery({ items }: { items: Item[] }) {
+export default function ProjectsGallery({ items, detailed = false }: { items: Item[]; detailed?: boolean }) {
   const [open, setOpen] = useState<number | null>(null);
   const active = open !== null ? items[open] : null;
+  // A project is openable if it has an image, or (with the Pro feature) a case study.
+  const hasStudy = (pr: Item) => detailed && !!(pr.body || (pr.gallery && pr.gallery.some(Boolean)) || (pr.details && pr.details.length));
+  const canOpen = (pr: Item) => !!pr.image || hasStudy(pr);
 
   return (
     <>
@@ -17,8 +28,8 @@ export default function ProjectsGallery({ items }: { items: Item[] }) {
           <div
             className={`proj ${SHAPES[i % SHAPES.length]}`}
             key={i}
-            onClick={() => pr.image && setOpen(i)}
-            style={pr.image ? { cursor: "zoom-in" } : undefined}
+            onClick={() => canOpen(pr) && setOpen(i)}
+            style={canOpen(pr) ? { cursor: "zoom-in" } : undefined}
           >
             <span className="tag mono">{pr.tag}</span>
             {pr.image ? (
@@ -82,7 +93,41 @@ export default function ProjectsGallery({ items }: { items: Item[] }) {
         ))}
       </div>
 
-      {active?.image ? (
+      {active && hasStudy(active) ? (
+        <div className="proj-modal" onClick={() => setOpen(null)}>
+          <div className="proj-study" onClick={(e) => e.stopPropagation()}>
+            <button aria-label="إغلاق" className="proj-x" onClick={() => setOpen(null)}>✕</button>
+            {active.image ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img className="proj-hero" src={active.image} alt={active.title} />
+            ) : null}
+            <div className="proj-study-body">
+              <span className="tag mono">{active.tag}</span>
+              <h3>{active.title}</h3>
+              <span className="meta mono" dir="ltr">{active.meta}</span>
+              {active.details && active.details.length > 0 && (
+                <div className="proj-facts">
+                  {active.details.map((d, i) => (
+                    <div className="fact" key={i}>
+                      <span className="k mono">{d.k}</span>
+                      <span className="v">{d.v}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {active.body ? <p className="proj-text">{active.body}</p> : null}
+              {active.gallery && active.gallery.some(Boolean) && (
+                <div className="proj-gallery">
+                  {active.gallery.filter(Boolean).map((g, i) => (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img key={i} src={g as string} alt={`${active.title} ${i + 1}`} />
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      ) : active?.image ? (
         <div
           onClick={() => setOpen(null)}
           style={{

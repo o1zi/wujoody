@@ -38,5 +38,5 @@ export default async function SiteEditorPage() {
   const caps = await getPlanCaps(sub?.plan);
   const siteUrl = ctx.office.status === "active" ? tenantUrl(ctx.office.slug) : null;
 
-  return <Editor officeId={ctx.office.id} initial={content} siteUrl={siteUrl} caps={caps} />;
+  return <Editor officeId={ctx.office.id} initial={content} siteUrl={siteUrl} caps={caps} slug={ctx.office.slug} />;
 }

@@ -62,11 +62,13 @@ export default function Editor({
   initial,
   siteUrl,
   caps,
+  slug,
 }: {
   officeId: string;
   initial: SiteContent;
   siteUrl: string | null;
   caps: PlanCaps;
+  slug: string;
 }) {
   const presets = Number.isFinite(caps.presetLimit) ? BG_PRESETS.slice(0, caps.presetLimit) : BG_PRESETS;
   const [c, setC] = useState<SiteContent>(initial);
@@ -333,11 +335,18 @@ export default function Editor({
           <h1 className="text-2xl font-bold">محرّر الموقع</h1>
           <p className="mt-1 text-sm text-muted">عدّل المحتوى ثم احفظ — تظهر التغييرات على موقعك مباشرةً.</p>
         </div>
-        {siteUrl && (
-          <a href={siteUrl} target="_blank" rel="noreferrer" className="text-sm text-accent hover:underline">
-            معاينة الموقع ↗
-          </a>
-        )}
+        <div className="flex items-center gap-4">
+          {caps.profilePdf && (
+            <a href={`/profile/${slug}?print=1`} target="_blank" rel="noreferrer" className="text-sm text-accent hover:underline">
+              تحميل الملف التعريفي PDF ↓
+            </a>
+          )}
+          {siteUrl && (
+            <a href={siteUrl} target="_blank" rel="noreferrer" className="text-sm text-accent hover:underline">
+              معاينة الموقع ↗
+            </a>
+          )}
+        </div>
       </div>
 
       <Section title="الهوية واللون">
@@ -736,7 +745,7 @@ export default function Editor({
           items={c.projects.items}
           onChange={(v) => set("projects.items", v)}
           empty={{ tag: "", title: "", meta: "", image: null }}
-          render={(_, i) => (
+          render={(pr, i) => (
             <>
               <div className="grid grid-cols-2 gap-3">
                 {text("التصنيف (لاتيني)", `projects.items.${i}.tag`, "ltr")}
@@ -744,6 +753,31 @@ export default function Editor({
               </div>
               {text("اسم المشروع", `projects.items.${i}.title`)}
               {image("صورة المشروع", `projects.items.${i}.image`)}
+              {caps.projectDetails && (
+                <div className="mt-1 space-y-3 rounded-lg border border-dashed border-border p-3">
+                  <p className="text-xs text-muted">دراسة حالة (تظهر عند الضغط على المشروع):</p>
+                  {area("تفاصيل المشروع", `projects.items.${i}.body`)}
+                  <ListEditor
+                    title="معلومات (عميل/سنة/مساحة…)"
+                    items={pr.details ?? []}
+                    onChange={(v) => set(`projects.items.${i}.details`, v)}
+                    empty={{ k: "", v: "" }}
+                    render={(_, j) => (
+                      <div className="grid grid-cols-2 gap-3">
+                        {text("العنوان", `projects.items.${i}.details.${j}.k`)}
+                        {text("القيمة", `projects.items.${i}.details.${j}.v`)}
+                      </div>
+                    )}
+                  />
+                  <ListEditor
+                    title="صور إضافية"
+                    items={pr.gallery ?? []}
+                    onChange={(v) => set(`projects.items.${i}.gallery`, v)}
+                    empty={null as string | null}
+                    render={(_, j) => image(`صورة ${j + 1}`, `projects.items.${i}.gallery.${j}`)}
+                  />
+                </div>
+              )}
             </>
           )}
         />
