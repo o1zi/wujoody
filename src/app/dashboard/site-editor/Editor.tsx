@@ -63,12 +63,16 @@ export default function Editor({
   siteUrl,
   caps,
   slug,
+  aiUsed = 0,
+  aiLimit = 0,
 }: {
   officeId: string;
   initial: SiteContent;
   siteUrl: string | null;
   caps: PlanCaps;
   slug: string;
+  aiUsed?: number;
+  aiLimit?: number;
 }) {
   const presets = Number.isFinite(caps.presetLimit) ? BG_PRESETS.slice(0, caps.presetLimit) : BG_PRESETS;
   const [c, setC] = useState<SiteContent>(initial);
@@ -76,6 +80,7 @@ export default function Editor({
   const [msg, setMsg] = useState<{ kind: "success" | "error"; text: string } | null>(null);
   const [aiBusy, setAiBusy] = useState(false);
   const [aiSpecialty, setAiSpecialty] = useState("");
+  const [aiRemaining, setAiRemaining] = useState(Math.max(0, aiLimit - aiUsed));
 
   async function generateAi() {
     setAiBusy(true);
@@ -87,7 +92,13 @@ export default function Editor({
         body: JSON.stringify({ name: c.brand.ar, specialty: aiSpecialty }),
       });
       const d = await res.json();
+      if (res.status === 429) {
+        setAiRemaining(0);
+        setMsg({ kind: "error", text: `استنفدت حدّ التوليد لهذا الشهر (${aiLimit}). يتجدّد مطلع الشهر القادم.` });
+        return;
+      }
       if (!res.ok) throw new Error(d.error || "fail");
+      if (typeof d.remaining === "number") setAiRemaining(d.remaining);
       setC((prev) => {
         let next = prev;
         if (d.aboutLead) next = deepSet(next, "about.lead", d.aboutLead);
@@ -704,7 +715,10 @@ export default function Editor({
       <Section title="من نحن">
         {caps.aiContent && (
           <div className="rounded-lg border border-dashed border-accent/50 p-3">
-            <p className="mb-2 text-xs text-muted">✨ دع الذكاء الاصطناعي يكتب «من نحن» و«الخدمات» تلقائياً.</p>
+            <div className="mb-2 flex items-center justify-between">
+              <p className="text-xs text-muted">✨ دع الذكاء الاصطناعي يكتب «من نحن» و«الخدمات» تلقائياً.</p>
+              <span className="mono shrink-0 text-xs text-muted">المتبقّي هذا الشهر: {aiRemaining}/{aiLimit}</span>
+            </div>
             <div className="flex gap-2">
               <input
                 className={inputCls}
@@ -715,10 +729,10 @@ export default function Editor({
               <button
                 type="button"
                 onClick={generateAi}
-                disabled={aiBusy}
+                disabled={aiBusy || aiRemaining <= 0}
                 className="shrink-0 rounded-lg bg-accent px-4 text-sm font-medium text-[#0b0d10] hover:bg-accent-soft disabled:opacity-60"
               >
-                {aiBusy ? "…" : "اكتب لي"}
+                {aiBusy ? "…" : aiRemaining <= 0 ? "انتهى الحدّ" : "اكتب لي"}
               </button>
             </div>
           </div>

@@ -56,15 +56,15 @@ values
   ('basic', 'الأساسية', 249, 'شهرياً', 30,
    '["موقع مكتب كامل بنطاق فرعي","خلفية أنيقة (بيضاء أو سوداء)","محرّر محتوى متكامل","صندوق رسائل العملاء + إشعار بريدي","تحسين الظهور في جوجل (SEO)","أزرار تواصل (واتساب/تيك توك/سناب)"]'::jsonb,
    'https://salla.sa/your-store/checkout/REPLACE_BASIC', 'REPLACE_BASIC_PRODUCT_ID',
-   '{"solidOnly":true,"presets":false,"presetLimit":0,"upload":false,"whatsapp":false,"booking":false,"blog":false,"projectDetails":false,"badges":false,"profilePdf":false,"customDomain":false,"crm":false,"aiContent":false,"monthlyReport":false}'::jsonb, false, 1, true),
+   '{"solidOnly":true,"presets":false,"presetLimit":0,"upload":false,"whatsapp":false,"booking":false,"blog":false,"projectDetails":false,"badges":false,"profilePdf":false,"customDomain":false,"crm":false,"aiContent":false,"aiMonthlyLimit":0,"monthlyReport":false}'::jsonb, false, 1, true),
   ('pro', 'الاحترافية', 499, 'شهرياً', 30,
    '["كل مزايا الأساسية","٥ خلفيات فيديو سينمائية جاهزة","خلفية تتحرك مع التمرير","خريطة موقع المكتب (جوجل)","معرض مشاريع بنقر للتكبير"]'::jsonb,
    'https://salla.sa/your-store/checkout/REPLACE_PRO', 'REPLACE_PRO_PRODUCT_ID',
-   '{"solidOnly":false,"presets":true,"presetLimit":5,"upload":false,"whatsapp":true,"booking":true,"blog":true,"projectDetails":true,"badges":true,"profilePdf":true,"customDomain":true,"crm":false,"aiContent":false,"monthlyReport":false}'::jsonb, true, 2, true),
+   '{"solidOnly":false,"presets":true,"presetLimit":5,"upload":false,"whatsapp":true,"booking":true,"blog":true,"projectDetails":true,"badges":true,"profilePdf":true,"customDomain":true,"crm":false,"aiContent":false,"aiMonthlyLimit":0,"monthlyReport":false}'::jsonb, true, 2, true),
   ('premium', 'بريميوم', 899, 'شهرياً', 30,
    '["كل مزايا الاحترافية","جميع خلفيات الفيديو الجاهزة","رفع فيديو/صور خلفية خاصة بك","تحويل فيديوك لحركة مع التمرير","أولوية في الدعم الفني","نطاق مخصّص (قريباً)"]'::jsonb,
    'https://salla.sa/your-store/checkout/REPLACE_PREMIUM', 'REPLACE_PREMIUM_PRODUCT_ID',
-   '{"solidOnly":false,"presets":true,"presetLimit":null,"upload":true,"whatsapp":true,"booking":true,"blog":true,"projectDetails":true,"badges":true,"profilePdf":true,"customDomain":true,"crm":true,"aiContent":true,"monthlyReport":true}'::jsonb, false, 3, true)
+   '{"solidOnly":false,"presets":true,"presetLimit":null,"upload":true,"whatsapp":true,"booking":true,"blog":true,"projectDetails":true,"badges":true,"profilePdf":true,"customDomain":true,"crm":true,"aiContent":true,"aiMonthlyLimit":10,"monthlyReport":true}'::jsonb, false, 3, true)
 on conflict (code) do update set
   name = excluded.name, price = excluded.price, period = excluded.period,
   duration_days = excluded.duration_days, features = excluded.features,
@@ -154,6 +154,18 @@ begin
   );
   return new;
 end $$;
+
+-- ---------- 3f) ai_usage (حد استخدام الذكاء الاصطناعي شهرياً) ----------
+create table if not exists public.ai_usage (
+  office_id uuid not null references public.offices(id) on delete cascade,
+  period text not null,            -- 'YYYY-MM'
+  count int not null default 0,
+  primary key (office_id, period)
+);
+alter table public.ai_usage enable row level security;
+drop policy if exists ai_usage_read_own on public.ai_usage;
+create policy ai_usage_read_own on public.ai_usage
+  for select using (office_id = public.current_office_id() or public.is_super_admin());
 
 -- ---------- 4) storage: السماح للسوبر أدمن برفع وسائط أي مكتب ----------
 drop policy if exists site_media_owner_write on storage.objects;

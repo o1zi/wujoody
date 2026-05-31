@@ -38,5 +38,28 @@ export default async function SiteEditorPage() {
   const caps = await getPlanCaps(sub?.plan);
   const siteUrl = ctx.office.status === "active" ? tenantUrl(ctx.office.slug) : null;
 
-  return <Editor officeId={ctx.office.id} initial={content} siteUrl={siteUrl} caps={caps} slug={ctx.office.slug} />;
+  // Current month's AI usage for this office (to show the remaining quota).
+  let aiUsed = 0;
+  if (caps.aiContent) {
+    const period = new Date().toISOString().slice(0, 7);
+    const { data: usage } = await supabase
+      .from("ai_usage")
+      .select("count")
+      .eq("office_id", ctx.office.id)
+      .eq("period", period)
+      .maybeSingle();
+    aiUsed = usage?.count ?? 0;
+  }
+
+  return (
+    <Editor
+      officeId={ctx.office.id}
+      initial={content}
+      siteUrl={siteUrl}
+      caps={caps}
+      slug={ctx.office.slug}
+      aiUsed={aiUsed}
+      aiLimit={caps.aiMonthlyLimit}
+    />
+  );
 }

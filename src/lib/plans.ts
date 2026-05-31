@@ -18,6 +18,7 @@ export type PlanCaps = {
   customDomain: boolean; // connect-your-own-domain
   crm: boolean; // leads CRM (statuses, notes, export) — Premium
   aiContent: boolean; // AI content generation — Premium
+  aiMonthlyLimit: number; // max AI generations per office per month
   monthlyReport: boolean; // monthly performance email — Premium
 };
 
@@ -38,7 +39,7 @@ export type Plan = {
 export const DEFAULT_CAPS: PlanCaps = {
   solidOnly: false, presets: true, presetLimit: Infinity, upload: true,
   whatsapp: true, booking: true, blog: true, projectDetails: true, badges: true,
-  profilePdf: true, customDomain: true, crm: true, aiContent: true, monthlyReport: true,
+  profilePdf: true, customDomain: true, crm: true, aiContent: true, aiMonthlyLimit: 10, monthlyReport: true,
 };
 
 export const FALLBACK_PLANS: Plan[] = [
@@ -54,7 +55,7 @@ export const FALLBACK_PLANS: Plan[] = [
     caps: {
       solidOnly: true, presets: false, presetLimit: 0, upload: false,
       whatsapp: false, booking: false, blog: false, projectDetails: false, badges: false,
-      profilePdf: false, customDomain: false, crm: false, aiContent: false, monthlyReport: false,
+      profilePdf: false, customDomain: false, crm: false, aiContent: false, aiMonthlyLimit: 0, monthlyReport: false,
     },
     features: [
       "موقع مكتب كامل بنطاق فرعي",
@@ -78,7 +79,7 @@ export const FALLBACK_PLANS: Plan[] = [
     caps: {
       solidOnly: false, presets: true, presetLimit: 5, upload: false,
       whatsapp: true, booking: true, blog: true, projectDetails: true, badges: true,
-      profilePdf: true, customDomain: true, crm: false, aiContent: false, monthlyReport: false,
+      profilePdf: true, customDomain: true, crm: false, aiContent: false, aiMonthlyLimit: 0, monthlyReport: false,
     },
     features: [
       "كل مزايا الأساسية",
@@ -102,7 +103,7 @@ export const FALLBACK_PLANS: Plan[] = [
     caps: {
       solidOnly: false, presets: true, presetLimit: Infinity, upload: true,
       whatsapp: true, booking: true, blog: true, projectDetails: true, badges: true,
-      profilePdf: true, customDomain: true, crm: true, aiContent: true, monthlyReport: true,
+      profilePdf: true, customDomain: true, crm: true, aiContent: true, aiMonthlyLimit: 10, monthlyReport: true,
     },
     features: [
       "كل مزايا الاحترافية",
@@ -143,6 +144,7 @@ export function normalizePlan(row: any): Plan {
       customDomain: !!caps.customDomain,
       crm: !!caps.crm,
       aiContent: !!caps.aiContent,
+      aiMonthlyLimit: caps.aiMonthlyLimit == null ? (caps.aiContent ? 10 : 0) : Number(caps.aiMonthlyLimit),
       monthlyReport: !!caps.monthlyReport,
     },
   };

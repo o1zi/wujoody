@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getSessionContext } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { getPlanCaps } from "@/lib/plans-server";
 
 export const runtime = "nodejs";
@@ -23,6 +24,24 @@ export async function POST(request: NextRequest) {
     .maybeSingle();
   const caps = await getPlanCaps(sub?.plan);
   if (!caps.aiContent) return NextResponse.json({ error: "feature not in plan" }, { status: 403 });
+
+  // Enforce the monthly usage quota per office.
+  const limit = caps.aiMonthlyLimit ?? 0;
+  const period = new Date().toISOString().slice(0, 7); // YYYY-MM
+  const adminDb = createAdminClient();
+  const { data: usageRow } = await adminDb
+    .from("ai_usage")
+    .select("count")
+    .eq("office_id", ctx.office.id)
+    .eq("period", period)
+    .maybeSingle();
+  const used = usageRow?.count ?? 0;
+  if (used >= limit) {
+    return NextResponse.json(
+      { error: "monthly limit reached", limit, remaining: 0 },
+      { status: 429 },
+    );
+  }
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) return NextResponse.json({ error: "AI not configured" }, { status: 503 });
@@ -63,12 +82,20 @@ export async function POST(request: NextRequest) {
     const match = textOut.match(/\{[\s\S]*\}/);
     if (!match) return NextResponse.json({ error: "bad ai output" }, { status: 502 });
     const parsed = JSON.parse(match[0]);
+
+    // Count this successful generation against the monthly quota.
+    await adminDb
+      .from("ai_usage")
+      .upsert({ office_id: ctx.office.id, period, count: used + 1 }, { onConflict: "office_id,period" });
+
     return NextResponse.json({
       aboutLead: String(parsed.aboutLead || ""),
       aboutBody: String(parsed.aboutBody || ""),
       services: Array.isArray(parsed.services)
         ? parsed.services.slice(0, 9).map((s: { title?: string; desc?: string }) => ({ title: String(s.title || ""), desc: String(s.desc || "") }))
         : [],
+      limit,
+      remaining: Math.max(0, limit - (used + 1)),
     });
   } catch {
     return NextResponse.json({ error: "ai error" }, { status: 500 });
