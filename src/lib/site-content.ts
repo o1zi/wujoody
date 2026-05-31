@@ -81,6 +81,7 @@ export type SiteContent = {
     testimonials: boolean;
     credentials: boolean;
     faq: boolean;
+    booking: boolean;
     contact: boolean;
   };
 };
@@ -203,6 +204,7 @@ export const defaultContent: SiteContent = {
     testimonials: true,
     credentials: true,
     faq: true,
+    booking: true,
     contact: true,
   },
 };

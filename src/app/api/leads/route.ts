@@ -5,7 +5,15 @@ import { sendEmail, emailLayout } from "@/lib/email";
 export const runtime = "nodejs";
 
 export async function POST(request: NextRequest) {
-  let body: { slug?: string; name?: string; contact?: string; message?: string };
+  let body: {
+    slug?: string;
+    name?: string;
+    contact?: string;
+    message?: string;
+    kind?: string;
+    preferredDate?: string;
+    preferredTime?: string;
+  };
   try {
     body = await request.json();
   } catch {
@@ -15,7 +23,16 @@ export async function POST(request: NextRequest) {
   const slug = (body.slug || "").toLowerCase().trim();
   const name = (body.name || "").trim().slice(0, 120);
   const contact = (body.contact || "").trim().slice(0, 160);
-  const message = (body.message || "").trim().slice(0, 2000);
+  const kind = body.kind === "booking" ? "booking" : "message";
+  let message = (body.message || "").trim().slice(0, 2000);
+
+  // For a consultation booking, fold the preferred slot into the message.
+  if (kind === "booking") {
+    const date = (body.preferredDate || "").trim().slice(0, 20);
+    const time = (body.preferredTime || "").trim().slice(0, 10);
+    const slot = [date && `التاريخ: ${date}`, time && `الوقت: ${time}`].filter(Boolean).join(" — ");
+    message = [`🗓️ طلب حجز استشارة${slot ? ` (${slot})` : ""}`, message].filter(Boolean).join("\n").slice(0, 2000);
+  }
 
   if (!slug || !name || !contact) {
     return NextResponse.json({ error: "missing fields" }, { status: 400 });
@@ -39,6 +56,7 @@ export async function POST(request: NextRequest) {
     name,
     contact,
     message,
+    kind,
     status: "new",
   });
 
@@ -55,7 +73,7 @@ export async function POST(request: NextRequest) {
   if (owner?.email) {
     await sendEmail({
       to: owner.email,
-      subject: `طلب تواصل جديد — ${office.name}`,
+      subject: `${kind === "booking" ? "طلب حجز استشارة" : "طلب تواصل"} جديد — ${office.name}`,
       html: emailLayout(
         "وصلك طلب تواصل جديد",
         `<b>الاسم:</b> ${name}<br/><b>التواصل:</b> ${contact}<br/><b>الرسالة:</b><br/>${(message || "—").replace(/</g, "&lt;")}<br/><br/>راجع رسائلك من لوحة التحكم.`,

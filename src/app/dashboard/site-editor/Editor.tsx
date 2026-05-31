@@ -909,6 +909,7 @@ export default function Editor({
             ["testimonials", "الآراء"],
             ["credentials", "الاعتمادات"],
             ["faq", "الأسئلة الشائعة"],
+            ["booking", "حجز استشارة"],
             ["contact", "التواصل"],
           ] as const).map(([key, label]) => {
             const on = c.visible?.[key] !== false;

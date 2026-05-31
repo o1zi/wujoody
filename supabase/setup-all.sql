@@ -15,6 +15,7 @@ create table if not exists public.leads (
   created_at  timestamptz not null default now()
 );
 create index if not exists leads_office_idx on public.leads(office_id, created_at desc);
+alter table public.leads add column if not exists kind text; -- 'message' | 'booking'
 alter table public.leads enable row level security;
 drop policy if exists leads_read_own on public.leads;
 create policy leads_read_own on public.leads

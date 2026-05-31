@@ -9,6 +9,7 @@ type Lead = {
   contact: string | null;
   message: string | null;
   status: string;
+  kind: string | null;
   created_at: string;
 };
 
@@ -26,7 +27,7 @@ export default async function LeadsPage() {
   const supabase = await createClient();
   const { data } = await supabase
     .from("leads")
-    .select("id, name, contact, message, status, created_at")
+    .select("id, name, contact, message, status, kind, created_at")
     .eq("office_id", ctx.office.id)
     .order("created_at", { ascending: false })
     .limit(200);
@@ -60,6 +61,9 @@ export default async function LeadsPage() {
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
                   <span className="font-semibold">{l.name || "—"}</span>
+                  {l.kind === "booking" && (
+                    <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-xs text-emerald-300">🗓️ حجز استشارة</span>
+                  )}
                   {l.status === "new" && (
                     <span className="rounded-full bg-accent/15 px-2 py-0.5 text-xs text-accent">جديدة</span>
                   )}
