@@ -23,17 +23,24 @@ export async function POST(request: NextRequest) {
   const msg = (update as any)?.message;
   const text: string = msg?.text || "";
   const chatId = msg?.chat?.id;
-  const m = text.match(/^\/start\s+(\S+)/);
-
-  if (m && chatId) {
-    const token = m[1];
-    const admin = createAdminClient();
-    const { data: office } = await admin.from("offices").select("id, name").eq("telegram_link_token", token).maybeSingle();
-    if (office) {
-      await admin.from("offices").update({ telegram_chat_id: String(chatId), telegram_link_token: null }).eq("id", office.id);
-      await sendTelegram(String(chatId), `✅ تم ربط مكتب «${office.name}» بنجاح.\nستصلك إشعارات العملاء الجدد هنا فوراً.`);
+  if (chatId && text.startsWith("/start")) {
+    const m = text.match(/^\/start\s+(\S+)/);
+    if (m) {
+      const token = m[1];
+      const admin = createAdminClient();
+      const { data: office } = await admin.from("offices").select("id, name").eq("telegram_link_token", token).maybeSingle();
+      if (office) {
+        await admin.from("offices").update({ telegram_chat_id: String(chatId), telegram_link_token: null }).eq("id", office.id);
+        await sendTelegram(String(chatId), `✅ تم ربط مكتب «${office.name}» بنجاح.\nستصلك إشعارات العملاء الجدد هنا فوراً.`);
+      } else {
+        await sendTelegram(String(chatId), "تعذّر الربط: رابط غير صالح أو منتهٍ. أنشئ رابطاً جديداً من لوحة التحكم.");
+      }
     } else {
-      await sendTelegram(String(chatId), "تعذّر الربط: رابط غير صالح أو منتهٍ. أنشئ رابطاً جديداً من لوحة التحكم.");
+      // Bare /start (typed manually) — guide the user to the dashboard link.
+      await sendTelegram(
+        String(chatId),
+        "مرحباً بك في رِواق 👋\nلربط مكتبك بالإشعارات: افتح لوحة التحكم ← «الإشعارات» ← اضغط «اربط تيليجرام». لا تكتب /start يدوياً.",
+      );
     }
   }
 
