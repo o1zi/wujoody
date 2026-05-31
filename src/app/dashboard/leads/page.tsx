@@ -1,7 +1,10 @@
 import { redirect } from "next/navigation";
 import { getSessionContext } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
+import { getPlanCaps } from "@/lib/plans-server";
 import { setLeadStatus } from "./actions";
+import LeadCrm from "./LeadCrm";
+import ExportCsv from "./ExportCsv";
 
 type Lead = {
   id: string;
@@ -10,6 +13,7 @@ type Lead = {
   message: string | null;
   status: string;
   kind: string | null;
+  note: string | null;
   created_at: string;
 };
 
@@ -25,14 +29,24 @@ export default async function LeadsPage() {
   }
 
   const supabase = await createClient();
+  const { data: sub } = await supabase
+    .from("subscriptions")
+    .select("plan")
+    .eq("office_id", ctx.office.id)
+    .eq("status", "active")
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  const caps = await getPlanCaps(sub?.plan);
+
   const q1 = await supabase
     .from("leads")
-    .select("id, name, contact, message, status, kind, created_at")
+    .select("id, name, contact, message, status, kind, note, created_at")
     .eq("office_id", ctx.office.id)
     .order("created_at", { ascending: false })
     .limit(200);
 
-  // Fallback if the `kind` column hasn't been added yet (setup-all.sql not run).
+  // Fallback if the new columns haven't been added yet (setup-all.sql not run).
   let rows = q1.data as Lead[] | null;
   if (!rows) {
     const q2 = await supabase
@@ -49,11 +63,14 @@ export default async function LeadsPage() {
 
   return (
     <div className="mx-auto max-w-4xl">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-3">
         <h1 className="text-2xl font-bold">الرسائل الواردة</h1>
-        {newCount > 0 && (
-          <span className="rounded-full bg-accent/15 px-3 py-1 text-sm text-accent">{newCount} جديدة</span>
-        )}
+        <div className="flex items-center gap-3">
+          {newCount > 0 && (
+            <span className="rounded-full bg-accent/15 px-3 py-1 text-sm text-accent">{newCount} جديدة</span>
+          )}
+          {caps.crm && leads.length > 0 && <ExportCsv rows={leads} />}
+        </div>
       </div>
       <p className="mt-1 text-muted">طلبات التواصل التي تصلك من زوّار موقعك.</p>
 
@@ -89,23 +106,26 @@ export default async function LeadsPage() {
                 <div className="mono text-xs text-muted">
                   {new Date(l.created_at).toLocaleString("ar-SA")}
                 </div>
-                <div className="mt-2 flex justify-end gap-2">
-                  {l.status === "new" ? (
-                    <form action={setLeadStatus.bind(null, l.id, "read")}>
-                      <button className="rounded-md border border-border px-2.5 py-1 text-xs hover:bg-surface-2">
-                        تمييز كمقروء
-                      </button>
-                    </form>
-                  ) : (
-                    <form action={setLeadStatus.bind(null, l.id, "archived")}>
-                      <button className="rounded-md border border-border px-2.5 py-1 text-xs text-muted hover:bg-surface-2">
-                        أرشفة
-                      </button>
-                    </form>
-                  )}
-                </div>
+                {!caps.crm && (
+                  <div className="mt-2 flex justify-end gap-2">
+                    {l.status === "new" ? (
+                      <form action={setLeadStatus.bind(null, l.id, "read")}>
+                        <button className="rounded-md border border-border px-2.5 py-1 text-xs hover:bg-surface-2">
+                          تمييز كمقروء
+                        </button>
+                      </form>
+                    ) : (
+                      <form action={setLeadStatus.bind(null, l.id, "archived")}>
+                        <button className="rounded-md border border-border px-2.5 py-1 text-xs text-muted hover:bg-surface-2">
+                          أرشفة
+                        </button>
+                      </form>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
+            {caps.crm && <LeadCrm id={l.id} status={l.status} note={l.note} />}
           </div>
         ))}
       </div>
