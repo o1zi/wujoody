@@ -46,6 +46,39 @@ export async function setOfficePlan(officeId: string, plan: string) {
   revalidatePath("/super-admin");
 }
 
+const RESERVED_SLUGS = new Set(["www", "app", "api", "admin", "mail", "dashboard", "super-admin"]);
+
+// Change an office's subdomain (slug). Returns {ok,error} for UI feedback.
+export async function setOfficeSlug(
+  officeId: string,
+  rawSlug: string,
+): Promise<{ ok: boolean; error?: string }> {
+  await assertSuperAdmin();
+  const slug = rawSlug
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9-]/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+
+  if (slug.length < 3) return { ok: false, error: "النطاق يجب أن يكون 3 أحرف على الأقل (إنجليزية/أرقام)." };
+  if (RESERVED_SLUGS.has(slug)) return { ok: false, error: "هذا النطاق محجوز للنظام." };
+
+  const admin = createAdminClient();
+  const { data: taken } = await admin
+    .from("offices")
+    .select("id")
+    .eq("slug", slug)
+    .neq("id", officeId)
+    .maybeSingle();
+  if (taken) return { ok: false, error: `النطاق "${slug}" مستخدم من مكتب آخر.` };
+
+  const { error } = await admin.from("offices").update({ slug }).eq("id", officeId);
+  if (error) return { ok: false, error: error.message };
+  revalidatePath("/super-admin");
+  return { ok: true };
+}
+
 export async function deleteOffice(officeId: string) {
   await assertSuperAdmin();
   const admin = createAdminClient();

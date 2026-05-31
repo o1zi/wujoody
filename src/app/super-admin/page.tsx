@@ -99,7 +99,7 @@ export default async function SuperAdminPage() {
                   </td>
                   <td className="px-4 py-3">
                     <OfficeActions
-                      office={{ id: o.id, status: o.status }}
+                      office={{ id: o.id, status: o.status, slug: o.slug }}
                       currentPlan={sub?.plan ?? null}
                       plans={planOptions}
                     />

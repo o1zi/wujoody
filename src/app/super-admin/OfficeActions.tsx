@@ -2,18 +2,27 @@
 
 import Link from "next/link";
 import { useTransition } from "react";
-import { setOfficeStatus, setOfficePlan, deleteOffice } from "./actions";
+import { setOfficeStatus, setOfficePlan, setOfficeSlug, deleteOffice } from "./actions";
 
 export default function OfficeActions({
   office,
   currentPlan,
   plans,
 }: {
-  office: { id: string; status: string };
+  office: { id: string; status: string; slug: string };
   currentPlan: string | null;
   plans: { code: string; name: string }[];
 }) {
   const [pending, start] = useTransition();
+
+  function changeSlug() {
+    const v = window.prompt("النطاق الفرعي الجديد (إنجليزي بدون مسافات):", office.slug);
+    if (!v || v.trim() === office.slug) return;
+    start(async () => {
+      const res = await setOfficeSlug(office.id, v);
+      if (!res.ok) alert(res.error || "تعذّر تغيير النطاق.");
+    });
+  }
 
   return (
     <div className="flex flex-wrap items-center gap-1.5">
@@ -45,6 +54,13 @@ export default function OfficeActions({
       >
         الرسائل
       </Link>
+      <button
+        disabled={pending}
+        onClick={changeSlug}
+        className="rounded-md border border-border px-2.5 py-1 text-xs hover:bg-surface-2"
+      >
+        تغيير النطاق
+      </button>
 
       {office.status !== "active" && (
         <button
