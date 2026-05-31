@@ -113,9 +113,9 @@ export default function Editor({
       });
       const dur = v.duration || 1;
       const FPS = 16; // frames per second of video (Awtad-style)
-      const QUALITY = 0.92; // high JPEG quality — keep the footage crisp
-      const MAX_W = 1920; // don't upscale; only cap very large footage
-      const CAP = 600; // safety bound on total frames
+      const QUALITY = 0.85; // good JPEG quality, lighter on memory
+      const MAX_W = 1280; // cap width to avoid freezing the browser
+      const CAP = 400; // safety bound on total frames
       const nativeW = v.videoWidth || MAX_W;
       const nativeH = v.videoHeight || Math.round((MAX_W * 9) / 16);
       const sc = Math.min(1, MAX_W / nativeW);
@@ -131,11 +131,26 @@ export default function Editor({
       let lastT = -1;
 
       await new Promise<void>((resolve, reject) => {
-        const hasRVFC = typeof (v as unknown as { requestVideoFrameCallback?: unknown }).requestVideoFrameCallback === "function";
-        const finish = () => resolve();
-        v.onended = finish;
-        v.onerror = () => reject(new Error("play"));
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const va = v as any;
+        const hasRVFC = typeof va.requestVideoFrameCallback === "function";
+        let done = false;
+        // watchdog: never hang, even if "ended" never fires for this encoding.
+        const watchdog = setTimeout(() => finish(), Math.min(60000, (dur / 2) * 1000 + 15000));
+        const finish = () => {
+          if (done) return;
+          done = true;
+          clearTimeout(watchdog);
+          resolve();
+        };
+        const fail = () => {
+          if (done) return;
+          done = true;
+          clearTimeout(watchdog);
+          reject(new Error("capture"));
+        };
         const cap = () => {
+          if (done) return;
           if (lastT < 0 || v.currentTime - lastT >= minStep - 0.0001) {
             tctx.drawImage(v, 0, 0, ew, eh);
             shots.push(tmp.toDataURL("image/jpeg", QUALITY));
@@ -143,15 +158,18 @@ export default function Editor({
             setExtractInfo(`التقاط الإطارات… ${shots.length}`);
             if (shots.length >= MAXF) return finish();
           }
-          if (hasRVFC) (v as unknown as { requestVideoFrameCallback: (cb: () => void) => void }).requestVideoFrameCallback(cap);
+          if (v.duration && v.currentTime >= v.duration - 0.05) return finish();
+          if (hasRVFC) va.requestVideoFrameCallback(cap);
         };
+        v.onended = finish;
+        v.onerror = fail;
         v.playbackRate = 2;
         v.play()
           .then(() => {
-            if (hasRVFC) (v as unknown as { requestVideoFrameCallback: (cb: () => void) => void }).requestVideoFrameCallback(cap);
+            if (hasRVFC) va.requestVideoFrameCallback(cap);
             else v.ontimeupdate = cap;
           })
-          .catch(() => reject(new Error("autoplay")));
+          .catch(fail);
       });
       v.pause();
 
