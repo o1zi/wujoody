@@ -24,10 +24,10 @@ export default async function SuperOfficeLeads({ params }: { params: Params }) {
       <h1 className="mt-1 text-lg font-bold">رسائل: {office.name}</h1>
       <div className="mt-5 space-y-3">
         {(leads ?? []).length === 0 && (
-          <div className="rounded-2xl border border-border bg-surface p-8 text-center text-muted">لا توجد رسائل.</div>
+          <div className="rounded-2xl glass-panel p-8 text-center text-muted">لا توجد رسائل.</div>
         )}
         {(leads ?? []).map((l) => (
-          <div key={l.id} className="rounded-2xl border border-border bg-surface p-5">
+          <div key={l.id} className="rounded-2xl glass-panel p-5">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <div className="font-semibold">{l.name || "—"}</div>

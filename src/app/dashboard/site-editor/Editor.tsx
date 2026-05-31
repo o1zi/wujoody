@@ -43,7 +43,7 @@ function dataURLtoBlob(d: string): Blob {
 }
 
 const inputCls =
-  "w-full rounded-lg border border-border bg-surface-2 px-3 py-2 text-sm outline-none focus:border-accent";
+  "w-full rounded-lg glass-panel-2 px-3 py-2 text-sm outline-none focus:border-accent";
 
 export default function Editor({
   officeId,
@@ -214,7 +214,7 @@ export default function Editor({
     const val = deepGet(c, path) as string | null;
     return (
       <div className="flex items-center gap-3">
-        <div className="h-14 w-14 shrink-0 overflow-hidden rounded-lg border border-border bg-surface-2">
+        <div className="h-14 w-14 shrink-0 overflow-hidden rounded-lg glass-panel-2">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           {val ? <img src={val} alt="" className="h-full w-full object-cover" /> : null}
         </div>
@@ -669,7 +669,7 @@ export default function Editor({
       </Section>
 
       <Section title="التواصل">
-        <div className="space-y-3 rounded-lg border border-border bg-surface-2/40 p-3">
+        <div className="space-y-3 rounded-lg glass-panel-2/40 p-3">
           <div>
             {text("رقم واتساب (مع رمز الدولة بدون +)", "contact.whatsapp", "ltr")}
             <p className="mt-1 text-xs text-muted">مثال: 9665XXXXXXXX. إن تُرك فارغاً يُستخدم رقم الهاتف.</p>
@@ -741,7 +741,7 @@ export default function Editor({
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="mt-6 rounded-2xl border border-border bg-surface p-6">
+    <section className="mt-6 rounded-2xl glass-panel p-6">
       <h2 className="mb-4 text-lg font-semibold">{title}</h2>
       <div className="space-y-4">{children}</div>
     </section>
@@ -775,7 +775,7 @@ function ListEditor<T>({
       </div>
       <div className="space-y-4">
         {items.map((item, i) => (
-          <div key={i} className="rounded-xl border border-border bg-surface-2/40 p-4">
+          <div key={i} className="rounded-xl glass-panel-2/40 p-4">
             <div className="mb-2 flex items-center justify-between">
               <span className="mono text-xs text-muted">#{i + 1}</span>
               <button

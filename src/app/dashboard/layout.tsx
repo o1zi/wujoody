@@ -36,8 +36,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
   ];
 
   return (
-    <div className="grid min-h-dvh md:grid-cols-[260px_1fr]">
-      <aside className="flex flex-col border-l border-border bg-surface p-5">
+    <div className="admin-shell grid min-h-dvh md:grid-cols-[260px_1fr]">
+      <aside className="glass-panel flex flex-col border-0 border-l border-white/10 p-5">
         <Link href="/dashboard" className="text-lg font-bold">
           لوحة التحكم<span className="text-accent">.</span>
         </Link>

@@ -8,8 +8,8 @@ export default async function SuperAdminLayout({ children }: { children: React.R
   if (!isAllowedSuperAdmin(ctx.email, ctx.profile?.role)) redirect("/dashboard");
 
   return (
-    <div className="min-h-dvh">
-      <header className="border-b border-border bg-surface">
+    <div className="admin-shell min-h-dvh">
+      <header className="glass-panel sticky top-0 z-30 border-x-0 border-t-0 border-b border-white/10">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <div className="flex items-center gap-5">
             <Link href="/super-admin" className="text-lg font-bold">

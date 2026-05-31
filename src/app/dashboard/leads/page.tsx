@@ -17,7 +17,7 @@ export default async function LeadsPage() {
   if (!ctx) redirect("/login");
   if (!ctx.office) {
     return (
-      <div className="mx-auto max-w-2xl rounded-2xl border border-border bg-surface p-8 text-center">
+      <div className="mx-auto max-w-2xl rounded-2xl glass-panel p-8 text-center">
         <h1 className="text-xl font-bold">لا يوجد مكتب مرتبط بحسابك</h1>
       </div>
     );
@@ -46,7 +46,7 @@ export default async function LeadsPage() {
 
       <div className="mt-6 space-y-3">
         {leads.length === 0 && (
-          <div className="rounded-2xl border border-border bg-surface p-10 text-center text-muted">
+          <div className="rounded-2xl glass-panel p-10 text-center text-muted">
             لا توجد رسائل بعد. ستظهر هنا فور إرسال أي زائر نموذج «تواصل معنا».
           </div>
         )}

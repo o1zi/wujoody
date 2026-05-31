@@ -43,7 +43,7 @@ export default async function SubscriptionPage() {
         </div>
       ) : null}
 
-      <div className="mt-6 rounded-xl border border-border bg-surface p-4 text-sm text-muted">
+      <div className="mt-6 rounded-xl glass-panel p-4 text-sm text-muted">
         مهم: ادفع باستخدام <span className="text-foreground">نفس بريدك المسجّل في المنصة</span>{" "}
         (<span dir="ltr" className="mono">{ctx.email}</span>) ليُربط الدفع بمكتبك تلقائياً.
       </div>

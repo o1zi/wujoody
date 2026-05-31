@@ -116,7 +116,7 @@ export default async function SuperAdminPage() {
 
 function Stat({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-2xl border border-border bg-surface p-5">
+    <div className="rounded-2xl glass-panel p-5">
       <div className="text-3xl font-bold">{value}</div>
       <div className="mt-1 text-sm text-muted">{label}</div>
     </div>

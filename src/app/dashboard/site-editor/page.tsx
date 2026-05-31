@@ -11,7 +11,7 @@ export default async function SiteEditorPage() {
   if (!ctx) redirect("/login");
   if (!ctx.office) {
     return (
-      <div className="mx-auto max-w-2xl rounded-2xl border border-border bg-surface p-8 text-center">
+      <div className="mx-auto max-w-2xl rounded-2xl glass-panel p-8 text-center">
         <h1 className="text-xl font-bold">لا يوجد مكتب مرتبط بحسابك</h1>
         <p className="mt-2 text-muted">تواصل مع الدعم لربط حسابك بمكتب.</p>
       </div>

@@ -33,7 +33,7 @@ export default async function DashboardHome() {
       <p className="mt-1 text-muted">هذه نظرة سريعة على حالة مكتبك وموقعك.</p>
 
       <div className="mt-8 grid gap-5 sm:grid-cols-2">
-        <div className="rounded-2xl border border-border bg-surface p-6">
+        <div className="rounded-2xl glass-panel p-6">
           <div className="mono text-xs text-muted">حالة الموقع</div>
           <div className="mt-2 text-xl font-semibold">
             {isLive ? "موقعك يعمل الآن ✓" : "غير مُفعّل بعد"}
@@ -49,7 +49,7 @@ export default async function DashboardHome() {
           )}
         </div>
 
-        <div className="rounded-2xl border border-border bg-surface p-6">
+        <div className="rounded-2xl glass-panel p-6">
           <div className="mono text-xs text-muted">الاشتراك</div>
           <div className="mt-2 text-xl font-semibold">
             {subStatus === "active" ? "اشتراك نشط" : subStatus === "pending" ? "بانتظار الدفع" : "لا يوجد اشتراك"}
@@ -65,7 +65,7 @@ export default async function DashboardHome() {
         </div>
       </div>
 
-      <div className="mt-5 rounded-2xl border border-border bg-surface p-6">
+      <div className="mt-5 rounded-2xl glass-panel p-6">
         <div className="flex items-center justify-between">
           <div>
             <div className="text-lg font-semibold">محرّر الموقع</div>

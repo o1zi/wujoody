@@ -35,10 +35,10 @@ export default function PlanEditor({ plan }: { plan: PlanRow }) {
     });
   }
 
-  const input = "w-full rounded-lg border border-border bg-surface-2 px-3 py-2 text-sm outline-none focus:border-accent";
+  const input = "w-full rounded-lg glass-panel-2 px-3 py-2 text-sm outline-none focus:border-accent";
 
   return (
-    <div className="rounded-2xl border border-border bg-surface p-5">
+    <div className="rounded-2xl glass-panel p-5">
       <div className="mono mb-3 text-xs text-muted">{plan.code}</div>
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="block">

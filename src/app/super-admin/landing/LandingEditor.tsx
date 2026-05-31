@@ -29,11 +29,11 @@ function deepGet(obj: any, path: string): any {
   return path.split(".").reduce((a, k) => (a == null ? a : a[k]), obj);
 }
 
-const inputCls = "w-full rounded-lg border border-border bg-surface-2 px-3 py-2 text-sm outline-none focus:border-accent";
+const inputCls = "w-full rounded-lg glass-panel-2 px-3 py-2 text-sm outline-none focus:border-accent";
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="rounded-2xl border border-border bg-surface p-6">
+    <section className="rounded-2xl glass-panel p-6">
       <h2 className="mb-4 text-lg font-semibold">{title}</h2>
       <div className="space-y-4">{children}</div>
     </section>
@@ -163,7 +163,7 @@ export default function LandingEditor({ initial }: { initial: LandingContent }) 
         {text("عنوان القسم", "features.title")}
         {area("وصف القسم", "features.lead")}
         {c.features.items.map((_, i) => (
-          <div className="rounded-xl border border-border bg-surface-2/40 p-4" key={i}>
+          <div className="rounded-xl glass-panel-2/40 p-4" key={i}>
             <div className="mono mb-2 text-xs text-muted">ميزة #{i + 1}</div>
             {text("العنوان", `features.items.${i}.title`)}
             {area("الوصف", `features.items.${i}.desc`)}
@@ -174,7 +174,7 @@ export default function LandingEditor({ initial }: { initial: LandingContent }) 
       <Section title="كيف تبدأ">
         {text("عنوان القسم", "steps.title")}
         {c.steps.items.map((_, i) => (
-          <div className="rounded-xl border border-border bg-surface-2/40 p-4" key={i}>
+          <div className="rounded-xl glass-panel-2/40 p-4" key={i}>
             <div className="mono mb-2 text-xs text-muted">خطوة #{i + 1}</div>
             {text("العنوان", `steps.items.${i}.title`)}
             {area("الوصف", `steps.items.${i}.desc`)}
