@@ -255,7 +255,7 @@ export default async function HomePage() {
                 <p className="sec-lead" style={{ marginBottom: 28 }}>
                   مدعومة عبر بوابة سلة الآمنة — بطاقات، محافظ رقمية، وتقسيط.
                 </p>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(130px, 1fr))", gap: 12 }}>
                   {PAYMENT_METHODS.map((p) => (
                     <div
                       key={p.id}
@@ -265,7 +265,6 @@ export default async function HomePage() {
                         borderRadius: 12,
                         padding: "12px 22px",
                         height: 74,
-                        minWidth: 128,
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
