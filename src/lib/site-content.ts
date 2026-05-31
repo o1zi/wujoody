@@ -1,7 +1,13 @@
 // Shape of an office site's editable content + sensible defaults (from the Awtad template).
 
 export type SiteContent = {
-  theme: { accent: "bronze" | "terracotta" | "azure" | "sage" };
+  theme: {
+    accent: "bronze" | "terracotta" | "azure" | "sage";
+    accentHex?: string | null; // custom accent color; overrides the preset when set
+    font?: string; // key from SITE_FONTS
+    cardStyle?: "glass" | "solid" | "outline";
+    cardRadius?: "sharp" | "soft" | "round";
+  };
   media: {
     bgVideo: string | null;
     bgMode: "video" | "frames" | "solid";
@@ -63,7 +69,7 @@ export type SiteContent = {
 };
 
 export const defaultContent: SiteContent = {
-  theme: { accent: "bronze" },
+  theme: { accent: "bronze", accentHex: null, font: "readex", cardStyle: "glass", cardRadius: "soft" },
   media: { bgVideo: null, bgMode: "video", frames: null, solid: "black" },
   brand: { ar: "أوتاد", en: "AWTAD", logo: null },
   coordinates: { lat: "24.7136°N", lng: "46.6753°E", label: "RIYADH · KSA" },

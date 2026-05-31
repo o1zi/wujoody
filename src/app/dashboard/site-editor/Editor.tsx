@@ -5,7 +5,19 @@ import { createClient } from "@/lib/supabase/client";
 import type { SiteContent } from "@/lib/site-content";
 import type { PlanCaps } from "@/lib/plans";
 import { BG_PRESETS } from "@/lib/bg-presets";
+import { SITE_FONTS } from "@/lib/site-fonts";
 import { Button, Alert } from "@/components/ui";
+
+const CARD_STYLES: { key: NonNullable<SiteContent["theme"]["cardStyle"]>; label: string; hint: string }[] = [
+  { key: "glass", label: "زجاجي", hint: "ضبابي شفاف (الافتراضي)" },
+  { key: "solid", label: "صلب", hint: "خلفية معتمة نظيفة" },
+  { key: "outline", label: "محدّد", hint: "شفاف بإطار ملوّن" },
+];
+const CARD_RADII: { key: NonNullable<SiteContent["theme"]["cardRadius"]>; label: string }[] = [
+  { key: "sharp", label: "حواف حادّة" },
+  { key: "soft", label: "حواف ناعمة" },
+  { key: "round", label: "دائرية" },
+];
 
 const ACCENTS: { key: SiteContent["theme"]["accent"]; label: string; hex: string }[] = [
   { key: "bronze", label: "برونزي", hex: "#C2974E" },
@@ -354,6 +366,75 @@ export default function Editor({
           {text("خط العرض", "coordinates.lat", "ltr")}
           {text("خط الطول", "coordinates.lng", "ltr")}
           {text("المدينة (لاتيني)", "coordinates.label", "ltr")}
+        </div>
+      </Section>
+
+      <Section title="مظهر الموقع">
+        <p className="text-xs text-muted">غيّر خط الموقع وشكل البطاقات ولون التمييز. تظهر التغييرات بعد الحفظ وتحديث الموقع.</p>
+
+        <label className="block">
+          <span className="mb-1 block text-xs text-muted">خط الموقع</span>
+          <select
+            className={inputCls}
+            value={c.theme.font ?? "readex"}
+            onChange={(e) => set("theme.font", e.target.value)}
+          >
+            {SITE_FONTS.map((f) => (
+              <option key={f.key} value={f.key}>{f.label}</option>
+            ))}
+          </select>
+        </label>
+
+        <div>
+          <span className="mb-2 block text-xs text-muted">شكل البطاقات</span>
+          <div className="grid gap-2 sm:grid-cols-3">
+            {CARD_STYLES.map((s) => (
+              <button
+                key={s.key}
+                type="button"
+                onClick={() => set("theme.cardStyle", s.key)}
+                className={`rounded-lg border p-3 text-right ${(c.theme.cardStyle ?? "glass") === s.key ? "border-accent" : "border-border"}`}
+              >
+                <div className="text-sm font-medium">{s.label}</div>
+                <div className="mt-1 text-xs text-muted">{s.hint}</div>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <span className="mb-2 block text-xs text-muted">استدارة الحواف</span>
+          <div className="flex flex-wrap gap-2">
+            {CARD_RADII.map((r) => (
+              <button
+                key={r.key}
+                type="button"
+                onClick={() => set("theme.cardRadius", r.key)}
+                className={`rounded-lg border px-4 py-2 text-sm ${(c.theme.cardRadius ?? "soft") === r.key ? "border-accent" : "border-border"}`}
+              >
+                {r.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <span className="mb-2 block text-xs text-muted">لون مخصّص للتمييز (اختياري)</span>
+          <div className="flex items-center gap-3">
+            <input
+              type="color"
+              value={c.theme.accentHex || "#C2974E"}
+              onChange={(e) => set("theme.accentHex", e.target.value)}
+              className="h-10 w-14 cursor-pointer rounded-lg border border-border bg-transparent p-1"
+            />
+            <span className="mono text-xs text-muted" dir="ltr">{c.theme.accentHex || "—"}</span>
+            {c.theme.accentHex && (
+              <button type="button" className="text-xs text-red-400 hover:underline" onClick={() => set("theme.accentHex", null)}>
+                إلغاء (استخدم لون الباقة أعلاه)
+              </button>
+            )}
+          </div>
+          <p className="mt-1 text-xs text-muted">يتجاوز ألوان التمييز الجاهزة في قسم «الهوية واللون».</p>
         </div>
       </Section>
 

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { mergeContent, clampMedia } from "@/lib/site-content";
+import { googleFontsHref } from "@/lib/site-fonts";
 import { getPlanCaps } from "@/lib/plans-server";
 import { tenantUrl } from "@/lib/urls";
 import SiteView from "@/components/site/SiteView";
@@ -133,6 +134,8 @@ export default async function TenantSite({ params }: { params: Params }) {
     <>
       {/* eslint-disable-next-line @next/next/no-css-tags */}
       <link rel="stylesheet" href="/site-template/site.css" precedence="high" />
+      {/* eslint-disable-next-line @next/next/no-css-tags */}
+      <link rel="stylesheet" href={googleFontsHref([data.content.theme.font || "readex"])} precedence="high" />
       <SiteView content={data.content} slug={data.office.slug} />
       <CinematicRuntime />
     </>

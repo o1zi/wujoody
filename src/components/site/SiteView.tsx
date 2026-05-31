@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import type { SiteContent } from "@/lib/site-content";
+import { fontByKey } from "@/lib/site-fonts";
 import { tenantUrl } from "@/lib/urls";
 import ContactForm from "./ContactForm";
 import ProjectsGallery from "./ProjectsGallery";
@@ -10,6 +11,16 @@ const ACCENTS: Record<string, { hex: string; rgb: string }> = {
   azure: { hex: "#4C7DF0", rgb: "76,125,240" },
   sage: { hex: "#8FA66E", rgb: "143,166,110" },
 };
+
+const CARD_RADIUS: Record<string, string> = { sharp: "6px", soft: "16px", round: "28px" };
+
+// "#RRGGBB" -> "r,g,b" (for the accent glow). Returns null on bad input.
+function hexToRgb(hex?: string | null): string | null {
+  const m = /^#?([0-9a-f]{6})$/i.exec((hex || "").trim());
+  if (!m) return null;
+  const n = parseInt(m[1], 16);
+  return `${(n >> 16) & 255},${(n >> 8) & 255},${n & 255}`;
+}
 
 function Slot({ src, label, kind = "image" }: { src: string | null; label: string; kind?: "person" | "project" | "image" }) {
   if (src) {
@@ -124,7 +135,12 @@ function MacBar() {
 }
 
 export default function SiteView({ content, slug }: { content: SiteContent; slug: string }) {
-  const accent = ACCENTS[content.theme.accent] ?? ACCENTS.bronze;
+  const preset = ACCENTS[content.theme.accent] ?? ACCENTS.bronze;
+  const customRgb = hexToRgb(content.theme.accentHex);
+  const accent = customRgb ? { hex: content.theme.accentHex as string, rgb: customRgb } : preset;
+  const fontFamily = fontByKey(content.theme.font).family;
+  const cardStyle = content.theme.cardStyle ?? "glass";
+  const cardRadius = CARD_RADIUS[content.theme.cardRadius ?? "soft"] ?? CARD_RADIUS.soft;
   const { brand } = content;
   const m = content.media;
   const isSolid = m?.bgMode === "solid";
@@ -162,7 +178,14 @@ export default function SiteView({ content, slug }: { content: SiteContent; slug
   return (
     <div
       className={isSolid && solidColor === "white" ? "theme-light" : undefined}
-      style={{ ["--accent" as string]: accent.hex, ["--accent-rgb" as string]: accent.rgb }}
+      data-card={cardStyle}
+      data-font={content.theme.font || "readex"}
+      style={{
+        ["--accent" as string]: accent.hex,
+        ["--accent-rgb" as string]: accent.rgb,
+        ["--card-radius" as string]: cardRadius,
+        fontFamily,
+      }}
     >
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <script dangerouslySetInnerHTML={{ __html: `window.__OFFICE_SLUG__=${JSON.stringify(slug)};` }} />

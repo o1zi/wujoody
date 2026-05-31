@@ -476,3 +476,29 @@ button{font-family:inherit;cursor:pointer}
   .reveal{transition-duration:.4s}
   .bg-grain{animation:none}
 }
+
+/* ============================================================
+   مظهر الموقع — per-office theme overrides (font / card shape / radius).
+   These come last so they win over the defaults above by source order.
+   Driven by inline vars + data-attributes set on the site wrapper.
+   ============================================================ */
+/* Chosen Arabic font: wrapper sets font-family; force display text to inherit
+   it (these elements otherwise hard-code Readex Pro). Mono/Latin accents keep
+   their own family on purpose. */
+[data-font] h1,[data-font] h2,[data-font] h3,[data-font] h4,
+[data-font] .hero-mark,[data-font] .hero-sub,[data-font] .brand .ar,
+[data-font] .loader .mk,[data-font] .glass-card,[data-font] p{font-family:inherit}
+
+/* Card corner radius */
+.glass-card{border-radius:var(--card-radius,16px)}
+
+/* Card style: solid (no blur, opaque) */
+[data-card="solid"] .glass-card{
+  background:#0f141b;-webkit-backdrop-filter:none;backdrop-filter:none;
+  border-color:rgba(255,255,255,.10)}
+.theme-light[data-card="solid"] .glass-card{background:#ffffff;border-color:rgba(14,17,22,.10)}
+
+/* Card style: outline (transparent, accent border) */
+[data-card="outline"] .glass-card{
+  background:transparent;-webkit-backdrop-filter:none;backdrop-filter:none;
+  border-color:var(--accent);box-shadow:none}
