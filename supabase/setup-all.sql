@@ -120,6 +120,11 @@ create policy site_events_read on public.site_events
 -- ---------- 3d) profiles.phone (ربط دفع سلة برقم الجوال) ----------
 alter table public.profiles add column if not exists phone text;
 
+-- ---------- 3e) offices: النطاق الخاص (Pro) ----------
+alter table public.offices add column if not exists custom_domain text;
+alter table public.offices add column if not exists domain_status text not null default 'none';
+create unique index if not exists offices_custom_domain_key on public.offices(custom_domain) where custom_domain is not null;
+
 -- إعادة إنشاء الدالة لتخزين رقم الجوال من بيانات التسجيل (آمن لإعادة التشغيل).
 create or replace function public.handle_new_user()
 returns trigger language plpgsql security definer set search_path = public as $$

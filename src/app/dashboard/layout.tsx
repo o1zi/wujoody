@@ -39,7 +39,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
     newSupport = supportCount ?? 0;
   }
 
-  let isPremium = false;
+  let caps = await getPlanCaps(undefined);
   if (office) {
     const supabase = await createClient();
     const { data: sub } = await supabase
@@ -50,14 +50,15 @@ export default async function DashboardLayout({ children }: { children: React.Re
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle();
-    isPremium = (await getPlanCaps(sub?.plan)).upload;
+    caps = await getPlanCaps(sub?.plan);
   }
 
   const nav = [
     { href: "/dashboard", label: "نظرة عامة", badge: 0 },
     { href: "/dashboard/leads", label: "الرسائل", badge: newLeads },
-    ...(isPremium ? [{ href: "/dashboard/analytics", label: "التحليلات", badge: 0 }] : []),
+    ...(caps.upload ? [{ href: "/dashboard/analytics", label: "التحليلات", badge: 0 }] : []),
     { href: "/dashboard/site-editor", label: "محرّر الموقع", badge: 0 },
+    ...(caps.customDomain ? [{ href: "/dashboard/domain", label: "النطاق الخاص", badge: 0 }] : []),
     { href: "/dashboard/subscription", label: "الاشتراك", badge: 0 },
     { href: "/dashboard/support", label: "الدعم الفني", badge: newSupport },
   ];
