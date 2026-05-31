@@ -74,6 +74,34 @@ export default function Editor({
   const [c, setC] = useState<SiteContent>(initial);
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<{ kind: "success" | "error"; text: string } | null>(null);
+  const [aiBusy, setAiBusy] = useState(false);
+  const [aiSpecialty, setAiSpecialty] = useState("");
+
+  async function generateAi() {
+    setAiBusy(true);
+    setMsg(null);
+    try {
+      const res = await fetch("/api/ai/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: c.brand.ar, specialty: aiSpecialty }),
+      });
+      const d = await res.json();
+      if (!res.ok) throw new Error(d.error || "fail");
+      setC((prev) => {
+        let next = prev;
+        if (d.aboutLead) next = deepSet(next, "about.lead", d.aboutLead);
+        if (d.aboutBody) next = deepSet(next, "about.body", d.aboutBody);
+        if (Array.isArray(d.services) && d.services.length) next = deepSet(next, "services.items", d.services);
+        return next;
+      });
+      setMsg({ kind: "success", text: "تم توليد المحتوى بالذكاء الاصطناعي. راجعه ثم احفظ." });
+    } catch {
+      setMsg({ kind: "error", text: "تعذّر توليد المحتوى. تأكد أن الميزة مفعّلة في باقتك." });
+    } finally {
+      setAiBusy(false);
+    }
+  }
 
   const set = (path: string, value: unknown) => setC((prev) => deepSet(prev, path, value));
 
@@ -674,6 +702,27 @@ export default function Editor({
       </Section>
 
       <Section title="من نحن">
+        {caps.aiContent && (
+          <div className="rounded-lg border border-dashed border-accent/50 p-3">
+            <p className="mb-2 text-xs text-muted">✨ دع الذكاء الاصطناعي يكتب «من نحن» و«الخدمات» تلقائياً.</p>
+            <div className="flex gap-2">
+              <input
+                className={inputCls}
+                placeholder="تخصص المكتب (اختياري) — مثال: تصميم معماري وإشراف"
+                value={aiSpecialty}
+                onChange={(e) => setAiSpecialty(e.target.value)}
+              />
+              <button
+                type="button"
+                onClick={generateAi}
+                disabled={aiBusy}
+                className="shrink-0 rounded-lg bg-accent px-4 text-sm font-medium text-[#0b0d10] hover:bg-accent-soft disabled:opacity-60"
+              >
+                {aiBusy ? "…" : "اكتب لي"}
+              </button>
+            </div>
+          </div>
+        )}
         {area("العنوان الرئيسي", "about.lead")}
         {area("النص", "about.body")}
         <ListEditor
