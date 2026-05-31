@@ -63,7 +63,7 @@ button{font-family:inherit;cursor:pointer}
   animation:grain 6s steps(6) infinite}
 @keyframes grain{0%{transform:translate(0,0)}20%{transform:translate(-4%,3%)}40%{transform:translate(3%,-3%)}60%{transform:translate(-2%,2%)}80%{transform:translate(2%,-4%)}100%{transform:translate(0,0)}}
 /* faint blueprint grid */
-.bg-grid{position:absolute;inset:0;pointer-events:none;opacity:.5;
+.bg-grid{display:none !important;position:absolute;inset:0;pointer-events:none;opacity:.5;
   background-image:
     linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),
     linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);
