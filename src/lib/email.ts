@@ -12,7 +12,7 @@ export async function sendEmail({
   html: string;
 }): Promise<boolean> {
   const key = process.env.RESEND_API_KEY;
-  const from = process.env.EMAIL_FROM || "Wujood <onboarding@resend.dev>";
+  const from = process.env.EMAIL_FROM || "Riwaq <onboarding@resend.dev>";
   if (!key) return false;
   try {
     const res = await fetch("https://api.resend.com/emails", {

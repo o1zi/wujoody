@@ -116,6 +116,38 @@ drop policy if exists site_events_read on public.site_events;
 create policy site_events_read on public.site_events
   for select using (office_id = public.current_office_id() or public.is_super_admin());
 
+-- ---------- 3d) profiles.phone (ربط دفع سلة برقم الجوال) ----------
+alter table public.profiles add column if not exists phone text;
+
+-- إعادة إنشاء الدالة لتخزين رقم الجوال من بيانات التسجيل (آمن لإعادة التشغيل).
+create or replace function public.handle_new_user()
+returns trigger language plpgsql security definer set search_path = public as $$
+declare
+  v_office_id uuid;
+  v_slug text := nullif(new.raw_user_meta_data->>'office_slug', '');
+  v_office_name text := coalesce(nullif(new.raw_user_meta_data->>'office_name',''), 'مكتب هندسي');
+begin
+  if v_slug is not null then
+    insert into public.offices(owner_id, name, slug, status)
+    values (new.id, v_office_name, v_slug, 'pending')
+    returning id into v_office_id;
+
+    insert into public.site_content(office_id, content)
+    values (v_office_id, '{}'::jsonb);
+  end if;
+
+  insert into public.profiles(id, email, phone, full_name, role, office_id)
+  values (
+    new.id,
+    new.email,
+    nullif(new.raw_user_meta_data->>'phone', ''),
+    coalesce(new.raw_user_meta_data->>'full_name',''),
+    'office_admin',
+    v_office_id
+  );
+  return new;
+end $$;
+
 -- ---------- 4) storage: السماح للسوبر أدمن برفع وسائط أي مكتب ----------
 drop policy if exists site_media_owner_write on storage.objects;
 create policy site_media_owner_write on storage.objects

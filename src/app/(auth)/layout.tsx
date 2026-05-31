@@ -22,7 +22,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         href="/"
         style={{ fontFamily: '"Readex Pro",sans-serif', fontWeight: 600, fontSize: 30, color: "#fff", marginBottom: 22 }}
       >
-        وجود<span style={{ color: "var(--accent)" }}>.</span>
+        رِواق<span style={{ color: "var(--accent)" }}>.</span>
       </Link>
 
       <div className="glass-card" style={{ width: "100%", maxWidth: 430 }}>

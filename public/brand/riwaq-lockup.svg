@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400" width="1200" height="400">
+  <defs>
+    <linearGradient id="gold" gradientUnits="userSpaceOnUse" x1="0" y1="120" x2="0" y2="320">
+      <stop offset="0" stop-color="#E7CB82"/>
+      <stop offset="0.55" stop-color="#CDA258"/>
+      <stop offset="1" stop-color="#B0813A"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="1200" height="400" rx="56" fill="#0B0D10"/>
+  <g transform="translate(235 92) scale(0.66)" fill="none" stroke="url(#gold)" stroke-width="20" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M150 356 V236"/>
+    <path d="M224 356 V236"/>
+    <path d="M298 356 V236"/>
+    <path d="M372 356 V236"/>
+    <path d="M150 236 A37 37 0 0 1 224 236"/>
+    <path d="M224 236 A37 37 0 0 1 298 236"/>
+    <path d="M298 236 A37 37 0 0 1 372 236"/>
+    <path d="M122 368 H400"/>
+  </g>
+  <text x="735" y="232" text-anchor="middle" font-family="'Readex Pro','Segoe UI',Tahoma,sans-serif" font-size="132" font-weight="700" fill="#FFFFFF" direction="rtl">رِواق</text>
+  <text x="735" y="300" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="38" font-weight="500" letter-spacing="16" fill="#CDA258">RIWAQ</text>
+</svg>

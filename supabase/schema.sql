@@ -30,6 +30,7 @@ create index if not exists offices_owner_idx on public.offices(owner_id);
 create table if not exists public.profiles (
   id          uuid primary key references auth.users(id) on delete cascade,
   email       text,
+  phone       text,
   full_name   text,
   role        public.user_role not null default 'office_admin',
   office_id   uuid references public.offices(id) on delete set null,
@@ -121,10 +122,11 @@ begin
     values (v_office_id, '{}'::jsonb);
   end if;
 
-  insert into public.profiles(id, email, full_name, role, office_id)
+  insert into public.profiles(id, email, phone, full_name, role, office_id)
   values (
     new.id,
     new.email,
+    nullif(new.raw_user_meta_data->>'phone', ''),
     coalesce(new.raw_user_meta_data->>'full_name',''),
     'office_admin',
     v_office_id

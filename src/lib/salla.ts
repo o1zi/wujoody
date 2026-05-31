@@ -60,6 +60,22 @@ export function isPaidEvent(evt: SallaEvent): boolean {
   return false;
 }
 
+// We append `?office=<uuid>` to each plan's Salla payment link. Salla carries
+// the checkout entry URL into the order payload, so we recover the office id by
+// scanning the raw body for our marker — wherever (and however encoded) it lands.
+export function extractOfficeId(rawBody: string): string | null {
+  const re =
+    /office(?:_id)?(?:=|%3d|"\s*:\s*"|\s*:\s*)\s*"?([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i;
+  let decoded = rawBody;
+  try {
+    decoded = decodeURIComponent(rawBody);
+  } catch {
+    // rawBody may contain stray % that isn't a valid escape; fall back to raw.
+  }
+  const m = decoded.match(re) || rawBody.match(re);
+  return m ? m[1].toLowerCase() : null;
+}
+
 // Extract the first product id from an order's line items.
 export function extractProductId(evt: SallaEvent): string | null {
   const items = evt.data?.items;

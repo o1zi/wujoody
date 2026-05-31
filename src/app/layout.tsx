@@ -15,8 +15,8 @@ const mono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "منصة المكاتب الهندسية",
-  description: "أنشئ موقعاً احترافياً لمكتبك الهندسي بنطاق فرعي خاص خلال دقائق.",
+  title: "رِواق · منصة المكاتب الهندسية",
+  description: "رِواق — أنشئ موقعاً احترافياً لمكتبك الهندسي بنطاق فرعي خاص خلال دقائق.",
 };
 
 export default function RootLayout({

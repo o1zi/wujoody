@@ -9,7 +9,7 @@ import Lenis from "lenis";
 // buttery smooth (eased) page scrolling.
 declare global {
   interface Window {
-    __WUJOOD_ENGINE?: () => () => void;
+    __RIWAQ_ENGINE?: () => () => void;
   }
 }
 
@@ -28,18 +28,18 @@ export default function CinematicRuntime() {
     // ----- Background/scroll engine -----
     const run = () => {
       if (destroyed) return;
-      if (window.__WUJOOD_ENGINE) destroy = window.__WUJOOD_ENGINE();
+      if (window.__RIWAQ_ENGINE) destroy = window.__RIWAQ_ENGINE();
     };
-    if (window.__WUJOOD_ENGINE) {
+    if (window.__RIWAQ_ENGINE) {
       run();
     } else {
-      const existing = document.querySelector<HTMLScriptElement>('script[data-wujood-engine]');
+      const existing = document.querySelector<HTMLScriptElement>('script[data-riwaq-engine]');
       if (existing) {
         existing.addEventListener("load", run, { once: true });
       } else {
         const s = document.createElement("script");
         s.src = "/site-template/scroll-engine.js";
-        s.dataset.wujoodEngine = "1";
+        s.dataset.riwaqEngine = "1";
         s.onload = run;
         document.body.appendChild(s);
       }

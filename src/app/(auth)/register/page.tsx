@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { normalizePhone } from "@/lib/phone";
 import { Field, Input, Button, Alert } from "@/components/ui";
 
 const ROOT_DOMAIN = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "localhost:3000";
@@ -23,6 +24,7 @@ export default function RegisterPage() {
   const [slug, setSlug] = useState("");
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -37,6 +39,11 @@ export default function RegisterPage() {
     }
     if (password.length < 8) {
       setError("كلمة المرور يجب أن تكون 8 أحرف على الأقل.");
+      return;
+    }
+    const cleanPhone = normalizePhone(phone);
+    if (cleanPhone.length !== 9 || !cleanPhone.startsWith("5")) {
+      setError("أدخل رقم جوال سعودي صحيح (مثال: 05XXXXXXXX).");
       return;
     }
     setLoading(true);
@@ -58,6 +65,7 @@ export default function RegisterPage() {
           full_name: fullName,
           office_name: officeName,
           office_slug: cleanSlug,
+          phone: cleanPhone,
         },
       },
     });
@@ -101,6 +109,9 @@ export default function RegisterPage() {
         </Field>
         <Field label="البريد الإلكتروني — EMAIL">
           <Input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" dir="ltr" />
+        </Field>
+        <Field label="رقم الجوال — MOBILE" hint="يُستخدم لربط دفعتك في سلة بمكتبك">
+          <Input type="tel" required value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="05XXXXXXXX" dir="ltr" />
         </Field>
         <Field label="كلمة المرور — PASSWORD" hint="8 أحرف على الأقل">
           <Input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" dir="ltr" />

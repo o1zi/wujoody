@@ -25,6 +25,7 @@ export type Office = {
 export type Profile = {
   id: string;
   email: string | null;
+  phone: string | null;
   full_name: string | null;
   role: "super_admin" | "office_admin";
   office_id: string | null;

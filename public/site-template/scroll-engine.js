@@ -1,13 +1,13 @@
 /* ============================================================
    Scroll engine — re-runnable (works across client-side navigation).
-   Exposes window.__WUJOOD_ENGINE(): initializes on the current DOM and
+   Exposes window.__RIWAQ_ENGINE(): initializes on the current DOM and
    returns a destroy() that cancels rAF/listeners. A React runtime calls it
    on mount and tears it down on unmount, so it works after Back navigation.
    ============================================================ */
 (function () {
   'use strict';
 
-  window.__WUJOOD_ENGINE = function init() {
+  window.__RIWAQ_ENGINE = function init() {
     var canvas = document.getElementById('bgCanvas');
     var video = document.getElementById('bgVideo');
     var bgImage = document.getElementById('bgImage');

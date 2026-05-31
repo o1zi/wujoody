@@ -24,6 +24,14 @@ export default async function SubscriptionPage() {
 
   const isActive = current?.status === "active" && ctx.office?.status === "active";
 
+  // Append the office id to a plan's payment link so the Salla webhook can link
+  // the payment back to this exact office regardless of which phone/email paid.
+  const payLink = (link: string) => {
+    if (!link || !ctx.office?.id) return link;
+    const sep = link.includes("?") ? "&" : "?";
+    return `${link}${sep}office=${ctx.office.id}`;
+  };
+
   return (
     <div className="mx-auto max-w-4xl">
       <h1 className="text-2xl font-bold">الاشتراك</h1>
@@ -44,8 +52,10 @@ export default async function SubscriptionPage() {
       ) : null}
 
       <div className="mt-6 rounded-xl glass-panel p-4 text-sm text-muted">
-        مهم: ادفع باستخدام <span className="text-foreground">نفس بريدك المسجّل في المنصة</span>{" "}
-        (<span dir="ltr" className="mono">{ctx.email}</span>) ليُربط الدفع بمكتبك تلقائياً.
+        ادفع من هذه الصفحة عبر أزرار الباقات أدناه. للتفعيل التلقائي الفوري، استخدم في
+        سلة <span className="text-foreground">نفس رقم جوالك المسجّل</span>
+        {" "}(<span dir="ltr" className="mono">{ctx.profile?.phone || "—"}</span>)
+        {" "}أو بريدك (<span dir="ltr" className="mono">{ctx.email}</span>) ليُربط الدفع بمكتبك.
       </div>
 
       <div className="mt-6 grid gap-6 md:grid-cols-3">
@@ -67,7 +77,7 @@ export default async function SubscriptionPage() {
                 ))}
               </ul>
               <a
-                href={p.paymentLink}
+                href={payLink(p.paymentLink)}
                 target="_blank"
                 rel="noreferrer"
                 className={`mt-6 block rounded-xl py-3 text-center font-medium ${

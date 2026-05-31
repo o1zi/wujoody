@@ -15,7 +15,7 @@ export type LandingContent = {
 
 export const defaultLanding: LandingContent = {
   media: { bgMode: "video", bgVideo: null, frames: null, solid: "black" },
-  brand: { ar: "وجود", en: "WUJOOD" },
+  brand: { ar: "رِواق", en: "RIWAQ" },
   hero: {
     eyebrow: "ENGINEERING OFFICES — SAAS PLATFORM · RIYADH",
     subtitle:
