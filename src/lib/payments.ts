@@ -4,14 +4,14 @@
 export type PayMethod = { id: string; name: string; logo?: string };
 
 export const PAYMENT_METHODS: PayMethod[] = [
-  { id: "mada", name: "مدى" },
-  { id: "applepay", name: "Apple Pay" },
-  { id: "visa", name: "VISA" },
-  { id: "mastercard", name: "Mastercard" },
+  { id: "mada", name: "مدى", logo: "/payments/Mada-01.svg" },
+  { id: "applepay", name: "Apple Pay", logo: "/payments/Apple Pay-01.svg" },
+  { id: "visa", name: "VISA", logo: "/payments/Visa-01.svg" },
+  { id: "mastercard", name: "Mastercard", logo: "/payments/Mastercard-01.svg" },
   { id: "stcpay", name: "STC Pay", logo: "/payments/STC-pay.svg" },
   { id: "tabby", name: "tabby", logo: "/payments/Tabby.svg" },
   { id: "tamara", name: "tamara", logo: "/payments/Tamara.svg" },
+  { id: "googlepay", name: "Google Pay", logo: "/payments/Google Pay-01.svg" },
   { id: "amex", name: "American Express" },
-  { id: "googlepay", name: "Google Pay" },
   { id: "sadad", name: "سداد" },
 ];
