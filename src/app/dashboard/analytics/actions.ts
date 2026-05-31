@@ -5,7 +5,8 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getPlanCaps } from "@/lib/plans-server";
 import { sendTelegram } from "@/lib/telegram";
-import { sendEmail, emailLayout } from "@/lib/email";
+import { sendEmail } from "@/lib/email";
+import { buildOfficeReport } from "@/lib/report";
 
 // Send the 30-day performance report to this office now (Telegram if linked,
 // else email). Premium only.
@@ -26,15 +27,8 @@ export async function sendMyReport(): Promise<{ ok: boolean; channel?: "telegram
   if (!caps.monthlyReport) return { ok: false, error: "هذه الميزة في باقة بريميوم." };
 
   const admin = createAdminClient();
-  const since = new Date(Date.now() - 30 * 86400000).toISOString();
   const officeId = ctx.office.id;
-  const name = ctx.office.name;
-
-  const [{ count: views }, { count: clicks }, { count: leads }] = await Promise.all([
-    admin.from("site_events").select("id", { count: "exact", head: true }).eq("office_id", officeId).eq("type", "view").gte("created_at", since),
-    admin.from("site_events").select("id", { count: "exact", head: true }).eq("office_id", officeId).like("type", "click%").gte("created_at", since),
-    admin.from("leads").select("id", { count: "exact", head: true }).eq("office_id", officeId).gte("created_at", since),
-  ]);
+  const report = await buildOfficeReport(admin, officeId, ctx.office.name, ctx.profile?.full_name || "");
 
   let chatId: string | null = null;
   try {
@@ -45,22 +39,12 @@ export async function sendMyReport(): Promise<{ ok: boolean; channel?: "telegram
   }
 
   if (chatId) {
-    const ok = await sendTelegram(
-      chatId,
-      `📊 تقرير مكتبك الشهري — ${name}\nملخص آخر 30 يوماً:\n\n👁️ الزيارات: ${views ?? 0}\n🔗 نقرات التواصل: ${clicks ?? 0}\n✉️ الرسائل/الحجوزات: ${leads ?? 0}`,
-    );
+    const ok = await sendTelegram(chatId, report.telegramText);
     if (ok) return { ok: true, channel: "telegram" };
   }
 
   if (ctx.email) {
-    const ok = await sendEmail({
-      to: ctx.email,
-      subject: `تقرير مكتبك الشهري — ${name}`,
-      html: emailLayout(
-        "تقرير الأداء الشهري",
-        `إليك ملخص آخر 30 يوماً لموقع «${name}»:<br/><br/>👁️ <b>الزيارات:</b> ${views ?? 0}<br/>🔗 <b>نقرات التواصل:</b> ${clicks ?? 0}<br/>✉️ <b>الرسائل/الحجوزات:</b> ${leads ?? 0}`,
-      ),
-    });
+    const ok = await sendEmail({ to: ctx.email, subject: report.subject, html: report.emailHtml });
     if (ok) return { ok: true, channel: "email" };
   }
 

@@ -1,8 +1,9 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getPlanCaps } from "@/lib/plans-server";
-import { sendEmail, emailLayout } from "@/lib/email";
+import { sendEmail } from "@/lib/email";
 import { sendTelegram } from "@/lib/telegram";
+import { buildOfficeReport } from "@/lib/report";
 
 export const runtime = "nodejs";
 
@@ -18,7 +19,6 @@ export async function GET(request: NextRequest) {
   }
 
   const admin = createAdminClient();
-  const since = new Date(Date.now() - 30 * 86400000).toISOString();
 
   // Active subscriptions + their office.
   const { data: subs } = await admin
@@ -34,11 +34,8 @@ export async function GET(request: NextRequest) {
     const caps = await getPlanCaps((s as { plan?: string }).plan);
     if (!caps.monthlyReport) continue;
 
-    const [{ count: views }, { count: clicks }, { count: leads }] = await Promise.all([
-      admin.from("site_events").select("id", { count: "exact", head: true }).eq("office_id", office.id).eq("type", "view").gte("created_at", since),
-      admin.from("site_events").select("id", { count: "exact", head: true }).eq("office_id", office.id).like("type", "click%").gte("created_at", since),
-      admin.from("leads").select("id", { count: "exact", head: true }).eq("office_id", office.id).gte("created_at", since),
-    ]);
+    const { data: prof } = await admin.from("profiles").select("email, full_name").eq("id", office.owner_id).maybeSingle();
+    const report = await buildOfficeReport(admin, office.id, office.name, prof?.full_name || "");
 
     // Prefer Telegram if the office linked it; fall back to email.
     let chatId: string | null = null;
@@ -50,32 +47,17 @@ export async function GET(request: NextRequest) {
     }
 
     if (chatId) {
-      const ok = await sendTelegram(
-        chatId,
-        `📊 تقرير مكتبك الشهري — ${office.name}\nملخص آخر 30 يوماً:\n\n👁️ الزيارات: ${views ?? 0}\n🔗 نقرات التواصل: ${clicks ?? 0}\n✉️ الرسائل/الحجوزات: ${leads ?? 0}`,
-      );
+      const ok = await sendTelegram(chatId, report.telegramText);
       if (ok) {
         sent++;
         continue;
       }
     }
 
-    const { data: prof } = await admin.from("profiles").select("email, full_name").eq("id", office.owner_id).maybeSingle();
-    if (!prof?.email) continue;
-
-    const ok = await sendEmail({
-      to: prof.email,
-      subject: `تقرير مكتبك الشهري — ${office.name}`,
-      html: emailLayout(
-        "تقرير الأداء الشهري",
-        `مرحباً ${prof.full_name || ""}،<br/>إليك ملخص آخر 30 يوماً لموقع «${office.name}»:` +
-          `<br/><br/>👁️ <b>الزيارات:</b> ${views ?? 0}` +
-          `<br/>🔗 <b>نقرات التواصل:</b> ${clicks ?? 0}` +
-          `<br/>✉️ <b>الرسائل/الحجوزات:</b> ${leads ?? 0}` +
-          `<br/><br/>راجع التفاصيل من لوحة التحكم.`,
-      ),
-    });
-    if (ok) sent++;
+    if (prof?.email) {
+      const ok = await sendEmail({ to: prof.email, subject: report.subject, html: report.emailHtml });
+      if (ok) sent++;
+    }
   }
 
   return NextResponse.json({ ok: true, sent });
