@@ -97,12 +97,25 @@ export async function saveOfficeContent(officeId: string, content: unknown) {
 // Update a plan row (price/features/caps/flags). Requires the plans table.
 export async function savePlan(
   code: string,
-  patch: { price?: number; name?: string; highlight?: boolean; active?: boolean; features?: string[] },
+  patch: {
+    price?: number;
+    name?: string;
+    highlight?: boolean;
+    active?: boolean;
+    features?: string[];
+    paymentLink?: string;
+    sallaProductId?: string;
+  },
 ) {
   await assertSuperAdmin();
   const admin = createAdminClient();
-  await admin.from("plans").update(patch).eq("code", code);
+  const { paymentLink, sallaProductId, ...rest } = patch;
+  const row: Record<string, unknown> = { ...rest };
+  if (paymentLink !== undefined) row.payment_link = paymentLink;
+  if (sallaProductId !== undefined) row.salla_product_id = sallaProductId;
+  await admin.from("plans").update(row).eq("code", code);
   revalidatePath("/super-admin/plans");
+  revalidatePath("/");
 }
 
 export async function logoutToLogin() {

@@ -17,6 +17,8 @@ export default async function SuperAdminPlans() {
           features: Array.isArray(p.features) ? p.features : [],
           highlight: !!p.highlight,
           active: !!p.active,
+          paymentLink: p.payment_link || "",
+          sallaProductId: p.salla_product_id || "",
         }))
       : FALLBACK_PLANS.map((p) => ({
           code: p.code,
@@ -25,6 +27,8 @@ export default async function SuperAdminPlans() {
           features: p.features,
           highlight: !!p.highlight,
           active: true,
+          paymentLink: p.paymentLink,
+          sallaProductId: p.sallaProductId,
         }));
 
   return (

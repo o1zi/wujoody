@@ -10,6 +10,8 @@ type PlanRow = {
   features: string[];
   highlight: boolean;
   active: boolean;
+  paymentLink: string;
+  sallaProductId: string;
 };
 
 export default function PlanEditor({ plan }: { plan: PlanRow }) {
@@ -18,6 +20,8 @@ export default function PlanEditor({ plan }: { plan: PlanRow }) {
   const [highlight, setHighlight] = useState(plan.highlight);
   const [active, setActive] = useState(plan.active);
   const [features, setFeatures] = useState(plan.features.join("\n"));
+  const [paymentLink, setPaymentLink] = useState(plan.paymentLink);
+  const [sallaProductId, setSallaProductId] = useState(plan.sallaProductId);
   const [pending, start] = useTransition();
   const [saved, setSaved] = useState(false);
 
@@ -29,13 +33,15 @@ export default function PlanEditor({ plan }: { plan: PlanRow }) {
         highlight,
         active,
         features: features.split("\n").map((f) => f.trim()).filter(Boolean),
+        paymentLink: paymentLink.trim(),
+        sallaProductId: sallaProductId.trim(),
       });
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
     });
   }
 
-  const input = "w-full rounded-lg glass-panel-2 px-3 py-2 text-sm outline-none focus:border-accent";
+  const input = "w-full rounded-lg border border-border bg-surface-2 px-3 py-2 text-sm outline-none focus:border-accent";
 
   return (
     <div className="rounded-2xl glass-panel p-5">
@@ -53,6 +59,14 @@ export default function PlanEditor({ plan }: { plan: PlanRow }) {
       <label className="mt-3 block">
         <span className="mb-1 block text-xs text-muted">المزايا (ميزة في كل سطر)</span>
         <textarea className={input} rows={6} value={features} onChange={(e) => setFeatures(e.target.value)} />
+      </label>
+      <label className="mt-3 block">
+        <span className="mb-1 block text-xs text-muted">رابط الدفع (سلة)</span>
+        <input className={input} dir="ltr" value={paymentLink} onChange={(e) => setPaymentLink(e.target.value)} placeholder="https://salla.sa/.../checkout/..." />
+      </label>
+      <label className="mt-3 block">
+        <span className="mb-1 block text-xs text-muted">رقم منتج سلة (Product ID)</span>
+        <input className={input} dir="ltr" value={sallaProductId} onChange={(e) => setSallaProductId(e.target.value)} placeholder="1234567890" />
       </label>
       <div className="mt-3 flex items-center gap-5">
         <label className="flex items-center gap-2 text-sm">
