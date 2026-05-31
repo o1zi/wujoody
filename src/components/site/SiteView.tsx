@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import type { SiteContent } from "@/lib/site-content";
+import type { PlanCaps } from "@/lib/plans";
 import { fontByKey } from "@/lib/site-fonts";
 import { tenantUrl } from "@/lib/urls";
 import ContactForm from "./ContactForm";
@@ -134,7 +135,7 @@ function MacBar() {
   );
 }
 
-export default function SiteView({ content, slug }: { content: SiteContent; slug: string }) {
+export default function SiteView({ content, slug, caps }: { content: SiteContent; slug: string; caps: PlanCaps }) {
   const preset = ACCENTS[content.theme.accent] ?? ACCENTS.bronze;
   const customRgb = hexToRgb(content.theme.accentHex);
   const accent = customRgb ? { hex: content.theme.accentHex as string, rgb: customRgb } : preset;
@@ -406,6 +407,49 @@ export default function SiteView({ content, slug }: { content: SiteContent; slug
           </div>
         </section>
 
+        {/* CREDENTIALS / TRUST BADGES (Pro) */}
+        {caps.badges && content.visible.credentials !== false &&
+          (content.credentials.badges.length > 0 || content.credentials.clients.length > 0) && (
+          <section className="sec" id="credentials" data-screen-label="الاعتمادات والثقة">
+            <div className="wrap">
+              <div className="glass-card reveal">
+                <MacBar />
+                <div className="glass-body">
+                  <div className="eyebrow mono">
+                    <span className="ln"></span>
+                    <span className="idx">★</span> الاعتمادات والثقة — <span className="en">CREDENTIALS</span>
+                  </div>
+                  {content.credentials.lead ? <p className="sec-lead" style={{ marginBottom: 26 }}>{content.credentials.lead}</p> : null}
+                  {content.credentials.badges.length > 0 && (
+                    <div className="cred-grid">
+                      {content.credentials.badges.map((b, i) => (
+                        <div className="cred-badge" key={i}>
+                          <div className="cred-v">{b.value}</div>
+                          <div className="cred-k">{b.label}</div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {content.credentials.clients.length > 0 && (
+                    <div className="cred-clients">
+                      {content.credentials.clients.map((cl, i) => (
+                        <div className="cred-client" key={i} title={cl.name}>
+                          {cl.logo ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={cl.logo} alt={cl.name} />
+                          ) : (
+                            <span>{cl.name}</span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* SERVICES */}
         <section className="sec" id="services" data-screen-label="الخدمات" style={{ display: content.visible.services === false ? "none" : undefined }}>
           <div className="wrap">
@@ -614,7 +658,7 @@ export default function SiteView({ content, slug }: { content: SiteContent; slug
                   <div>
                     <h2 className="sec-title" style={{ fontSize: "clamp(30px,4vw,52px)", marginBottom: 18 }}>لديك مشروع؟<br />لنضع له وتداً.</h2>
                     <p className="sec-lead" style={{ marginBottom: 34 }}>أخبرنا عن فكرتك، وسيتواصل معك أحد مهندسينا خلال يوم عمل واحد.</p>
-                    <ContactForm slug={slug} />
+                    <ContactForm slug={slug} waNumber={caps.whatsapp && waNumber.length >= 8 ? waNumber : ""} brand={brand.ar} />
                   </div>
                   <div className="cinfo">
                     <div className="it"><span className="k mono">PHONE</span><span className="v">{content.contact.phone}<small>{content.contact.phoneNote}</small></span></div>

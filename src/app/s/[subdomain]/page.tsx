@@ -82,7 +82,7 @@ async function loadOffice(slug: string) {
   const caps = await getPlanCaps(sub?.plan);
   const content = clampMedia(mergeContent(row?.content), caps);
   content.contact.mapQuery = await resolveMapQuery(content.contact.mapQuery);
-  return { office, content, live, expired };
+  return { office, content, live, expired, caps };
 }
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
@@ -136,7 +136,7 @@ export default async function TenantSite({ params }: { params: Params }) {
       <link rel="stylesheet" href="/site-template/site.css" precedence="high" />
       {/* eslint-disable-next-line @next/next/no-css-tags */}
       <link rel="stylesheet" href={googleFontsHref([data.content.theme.font || "readex"])} precedence="high" />
-      <SiteView content={data.content} slug={data.office.slug} />
+      <SiteView content={data.content} slug={data.office.slug} caps={data.caps} />
       <CinematicRuntime />
     </>
   );

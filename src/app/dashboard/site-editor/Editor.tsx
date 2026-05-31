@@ -786,6 +786,37 @@ export default function Editor({
         />
       </Section>
 
+      {caps.badges && (
+        <Section title="الاعتمادات والثقة">
+          <p className="text-xs text-muted">رقم الترخيص، اعتماد الهيئة، التصنيف، وشعارات عملائك — تظهر كقسم ثقة في موقعك.</p>
+          {text("جملة تعريفية", "credentials.lead")}
+          <ListEditor
+            title="الاعتمادات (شارة في كل سطر)"
+            items={c.credentials.badges}
+            onChange={(v) => set("credentials.badges", v)}
+            empty={{ label: "", value: "" }}
+            render={(_, i) => (
+              <div className="grid grid-cols-2 gap-3">
+                {text("العنوان", `credentials.badges.${i}.label`)}
+                {text("القيمة", `credentials.badges.${i}.value`)}
+              </div>
+            )}
+          />
+          <ListEditor
+            title="شعارات العملاء / الشركاء"
+            items={c.credentials.clients}
+            onChange={(v) => set("credentials.clients", v)}
+            empty={{ name: "", logo: null }}
+            render={(_, i) => (
+              <>
+                {text("اسم العميل", `credentials.clients.${i}.name`)}
+                {image("الشعار", `credentials.clients.${i}.logo`)}
+              </>
+            )}
+          />
+        </Section>
+      )}
+
       <Section title="الأسئلة الشائعة">
         <ListEditor
           title="الأسئلة"
@@ -842,6 +873,7 @@ export default function Editor({
             ["projects", "المشاريع"],
             ["team", "الفريق"],
             ["testimonials", "الآراء"],
+            ["credentials", "الاعتمادات"],
             ["faq", "الأسئلة الشائعة"],
             ["contact", "التواصل"],
           ] as const).map(([key, label]) => {

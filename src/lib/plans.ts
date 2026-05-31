@@ -8,6 +8,17 @@ export type PlanCaps = {
   presets: boolean;
   presetLimit: number; // Infinity = all
   upload: boolean;
+  // Value features (Pro = first seven, Premium = all):
+  whatsapp: boolean; // instant WhatsApp lead delivery
+  booking: boolean; // request-a-consultation booking
+  blog: boolean; // SEO blog/news
+  projectDetails: boolean; // detailed project case-study pages
+  badges: boolean; // accreditation / trust badges
+  profilePdf: boolean; // auto-generated company-profile PDF
+  customDomain: boolean; // connect-your-own-domain
+  crm: boolean; // leads CRM (statuses, notes, export) — Premium
+  aiContent: boolean; // AI content generation — Premium
+  monthlyReport: boolean; // monthly performance email — Premium
 };
 
 export type Plan = {
@@ -24,7 +35,11 @@ export type Plan = {
   highlight?: boolean;
 };
 
-export const DEFAULT_CAPS: PlanCaps = { solidOnly: false, presets: true, presetLimit: Infinity, upload: true };
+export const DEFAULT_CAPS: PlanCaps = {
+  solidOnly: false, presets: true, presetLimit: Infinity, upload: true,
+  whatsapp: true, booking: true, blog: true, projectDetails: true, badges: true,
+  profilePdf: true, customDomain: true, crm: true, aiContent: true, monthlyReport: true,
+};
 
 export const FALLBACK_PLANS: Plan[] = [
   {
@@ -36,7 +51,11 @@ export const FALLBACK_PLANS: Plan[] = [
     durationDays: 30,
     paymentLink: "https://salla.sa/your-store/checkout/REPLACE_BASIC",
     sallaProductId: "REPLACE_BASIC_PRODUCT_ID",
-    caps: { solidOnly: true, presets: false, presetLimit: 0, upload: false },
+    caps: {
+      solidOnly: true, presets: false, presetLimit: 0, upload: false,
+      whatsapp: false, booking: false, blog: false, projectDetails: false, badges: false,
+      profilePdf: false, customDomain: false, crm: false, aiContent: false, monthlyReport: false,
+    },
     features: [
       "موقع مكتب كامل بنطاق فرعي",
       "خلفية أنيقة (بيضاء أو سوداء)",
@@ -56,13 +75,19 @@ export const FALLBACK_PLANS: Plan[] = [
     highlight: true,
     paymentLink: "https://salla.sa/your-store/checkout/REPLACE_PRO",
     sallaProductId: "REPLACE_PRO_PRODUCT_ID",
-    caps: { solidOnly: false, presets: true, presetLimit: 5, upload: false },
+    caps: {
+      solidOnly: false, presets: true, presetLimit: 5, upload: false,
+      whatsapp: true, booking: true, blog: true, projectDetails: true, badges: true,
+      profilePdf: true, customDomain: true, crm: false, aiContent: false, monthlyReport: false,
+    },
     features: [
       "كل مزايا الأساسية",
       "٥ خلفيات فيديو سينمائية جاهزة",
-      "خلفية تتحرك مع التمرير",
-      "خريطة موقع المكتب (جوجل)",
-      "معرض مشاريع بنقر للتكبير",
+      "خلفية تتحرك مع التمرير + خريطة الموقع",
+      "وصول العملاء عبر واتساب فوراً",
+      "حجز استشارة + شارات اعتماد + بروفايل PDF",
+      "صفحات مشاريع تفصيلية + مدوّنة للـSEO",
+      "ربط نطاقك الخاص (.com/.sa)",
     ],
   },
   {
@@ -74,14 +99,18 @@ export const FALLBACK_PLANS: Plan[] = [
     durationDays: 30,
     paymentLink: "https://salla.sa/your-store/checkout/REPLACE_PREMIUM",
     sallaProductId: "REPLACE_PREMIUM_PRODUCT_ID",
-    caps: { solidOnly: false, presets: true, presetLimit: Infinity, upload: true },
+    caps: {
+      solidOnly: false, presets: true, presetLimit: Infinity, upload: true,
+      whatsapp: true, booking: true, blog: true, projectDetails: true, badges: true,
+      profilePdf: true, customDomain: true, crm: true, aiContent: true, monthlyReport: true,
+    },
     features: [
       "كل مزايا الاحترافية",
-      "جميع خلفيات الفيديو الجاهزة",
-      "رفع فيديو/صور خلفية خاصة بك",
-      "تحويل فيديوك لحركة مع التمرير",
+      "جميع خلفيات الفيديو + رفع خلفيتك الخاصة",
+      "إدارة العملاء المحتملين (CRM مصغّر)",
+      "كتابة محتوى موقعك بالذكاء الاصطناعي",
+      "تقرير أداء شهري بالبريد",
       "أولوية في الدعم الفني",
-      "نطاق مخصّص (قريباً)",
     ],
   },
 ];
@@ -105,6 +134,16 @@ export function normalizePlan(row: any): Plan {
       presets: caps.presets !== false,
       presetLimit: caps.presetLimit == null ? Infinity : Number(caps.presetLimit),
       upload: caps.upload !== false,
+      whatsapp: !!caps.whatsapp,
+      booking: !!caps.booking,
+      blog: !!caps.blog,
+      projectDetails: !!caps.projectDetails,
+      badges: !!caps.badges,
+      profilePdf: !!caps.profilePdf,
+      customDomain: !!caps.customDomain,
+      crm: !!caps.crm,
+      aiContent: !!caps.aiContent,
+      monthlyReport: !!caps.monthlyReport,
     },
   };
 }
