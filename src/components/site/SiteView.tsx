@@ -141,6 +141,7 @@ export default function SiteView({ content, slug }: { content: SiteContent; slug
   const fontFamily = fontByKey(content.theme.font).family;
   const cardStyle = content.theme.cardStyle ?? "glass";
   const cardRadius = CARD_RADIUS[content.theme.cardRadius ?? "soft"] ?? CARD_RADIUS.soft;
+  const cardRgb = hexToRgb(content.theme.cardTint) ?? "16,20,28";
   const { brand } = content;
   const m = content.media;
   const isSolid = m?.bgMode === "solid";
@@ -184,6 +185,7 @@ export default function SiteView({ content, slug }: { content: SiteContent; slug
         ["--accent" as string]: accent.hex,
         ["--accent-rgb" as string]: accent.rgb,
         ["--card-radius" as string]: cardRadius,
+        ["--card-rgb" as string]: cardRgb,
         fontFamily,
       }}
     >

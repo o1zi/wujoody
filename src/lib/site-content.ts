@@ -7,6 +7,7 @@ export type SiteContent = {
     font?: string; // key from SITE_FONTS
     cardStyle?: "glass" | "solid" | "outline";
     cardRadius?: "sharp" | "soft" | "round";
+    cardTint?: string | null; // hex tint for the cards (transparency preserved on glass)
   };
   media: {
     bgVideo: string | null;
@@ -69,7 +70,7 @@ export type SiteContent = {
 };
 
 export const defaultContent: SiteContent = {
-  theme: { accent: "bronze", accentHex: null, font: "readex", cardStyle: "glass", cardRadius: "soft" },
+  theme: { accent: "bronze", accentHex: null, font: "readex", cardStyle: "glass", cardRadius: "soft", cardTint: null },
   media: { bgVideo: null, bgMode: "video", frames: null, solid: "black" },
   brand: { ar: "أوتاد", en: "AWTAD", logo: null },
   coordinates: { lat: "24.7136°N", lng: "46.6753°E", label: "RIYADH · KSA" },

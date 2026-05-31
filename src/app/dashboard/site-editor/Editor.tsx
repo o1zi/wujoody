@@ -403,6 +403,25 @@ export default function Editor({
         </div>
 
         <div>
+          <span className="mb-2 block text-xs text-muted">لون البطاقات (مع الحفاظ على الشفافية)</span>
+          <div className="flex items-center gap-3">
+            <input
+              type="color"
+              value={c.theme.cardTint || "#10141c"}
+              onChange={(e) => set("theme.cardTint", e.target.value)}
+              className="h-10 w-14 cursor-pointer rounded-lg border border-border bg-transparent p-1"
+            />
+            <span className="mono text-xs text-muted" dir="ltr">{c.theme.cardTint || "—"}</span>
+            {c.theme.cardTint && (
+              <button type="button" className="text-xs text-red-400 hover:underline" onClick={() => set("theme.cardTint", null)}>
+                إلغاء (اللون الافتراضي)
+              </button>
+            )}
+          </div>
+          <p className="mt-1 text-xs text-muted">في البطاقة الزجاجية يبقى الضباب والشفافية، يتغيّر اللون فقط.</p>
+        </div>
+
+        <div>
           <span className="mb-2 block text-xs text-muted">استدارة الحواف</span>
           <div className="flex flex-wrap gap-2">
             {CARD_RADII.map((r) => (

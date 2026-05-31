@@ -492,9 +492,12 @@ button{font-family:inherit;cursor:pointer}
 /* Card corner radius */
 .glass-card{border-radius:var(--card-radius,16px)}
 
-/* Card style: solid (no blur, opaque) */
+/* Card tint: glass keeps its translucency (fixed alpha), only the hue changes */
+[data-card="glass"] .glass-card{background:rgba(var(--card-rgb,16,20,28),.34)}
+
+/* Card style: solid (no blur, opaque tint) */
 [data-card="solid"] .glass-card{
-  background:#0f141b;-webkit-backdrop-filter:none;backdrop-filter:none;
+  background:rgb(var(--card-rgb,15,20,27));-webkit-backdrop-filter:none;backdrop-filter:none;
   border-color:rgba(255,255,255,.10)}
 .theme-light[data-card="solid"] .glass-card{background:#ffffff;border-color:rgba(14,17,22,.10)}
 
