@@ -32,6 +32,20 @@ export default async function SubscriptionPage() {
     return `${link}${sep}office=${ctx.office.id}`;
   };
 
+  // Best-effort link to the Salla store account (for managing/cancelling), derived
+  // from a real payment link's store base.
+  const realLink = plans.map((p) => p.paymentLink).find((l) => l && !l.includes("REPLACE"));
+  let storeUrl: string | null = null;
+  try {
+    if (realLink) {
+      const u = new URL(realLink);
+      const seg = u.pathname.split("/").filter(Boolean)[0];
+      storeUrl = seg ? `${u.origin}/${seg}` : u.origin;
+    }
+  } catch {
+    storeUrl = null;
+  }
+
   return (
     <div className="mx-auto max-w-4xl">
       <h1 className="text-2xl font-bold">الاشتراك</h1>
@@ -91,6 +105,26 @@ export default async function SubscriptionPage() {
             </div>
           );
         })}
+      </div>
+
+      <div className="mt-8 rounded-2xl glass-panel p-6">
+        <h2 className="text-lg font-semibold">إلغاء الاشتراك</h2>
+        <p className="mt-1 text-sm text-muted">
+          الاشتراك يتجدّد شهرياً تلقائياً عبر سلة. لإيقاف التجديد، ألغِه من حسابك في المتجر:
+        </p>
+        <ol className="mt-3 space-y-1.5 text-sm text-muted">
+          <li>١. ادخل حسابك في المتجر على سلة.</li>
+          <li>٢. افتح <span className="text-foreground">«المحفظة والفواتير» / «اشتراكاتي»</span>.</li>
+          <li>٣. اختر الاشتراك واضغط (…) ثم <span className="text-foreground">«إلغاء التجديد التلقائي»</span>.</li>
+        </ol>
+        <p className="mt-3 text-xs text-muted">
+          بعد الإلغاء يبقى موقعك يعمل حتى نهاية الفترة المدفوعة، ثم يُغلق تلقائياً. لا تُسحب أي مبالغ جديدة.
+        </p>
+        {storeUrl && (
+          <a href={storeUrl} target="_blank" rel="noreferrer" className="mt-4 inline-block rounded-lg border border-border px-4 py-2 text-sm text-accent hover:bg-surface-2">
+            إدارة اشتراكي في سلة ↗
+          </a>
+        )}
       </div>
 
       <Link href="/dashboard" className="mt-8 inline-block text-sm text-accent hover:underline">
