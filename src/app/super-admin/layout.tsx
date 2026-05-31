@@ -1,11 +1,18 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getSessionContext, isAllowedSuperAdmin } from "@/lib/auth";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export default async function SuperAdminLayout({ children }: { children: React.ReactNode }) {
   const ctx = await getSessionContext();
   if (!ctx) redirect("/login");
   if (!isAllowedSuperAdmin(ctx.email, ctx.profile?.role)) redirect("/dashboard");
+
+  const { count: supportUnread } = await createAdminClient()
+    .from("support_messages")
+    .select("id", { count: "exact", head: true })
+    .eq("sender", "office")
+    .eq("read", false);
 
   return (
     <div className="admin-shell min-h-dvh">
@@ -19,6 +26,12 @@ export default async function SuperAdminLayout({ children }: { children: React.R
               <Link href="/super-admin" className="text-sm text-muted hover:text-foreground">المكاتب</Link>
               <Link href="/super-admin/plans" className="text-sm text-muted hover:text-foreground">الباقات</Link>
               <Link href="/super-admin/landing" className="text-sm text-muted hover:text-foreground">صفحة الهبوط</Link>
+              <Link href="/super-admin/support" className="flex items-center gap-1.5 text-sm text-muted hover:text-foreground">
+                الدعم
+                {(supportUnread ?? 0) > 0 && (
+                  <span className="rounded-full bg-accent px-1.5 text-xs font-medium text-[#0b0d10]">{supportUnread}</span>
+                )}
+              </Link>
             </nav>
           </div>
           <div className="flex items-center gap-4">

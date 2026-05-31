@@ -18,14 +18,24 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const status = office ? STATUS_LABEL[office.status] : null;
 
   let newLeads = 0;
+  let newSupport = 0;
   if (office) {
     const supabase = await createClient();
-    const { count } = await supabase
-      .from("leads")
-      .select("id", { count: "exact", head: true })
-      .eq("office_id", office.id)
-      .eq("status", "new");
-    newLeads = count ?? 0;
+    const [{ count: leadsCount }, { count: supportCount }] = await Promise.all([
+      supabase
+        .from("leads")
+        .select("id", { count: "exact", head: true })
+        .eq("office_id", office.id)
+        .eq("status", "new"),
+      supabase
+        .from("support_messages")
+        .select("id", { count: "exact", head: true })
+        .eq("office_id", office.id)
+        .eq("sender", "admin")
+        .eq("read", false),
+    ]);
+    newLeads = leadsCount ?? 0;
+    newSupport = supportCount ?? 0;
   }
 
   const nav = [
@@ -33,6 +43,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
     { href: "/dashboard/leads", label: "الرسائل", badge: newLeads },
     { href: "/dashboard/site-editor", label: "محرّر الموقع", badge: 0 },
     { href: "/dashboard/subscription", label: "الاشتراك", badge: 0 },
+    { href: "/dashboard/support", label: "الدعم الفني", badge: newSupport },
   ];
 
   return (

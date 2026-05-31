@@ -76,6 +76,22 @@ export async function logoutToLogin() {
   redirect("/login");
 }
 
+// Super admin replies to an office's support thread.
+export async function replySupport(officeId: string, body: string) {
+  await assertSuperAdmin();
+  const text = (body || "").trim().slice(0, 2000);
+  if (!text) return;
+  const admin = createAdminClient();
+  await admin.from("support_messages").insert({
+    office_id: officeId,
+    sender: "admin",
+    body: text,
+    read: false,
+  });
+  revalidatePath(`/super-admin/support/${officeId}`);
+  revalidatePath("/super-admin/support");
+}
+
 // Save the editable landing-page content.
 export async function saveLanding(content: unknown) {
   await assertSuperAdmin();
