@@ -504,6 +504,11 @@ export default function Editor({
           </div>
           <p className="mt-1 text-xs text-muted">يتجاوز ألوان التمييز الجاهزة في قسم «الهوية واللون».</p>
         </div>
+
+        <div>
+          {text("رمز تحقق Google Search Console (اختياري)", "seo.googleVerification", "ltr")}
+          <p className="mt-1 text-xs text-muted">الصق قيمة <span className="mono">content</span> من وسم التحقق (طريقة HTML tag) لتأكيد ملكية موقعك في Google Search Console.</p>
+        </div>
       </Section>
 
       <Section title="خلفية الموقع">

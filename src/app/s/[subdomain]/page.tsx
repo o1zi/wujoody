@@ -101,6 +101,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
     description,
     alternates: { canonical: url },
     robots: indexable ? { index: true, follow: true } : { index: false, follow: false },
+    verification: data.content.seo.googleVerification ? { google: data.content.seo.googleVerification } : undefined,
     icons: logo ? { icon: logo, apple: logo } : undefined,
     openGraph: {
       title,

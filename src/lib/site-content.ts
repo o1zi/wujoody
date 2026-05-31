@@ -9,6 +9,7 @@ export type SiteContent = {
     cardRadius?: "sharp" | "soft" | "round";
     cardTint?: string | null; // hex tint for the cards (transparency preserved on glass)
   };
+  seo: { googleVerification: string };
   media: {
     bgVideo: string | null;
     bgMode: "video" | "frames" | "solid";
@@ -97,6 +98,7 @@ export type SiteContent = {
 
 export const defaultContent: SiteContent = {
   theme: { accent: "bronze", accentHex: null, font: "readex", cardStyle: "glass", cardRadius: "soft", cardTint: null },
+  seo: { googleVerification: "" },
   media: { bgVideo: null, bgMode: "video", frames: null, solid: "black" },
   brand: { ar: "أوتاد", en: "AWTAD", logo: null },
   coordinates: { lat: "24.7136°N", lng: "46.6753°E", label: "RIYADH · KSA" },
@@ -272,6 +274,7 @@ export function mergeContent(stored: unknown): SiteContent {
     (s[key] !== undefined && s[key] !== null ? (s[key] as T) : fallback);
   return {
     theme: { ...d.theme, ...(pick("theme", {}) as object) },
+    seo: { ...d.seo, ...(pick("seo", {}) as object) },
     media: { ...d.media, ...(pick("media", {}) as object) },
     brand: { ...d.brand, ...(pick("brand", {}) as object) },
     coordinates: { ...d.coordinates, ...(pick("coordinates", {}) as object) },
