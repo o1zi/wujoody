@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getSessionContext } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { getPlanCaps } from "@/lib/plans-server";
+import SendReportButton from "./SendReportButton";
 
 const NETWORKS: { type: string; label: string }[] = [
   { type: "click_whatsapp", label: "واتساب" },
@@ -70,8 +71,13 @@ export default async function AnalyticsPage() {
 
   return (
     <div className="mx-auto max-w-4xl">
-      <h1 className="text-2xl font-bold">التحليلات</h1>
-      <p className="mt-1 text-muted">نظرة شاملة على أداء موقعك.</p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold">التحليلات</h1>
+          <p className="mt-1 text-muted">نظرة شاملة على أداء موقعك.</p>
+        </div>
+        <SendReportButton />
+      </div>
 
       <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Stat label="إجمالي الزيارات" value={viewsTotal} />
