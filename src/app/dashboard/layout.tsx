@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getSessionContext, isAllowedSuperAdmin } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
+import { getPlanCaps } from "@/lib/plans-server";
 import { tenantLabel } from "@/lib/urls";
 
 const STATUS_LABEL: Record<string, { text: string; cls: string }> = {
@@ -38,9 +39,24 @@ export default async function DashboardLayout({ children }: { children: React.Re
     newSupport = supportCount ?? 0;
   }
 
+  let isPremium = false;
+  if (office) {
+    const supabase = await createClient();
+    const { data: sub } = await supabase
+      .from("subscriptions")
+      .select("plan")
+      .eq("office_id", office.id)
+      .eq("status", "active")
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    isPremium = (await getPlanCaps(sub?.plan)).upload;
+  }
+
   const nav = [
     { href: "/dashboard", label: "نظرة عامة", badge: 0 },
     { href: "/dashboard/leads", label: "الرسائل", badge: newLeads },
+    ...(isPremium ? [{ href: "/dashboard/analytics", label: "التحليلات", badge: 0 }] : []),
     { href: "/dashboard/site-editor", label: "محرّر الموقع", badge: 0 },
     { href: "/dashboard/subscription", label: "الاشتراك", badge: 0 },
     { href: "/dashboard/support", label: "الدعم الفني", badge: newSupport },

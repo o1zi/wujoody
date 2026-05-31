@@ -182,6 +182,22 @@
       tTimer = setInterval(function () { show(idx + 1); }, 7000);
     })();
 
+    /* ---------- analytics tracking (tenant sites only) ---------- */
+    var trackSlug = window.__OFFICE_SLUG__;
+    function track(type) {
+      if (!trackSlug) return;
+      var payload = JSON.stringify({ slug: trackSlug, type: type });
+      try {
+        if (navigator.sendBeacon) navigator.sendBeacon('/api/track', payload);
+        else fetch('/api/track', { method: 'POST', body: payload, keepalive: true });
+      } catch (e) {}
+    }
+    var trackClick = function () { track('click_' + this.getAttribute('data-track')); };
+    [].slice.call(document.querySelectorAll('[data-track]')).forEach(function (el) {
+      el.addEventListener('click', trackClick);
+    });
+    if (trackSlug) track('view');
+
     function start() {
       if (started || killed) return; started = true;
       if (loader) loader.classList.add('done');

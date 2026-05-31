@@ -102,6 +102,20 @@ create policy support_update on public.support_messages
   for update using (office_id = public.current_office_id() or public.is_super_admin())
   with check (office_id = public.current_office_id() or public.is_super_admin());
 
+-- ---------- 3c) site_events (التحليلات) ----------
+create table if not exists public.site_events (
+  id bigint generated always as identity primary key,
+  office_id uuid not null references public.offices(id) on delete cascade,
+  type text not null,
+  created_at timestamptz not null default now()
+);
+create index if not exists site_events_office_time_idx on public.site_events(office_id, created_at desc);
+create index if not exists site_events_office_type_idx on public.site_events(office_id, type);
+alter table public.site_events enable row level security;
+drop policy if exists site_events_read on public.site_events;
+create policy site_events_read on public.site_events
+  for select using (office_id = public.current_office_id() or public.is_super_admin());
+
 -- ---------- 4) storage: السماح للسوبر أدمن برفع وسائط أي مكتب ----------
 drop policy if exists site_media_owner_write on storage.objects;
 create policy site_media_owner_write on storage.objects
