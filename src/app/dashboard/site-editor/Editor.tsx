@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import type { SiteContent } from "@/lib/site-content";
+import { defaultContent, type SiteContent } from "@/lib/site-content";
 import type { PlanCaps } from "@/lib/plans";
 import { BG_PRESETS } from "@/lib/bg-presets";
 import { SITE_FONTS } from "@/lib/site-fonts";
@@ -131,6 +131,10 @@ export default function Editor({
       },
       media: { ...prev.media, bgMode: "solid", solid: p.solid },
     }));
+  }
+
+  function resetStyle() {
+    setC((prev) => ({ ...prev, theme: { ...prev.theme, ...defaultContent.theme } }));
   }
 
   // Render helpers — called as functions (NOT <Comp/>) so the underlying DOM
@@ -458,7 +462,16 @@ export default function Editor({
               );
             })}
           </div>
-          <p className="mt-2 text-xs text-muted">تطبيق نمط يضبط الخط واللون والبطاقات والخلفية — تقدر تعدّل أي تفصيل بعدها.</p>
+          <div className="mt-3 flex items-center justify-between gap-3">
+            <p className="text-xs text-muted">تطبيق نمط يضبط الخط واللون والبطاقات والخلفية — تقدر تعدّل أي تفصيل بعدها.</p>
+            <button
+              type="button"
+              onClick={resetStyle}
+              className="shrink-0 rounded-lg border border-border px-3 py-1.5 text-xs text-muted hover:bg-surface-2 hover:text-foreground"
+            >
+              استعادة النمط الأساسي
+            </button>
+          </div>
         </div>
 
         <label className="block">
