@@ -44,6 +44,8 @@
       cw = window.innerWidth; ch = window.innerHeight;
       canvas.width = Math.round(cw * dpr); canvas.height = Math.round(ch * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
       drawFrame(lastDrawn < 0 ? 0 : lastDrawn);
     }
     function drawCover(src) {

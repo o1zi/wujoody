@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect } from "react";
+import Lenis from "lenis";
 
 // Loads the scroll engine once, then (re)initializes it on every mount and
 // tears it down on unmount — so the cinematic background/loader work correctly
-// even after client-side navigation (e.g. pressing Back).
+// even after client-side navigation (e.g. pressing Back). Also runs Lenis for
+// buttery smooth (eased) page scrolling.
 declare global {
   interface Window {
     __WUJOOD_ENGINE?: () => () => void;
@@ -16,11 +18,18 @@ export default function CinematicRuntime() {
     let destroyed = false;
     let destroy: (() => void) | undefined;
 
+    // ----- Smooth scrolling (Lenis) -----
+    const lenis = new Lenis({ lerp: 0.09, wheelMultiplier: 1, smoothWheel: true });
+    let rafId = requestAnimationFrame(function raf(time: number) {
+      lenis.raf(time);
+      rafId = requestAnimationFrame(raf);
+    });
+
+    // ----- Background/scroll engine -----
     const run = () => {
       if (destroyed) return;
       if (window.__WUJOOD_ENGINE) destroy = window.__WUJOOD_ENGINE();
     };
-
     if (window.__WUJOOD_ENGINE) {
       run();
     } else {
@@ -38,6 +47,8 @@ export default function CinematicRuntime() {
 
     return () => {
       destroyed = true;
+      cancelAnimationFrame(rafId);
+      lenis.destroy();
       if (destroy) destroy();
     };
   }, []);
