@@ -58,6 +58,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
     { href: "/dashboard/leads", label: "الرسائل", badge: newLeads },
     ...(caps.upload ? [{ href: "/dashboard/analytics", label: "التحليلات", badge: 0 }] : []),
     { href: "/dashboard/site-editor", label: "محرّر الموقع", badge: 0 },
+    ...(caps.blog ? [{ href: "/dashboard/blog", label: "المدوّنة", badge: 0 }] : []),
     ...(caps.customDomain ? [{ href: "/dashboard/domain", label: "النطاق الخاص", badge: 0 }] : []),
     { href: "/dashboard/subscription", label: "الاشتراك", badge: 0 },
     { href: "/dashboard/support", label: "الدعم الفني", badge: newSupport },

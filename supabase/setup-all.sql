@@ -167,6 +167,30 @@ drop policy if exists ai_usage_read_own on public.ai_usage;
 create policy ai_usage_read_own on public.ai_usage
   for select using (office_id = public.current_office_id() or public.is_super_admin());
 
+-- ---------- 3g) posts (مدوّنة المكتب — SEO) ----------
+create table if not exists public.posts (
+  id           uuid primary key default gen_random_uuid(),
+  office_id    uuid not null references public.offices(id) on delete cascade,
+  slug         text not null,
+  title        text not null,
+  excerpt      text,
+  body         text,
+  cover        text,
+  published    boolean not null default false,
+  created_at   timestamptz not null default now(),
+  published_at timestamptz,
+  unique (office_id, slug)
+);
+create index if not exists posts_office_idx on public.posts(office_id, published, published_at desc);
+alter table public.posts enable row level security;
+drop policy if exists posts_public_read on public.posts;
+create policy posts_public_read on public.posts
+  for select using (published = true or office_id = public.current_office_id() or public.is_super_admin());
+drop policy if exists posts_write_own on public.posts;
+create policy posts_write_own on public.posts
+  for all using (office_id = public.current_office_id() or public.is_super_admin())
+  with check (office_id = public.current_office_id() or public.is_super_admin());
+
 -- ---------- 4) storage: السماح للسوبر أدمن برفع وسائط أي مكتب ----------
 drop policy if exists site_media_owner_write on storage.objects;
 create policy site_media_owner_write on storage.objects
