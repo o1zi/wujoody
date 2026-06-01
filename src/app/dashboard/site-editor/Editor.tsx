@@ -474,6 +474,26 @@ export default function Editor({
           </div>
         </div>
 
+        <div>
+          <span className="mb-2 block text-xs text-muted">تخطيط الموقع</span>
+          <div className="grid gap-2 sm:grid-cols-2">
+            {([
+              ["cinematic", "سينمائي", "خلفية متحركة وتمرير سلس (الافتراضي)"],
+              ["minimal", "كلاسيكي", "نظيف ومباشر، أقسام متتابعة"],
+            ] as const).map(([key, label, hint]) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => set("theme.layout", key)}
+                className={`rounded-lg border p-3 text-right ${(c.theme.layout ?? "cinematic") === key ? "border-accent" : "border-border"}`}
+              >
+                <div className="text-sm font-medium">{label}</div>
+                <div className="mt-1 text-xs text-muted">{hint}</div>
+              </button>
+            ))}
+          </div>
+        </div>
+
         <label className="block">
           <span className="mb-1 block text-xs text-muted">خط الموقع</span>
           <select

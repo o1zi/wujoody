@@ -6,6 +6,7 @@ import { googleFontsHref } from "@/lib/site-fonts";
 import { getPlanCaps } from "@/lib/plans-server";
 import { tenantUrl } from "@/lib/urls";
 import SiteView from "@/components/site/SiteView";
+import MinimalSiteView from "@/components/site/MinimalSiteView";
 import NotLive from "@/components/site/NotLive";
 import CinematicRuntime from "@/components/site/CinematicRuntime";
 
@@ -131,12 +132,27 @@ export default async function TenantSite({ params }: { params: Params }) {
     return <NotLive variant={variant} slug={subdomain} name={data.office.name} />;
   }
 
+  const fontLink = googleFontsHref([data.content.theme.font || "readex"]);
+  if (data.content.theme.layout === "minimal") {
+    return (
+      <>
+        {/* eslint-disable-next-line @next/next/no-css-tags */}
+        <link rel="stylesheet" href="/site-template/site.css" precedence="high" />
+        {/* eslint-disable-next-line @next/next/no-css-tags */}
+        <link rel="stylesheet" href="/site-template/minimal.css" precedence="high" />
+        {/* eslint-disable-next-line @next/next/no-css-tags */}
+        <link rel="stylesheet" href={fontLink} precedence="high" />
+        <MinimalSiteView content={data.content} slug={data.office.slug} caps={data.caps} />
+      </>
+    );
+  }
+
   return (
     <>
       {/* eslint-disable-next-line @next/next/no-css-tags */}
       <link rel="stylesheet" href="/site-template/site.css" precedence="high" />
       {/* eslint-disable-next-line @next/next/no-css-tags */}
-      <link rel="stylesheet" href={googleFontsHref([data.content.theme.font || "readex"])} precedence="high" />
+      <link rel="stylesheet" href={fontLink} precedence="high" />
       <SiteView content={data.content} slug={data.office.slug} caps={data.caps} />
       <CinematicRuntime />
     </>

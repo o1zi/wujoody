@@ -8,6 +8,7 @@ export type SiteContent = {
     cardStyle?: "glass" | "solid" | "outline";
     cardRadius?: "sharp" | "soft" | "round";
     cardTint?: string | null; // hex tint for the cards (transparency preserved on glass)
+    layout?: "cinematic" | "minimal"; // page template
   };
   seo: { googleVerification: string };
   media: {
@@ -97,7 +98,7 @@ export type SiteContent = {
 };
 
 export const defaultContent: SiteContent = {
-  theme: { accent: "bronze", accentHex: null, font: "readex", cardStyle: "glass", cardRadius: "soft", cardTint: null },
+  theme: { accent: "bronze", accentHex: null, font: "readex", cardStyle: "glass", cardRadius: "soft", cardTint: null, layout: "cinematic" },
   seo: { googleVerification: "" },
   media: { bgVideo: null, bgMode: "video", frames: null, solid: "black" },
   brand: { ar: "أوتاد", en: "AWTAD", logo: null },
