@@ -15,6 +15,13 @@ export default function MinimalSiteView({ content, slug, caps }: { content: Site
   const brand = content.brand;
   const home = tenantUrl(slug);
 
+  // Hero background from the chosen media (video / image / first frame).
+  const m = content.media;
+  const isSolid = m?.bgMode === "solid";
+  const frames = m?.bgMode === "frames" && m.frames && m.frames.length ? m.frames : null;
+  const heroBg = !isSolid ? (frames ? frames[0] : m?.bgVideo ?? null) : null;
+  const heroBgIsVideo = !!heroBg && /\.(mp4|webm|mov|m4v|ogg|ogv)(\?|$)/i.test(heroBg);
+
   const waNumber = (content.contact.whatsapp || content.contact.phone || "").replace(/\D/g, "");
   const socials: { key: string; emoji: string; href: string }[] = [];
   const add = (key: string, emoji: string, href: string | null) => href && socials.push({ key, emoji, href });
@@ -73,7 +80,18 @@ export default function MinimalSiteView({ content, slug, caps }: { content: Site
       </header>
 
       <main id="top">
-        <section className="m-hero">
+        <section className="m-hero" data-hasbg={heroBg ? "" : undefined}>
+          {heroBg && (
+            <div className="m-hero-bg">
+              {heroBgIsVideo ? (
+                <video src={heroBg} autoPlay muted loop playsInline />
+              ) : (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={heroBg} alt="" />
+              )}
+              <span className="m-hero-ov" />
+            </div>
+          )}
           <div className="m-wrap">
             <div className="m-eyebrow">{content.hero.eyebrow}</div>
             <h1>{brand.ar}</h1>
