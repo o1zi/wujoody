@@ -476,10 +476,14 @@ export default function Editor({
 
         <div>
           <span className="mb-2 block text-xs text-muted">تخطيط الموقع</span>
-          <div className="grid gap-2 sm:grid-cols-2">
+          <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
             {([
               ["cinematic", "سينمائي", "خلفية متحركة وتمرير سلس (الافتراضي)"],
-              ["minimal", "كلاسيكي", "نظيف ومباشر، أقسام متتابعة"],
+              ["minimal", "كلاسيكي", "نظيف ومباشر، فاتح وأنيق"],
+              ["luxe", "فخم داكن", "أسود وذهبي، عناوين متوسّطة راقية"],
+              ["corporate", "مؤسسي", "فاتح ومنظّم، بطاقات بإطار وشريط علوي"],
+              ["editorial", "تحريري", "طابع مجلة، عناوين كبيرة وخطوط فاصلة"],
+              ["bold", "جريء", "داكن بعناوين ضخمة وتباين قوي"],
             ] as const).map(([key, label, hint]) => (
               <button
                 key={key}

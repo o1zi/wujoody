@@ -133,7 +133,7 @@ export default async function TenantSite({ params }: { params: Params }) {
   }
 
   const fontLink = googleFontsHref([data.content.theme.font || "readex"]);
-  if (data.content.theme.layout === "minimal") {
+  if (data.content.theme.layout && data.content.theme.layout !== "cinematic") {
     return (
       <>
         {/* eslint-disable-next-line @next/next/no-css-tags */}

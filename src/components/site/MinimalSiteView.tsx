@@ -15,6 +15,9 @@ export default function MinimalSiteView({ content, slug, caps }: { content: Site
   const dark = content.media?.solid !== "white";
   const brand = content.brand;
   const home = tenantUrl(slug);
+  // Visual variant (skin) of the minimal engine. "minimal" => classic.
+  const variant = !content.theme.layout || content.theme.layout === "minimal" ? "classic" : content.theme.layout;
+  const isClassic = variant === "classic";
 
   // Consistent section header: eyebrow (latin) + title + optional lead.
   const head = (title: string, en: string, lead?: string): ReactNode => (
@@ -29,7 +32,9 @@ export default function MinimalSiteView({ content, slug, caps }: { content: Site
   const m = content.media;
   const isSolid = m?.bgMode === "solid";
   const frames = m?.bgMode === "frames" && m.frames && m.frames.length ? m.frames : null;
-  const heroBg = !isSolid ? (frames ? frames[0] : m?.bgVideo ?? null) : null;
+  // The full-page media background is used by the classic variant only; the
+  // other variants are flat templates with their own surfaces.
+  const heroBg = isClassic && !isSolid ? (frames ? frames[0] : m?.bgVideo ?? null) : null;
   const heroBgIsVideo = !!heroBg && /\.(mp4|webm|mov|m4v|ogg|ogv)(\?|$)/i.test(heroBg);
 
   const waNumber = (content.contact.whatsapp || content.contact.phone || "").replace(/\D/g, "");
@@ -60,7 +65,7 @@ export default function MinimalSiteView({ content, slug, caps }: { content: Site
   };
 
   return (
-    <div className="m-site" data-bg={dark ? "dark" : undefined} data-mediabg={heroBg ? "" : undefined} data-card={t.dataCard} data-font={t.dataFont} style={t.style}>
+    <div className="m-site" data-variant={variant} data-bg={dark ? "dark" : undefined} data-mediabg={heroBg ? "" : undefined} data-card={t.dataCard} data-font={t.dataFont} style={t.style}>
       {heroBg && (
         <>
           <div className="m-bgfixed">
