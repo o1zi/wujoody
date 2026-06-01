@@ -96,6 +96,45 @@
 
 .m-foot{border-top:1px solid var(--m-line);padding:30px 0;color:var(--m-muted);text-align:center;font-size:13px}
 
+/* ===== Tidy refinements (neater rhythm, headers, cards, states) ===== */
+.m-sec{padding:clamp(56px,8vw,88px) 0}
+.m-head{margin-bottom:32px}
+.m-ey{display:inline-block;color:var(--accent);letter-spacing:.24em;font-size:12px;font-weight:700;margin-bottom:10px}
+.m-head h2{margin:0}
+.m-head .m-lead{margin:12px 0 0}
+.m-body{color:var(--m-muted);max-width:760px;font-size:16px;margin:0}
+
+/* Hero CTA + tighter hero rhythm */
+.m-hero-cta{display:inline-block;margin-top:30px;background:var(--accent);color:#0b0d10;padding:13px 32px;
+  border-radius:var(--card-radius,10px);font-weight:600;text-decoration:none;transition:transform .2s ease,filter .2s ease}
+.m-hero-cta:hover{transform:translateY(-1px);filter:brightness(1.06)}
+
+/* Cards: subtle elevation + hover lift */
+.m-card{transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease}
+.m-card:hover{transform:translateY(-3px);box-shadow:0 14px 34px rgba(0,0,0,.10);border-color:color-mix(in srgb,var(--accent) 40%,var(--m-line))}
+.m-site[data-bg="dark"] .m-card:hover,.m-site[data-mediabg] .m-card:hover{box-shadow:0 14px 40px rgba(0,0,0,.5)}
+
+/* Stats as tidy equal cards */
+.m-stats{gap:16px}
+.m-stat{flex:1 1 160px;border:1px solid var(--m-line);border-radius:var(--card-radius,14px);padding:22px;text-align:center;background:var(--m-card)}
+
+/* Numbered process steps */
+.m-steps{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+.m-step{display:flex;gap:16px;align-items:flex-start;border:1px solid var(--m-line);border-radius:var(--card-radius,14px);padding:20px;background:var(--m-card)}
+.m-step-n{flex:0 0 auto;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--accent);color:#0b0d10;font-weight:700}
+.m-step h3{margin:0 0 4px;font-size:17px;color:var(--m-fg)}
+.m-step p{margin:0;color:var(--m-muted);font-size:14px}
+
+/* Testimonials */
+.m-quote .q{color:var(--m-fg);font-size:16px;line-height:1.9;margin:0}
+.m-quote .who{margin-top:14px;display:flex;flex-direction:column}
+.m-quote .who b{color:var(--m-fg)}
+.m-quote .who span{color:var(--m-muted);font-size:13px}
+
+/* Focus + reduced motion */
+.m-site a:focus-visible,.m-site button:focus-visible,.m-site summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+@media(prefers-reduced-motion:reduce){.m-card,.m-hero-cta{transition:none}.m-card:hover,.m-hero-cta:hover{transform:none}}
+
 /* Make reused form/calculator components readable on the minimal surface */
 .m-site .form .fld input,.m-site .form .fld textarea{color:var(--m-fg);border-bottom-color:var(--m-line)}
 .m-site .form .fld label{color:var(--m-muted)}

@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type { SiteContent } from "@/lib/site-content";
 import type { PlanCaps } from "@/lib/plans";
 import { themeAttrs } from "@/lib/site-theme";
@@ -14,6 +15,15 @@ export default function MinimalSiteView({ content, slug, caps }: { content: Site
   const dark = content.media?.solid !== "white";
   const brand = content.brand;
   const home = tenantUrl(slug);
+
+  // Consistent section header: eyebrow (latin) + title + optional lead.
+  const head = (title: string, en: string, lead?: string): ReactNode => (
+    <div className="m-head">
+      <span className="m-ey">{en}</span>
+      <h2>{title}</h2>
+      {lead ? <p className="m-lead">{lead}</p> : null}
+    </div>
+  );
 
   // Hero background from the chosen media (video / image / first frame).
   const m = content.media;
@@ -98,12 +108,13 @@ export default function MinimalSiteView({ content, slug, caps }: { content: Site
             <div className="m-eyebrow">{content.hero.eyebrow}</div>
             <h1>{brand.ar}</h1>
             <p>{content.hero.subtitle}</p>
+            <a className="m-hero-cta" href="#contact">تواصل معنا</a>
             {content.hero.meta?.length > 0 && (
               <div className="m-meta">
-                {content.hero.meta.map((m, i) => (
+                {content.hero.meta.map((mt, i) => (
                   <div key={i}>
-                    <div className="v">{m.value}</div>
-                    <div className="l">{m.label}</div>
+                    <div className="v">{mt.value}</div>
+                    <div className="l">{mt.label}</div>
                   </div>
                 ))}
               </div>
@@ -114,9 +125,8 @@ export default function MinimalSiteView({ content, slug, caps }: { content: Site
         {show("about") && (
           <section className="m-sec" id="about">
             <div className="m-wrap">
-              <h2>من نحن</h2>
-              <p className="m-lead">{content.about.lead}</p>
-              <p style={{ color: "var(--m-muted)" }}>{content.about.body}</p>
+              {head("من نحن", "ABOUT", content.about.lead)}
+              <p className="m-body">{content.about.body}</p>
             </div>
           </section>
         )}
@@ -124,8 +134,7 @@ export default function MinimalSiteView({ content, slug, caps }: { content: Site
         {show("services") && (
           <section className="m-sec" id="services">
             <div className="m-wrap">
-              <h2>{content.services.title || "خدماتنا"}</h2>
-              <p className="m-lead">{content.services.lead}</p>
+              {head(content.services.title || "خدماتنا", "SERVICES", content.services.lead)}
               <div className="m-grid">
                 {content.services.items.filter((s) => s.title).map((s, i) => (
                   <div className="m-card" key={i}>
@@ -142,7 +151,7 @@ export default function MinimalSiteView({ content, slug, caps }: { content: Site
           <section className="m-sec">
             <div className="m-wrap m-stats">
               {content.stats.map((s, i) => (
-                <div key={i}>
+                <div className="m-stat" key={i}>
                   <div className="v">{s.value}{s.suffix}</div>
                   <div className="l">{s.label}</div>
                 </div>
@@ -154,12 +163,15 @@ export default function MinimalSiteView({ content, slug, caps }: { content: Site
         {show("process") && content.process.length > 0 && (
           <section className="m-sec">
             <div className="m-wrap">
-              <h2>منهجية العمل</h2>
-              <div className="m-grid">
+              {head("منهجية العمل", "PROCESS")}
+              <div className="m-steps">
                 {content.process.map((p, i) => (
-                  <div className="m-card" key={i}>
-                    <h3>{i + 1}. {p.title}</h3>
-                    <p>{p.desc}</p>
+                  <div className="m-step" key={i}>
+                    <span className="m-step-n">{i + 1}</span>
+                    <div>
+                      <h3>{p.title}</h3>
+                      <p>{p.desc}</p>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -170,7 +182,7 @@ export default function MinimalSiteView({ content, slug, caps }: { content: Site
         {show("projects") && (
           <section className="m-sec" id="projects">
             <div className="m-wrap">
-              <h2>المشاريع</h2>
+              {head("المشاريع", "PROJECTS")}
               <ProjectsGallery items={content.projects.items} detailed={caps.projectDetails} />
             </div>
           </section>
@@ -179,12 +191,12 @@ export default function MinimalSiteView({ content, slug, caps }: { content: Site
         {show("team") && content.team.items.length > 0 && (
           <section className="m-sec">
             <div className="m-wrap">
-              <h2>فريق العمل</h2>
+              {head("فريق العمل", "TEAM")}
               <div className="m-grid">
-                {content.team.items.map((m, i) => (
+                {content.team.items.map((mb, i) => (
                   <div className="m-card" key={i}>
-                    <h3>{m.name}</h3>
-                    <p>{m.role}</p>
+                    <h3>{mb.name}</h3>
+                    <p>{mb.role}</p>
                   </div>
                 ))}
               </div>
@@ -195,12 +207,12 @@ export default function MinimalSiteView({ content, slug, caps }: { content: Site
         {show("testimonials") && content.testimonials.length > 0 && (
           <section className="m-sec">
             <div className="m-wrap">
-              <h2>آراء العملاء</h2>
+              {head("آراء العملاء", "CLIENTS")}
               <div className="m-grid">
                 {content.testimonials.map((tt, i) => (
-                  <div className="m-card" key={i}>
-                    <p style={{ color: "var(--m-fg)" }}>«{tt.quote}»</p>
-                    <p style={{ marginTop: 10 }}><b>{tt.name}</b> — {tt.role}</p>
+                  <div className="m-card m-quote" key={i}>
+                    <p className="q">«{tt.quote}»</p>
+                    <p className="who"><b>{tt.name}</b><span>{tt.role}</span></p>
                   </div>
                 ))}
               </div>
@@ -211,8 +223,7 @@ export default function MinimalSiteView({ content, slug, caps }: { content: Site
         {show("credentials") && content.credentials.badges.length > 0 && (
           <section className="m-sec">
             <div className="m-wrap">
-              <h2>الاعتمادات والثقة</h2>
-              {content.credentials.lead ? <p className="m-lead">{content.credentials.lead}</p> : null}
+              {head("الاعتمادات والثقة", "CREDENTIALS", content.credentials.lead)}
               <div className="m-badges">
                 {content.credentials.badges.map((b, i) => (
                   <div className="m-badge" key={i}><b>{b.value}</b><span>{b.label}</span></div>
@@ -225,7 +236,7 @@ export default function MinimalSiteView({ content, slug, caps }: { content: Site
         {show("faq") && content.faq.items.length > 0 && (
           <section className="m-sec">
             <div className="m-wrap m-faq">
-              <h2>الأسئلة الشائعة</h2>
+              {head("الأسئلة الشائعة", "FAQ")}
               {content.faq.items.map((f, i) => (
                 <details key={i} open={i === 0}>
                   <summary>{f.q}</summary>
@@ -238,9 +249,8 @@ export default function MinimalSiteView({ content, slug, caps }: { content: Site
 
         {show("booking") && (
           <section className="m-sec">
-            <div className="m-wrap" style={{ maxWidth: 640 }}>
-              <h2>احجز استشارتك الأولى</h2>
-              <p className="m-lead">اختر الوقت المناسب وسيتواصل معك أحد مهندسينا.</p>
+            <div className="m-wrap" style={{ maxWidth: 680 }}>
+              {head("احجز استشارتك الأولى", "BOOK", "اختر الوقت المناسب وسيتواصل معك أحد مهندسينا.")}
               <BookingForm slug={slug} />
             </div>
           </section>
@@ -249,8 +259,7 @@ export default function MinimalSiteView({ content, slug, caps }: { content: Site
         {show("calculator") && content.calculator.types.some((x) => x.name) && (
           <section className="m-sec">
             <div className="m-wrap">
-              <h2>حاسبة التكلفة</h2>
-              {content.calculator.lead ? <p className="m-lead">{content.calculator.lead}</p> : null}
+              {head("حاسبة التكلفة", "ESTIMATE", content.calculator.lead)}
               <CostCalculator calc={content.calculator} />
             </div>
           </section>
@@ -259,7 +268,7 @@ export default function MinimalSiteView({ content, slug, caps }: { content: Site
         {show("contact") && (
           <section className="m-sec" id="contact">
             <div className="m-wrap">
-              <h2>تواصل معنا</h2>
+              {head("تواصل معنا", "CONTACT")}
               <div className="m-contact">
                 <div>
                   <ContactForm slug={slug} waNumber={caps.whatsapp && waNumber.length >= 8 ? waNumber : ""} brand={brand.ar} />
