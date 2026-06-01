@@ -17,7 +17,6 @@ export default function MinimalSiteView({ content, slug, caps }: { content: Site
   const home = tenantUrl(slug);
   // Visual variant (skin) of the minimal engine. "minimal" => classic.
   const variant = !content.theme.layout || content.theme.layout === "minimal" ? "classic" : content.theme.layout;
-  const isClassic = variant === "classic";
 
   // Consistent section header: eyebrow (latin) + title + optional lead.
   const head = (title: string, en: string, lead?: string): ReactNode => (
@@ -32,9 +31,9 @@ export default function MinimalSiteView({ content, slug, caps }: { content: Site
   const m = content.media;
   const isSolid = m?.bgMode === "solid";
   const frames = m?.bgMode === "frames" && m.frames && m.frames.length ? m.frames : null;
-  // The full-page media background is used by the classic variant only; the
-  // other variants are flat templates with their own surfaces.
-  const heroBg = isClassic && !isSolid ? (frames ? frames[0] : m?.bgVideo ?? null) : null;
+  // Full-page media background (video loops; frames show the first frame).
+  // Supported by every layout/variant; surfaces turn glassy over it.
+  const heroBg = !isSolid ? (frames ? frames[0] : m?.bgVideo ?? null) : null;
   const heroBgIsVideo = !!heroBg && /\.(mp4|webm|mov|m4v|ogg|ogv)(\?|$)/i.test(heroBg);
 
   const waNumber = (content.contact.whatsapp || content.contact.phone || "").replace(/\D/g, "");
