@@ -135,36 +135,52 @@
 .m-site a:focus-visible,.m-site button:focus-visible,.m-site summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
 @media(prefers-reduced-motion:reduce){.m-card,.m-hero-cta{transition:none}.m-card:hover,.m-hero-cta:hover{transform:none}}
 
-/* ===== Variants (skins of the same engine) ===== */
-/* فخم داكن — luxe */
-.m-site[data-variant="luxe"]{--m-bg:#0c0b09;--m-fg:#f3ecde;--m-muted:rgba(243,236,222,.62);--m-line:rgba(212,175,55,.20);--m-card:#15120c}
+/* ===== Variants — distinct in STRUCTURE, not just color ===== */
+
+/* فخم داكن — luxe: centered, gold rules, centered cards */
+.m-site[data-variant="luxe"]{--m-bg:#0b0a08;--m-fg:#f3ecde;--m-muted:rgba(243,236,222,.6);--m-line:rgba(212,175,55,.22);--m-card:#15120c}
+.m-site[data-variant="luxe"] .m-hero{padding:120px 0 96px}
+.m-site[data-variant="luxe"] .m-hero h1{font-weight:600;letter-spacing:.06em}
 .m-site[data-variant="luxe"] .m-head{text-align:center}
 .m-site[data-variant="luxe"] .m-head .m-lead{margin-inline:auto}
-.m-site[data-variant="luxe"] .m-hero h1{font-weight:600;letter-spacing:.04em}
+.m-site[data-variant="luxe"] .m-head h2{display:inline-block;padding-bottom:12px;border-bottom:1px solid var(--accent)}
+.m-site[data-variant="luxe"] .m-body{margin-inline:auto;text-align:center}
+.m-site[data-variant="luxe"] .m-card{text-align:center;background:linear-gradient(180deg,rgba(255,255,255,.04),transparent);border-color:rgba(212,175,55,.25)}
 .m-site[data-variant="luxe"] .m-sec{border-top-color:rgba(212,175,55,.18)}
-.m-site[data-variant="luxe"] .m-card{background:linear-gradient(180deg,rgba(255,255,255,.04),transparent)}
 
-/* مؤسسي — corporate */
-.m-site[data-variant="corporate"]{--m-bg:#f6f8fb;--m-fg:#0f1b2d;--m-muted:#566273;--m-line:#e2e7ee;--m-card:#ffffff}
-.m-site[data-variant="corporate"] .m-head{text-align:right}
-.m-site[data-variant="corporate"] .m-card{border-top:3px solid var(--accent)}
-.m-site[data-variant="corporate"] .m-hero{padding-top:80px}
-.m-site[data-variant="corporate"] main > .m-sec:nth-of-type(even){background:#eef2f7}
+/* مؤسسي — corporate: right-aligned, alternating bands, boxed cards + top bar */
+.m-site[data-variant="corporate"]{--m-bg:#f5f7fa;--m-fg:#0f1b2d;--m-muted:#566273;--m-line:#dfe5ec;--m-card:#ffffff}
+.m-site[data-variant="corporate"] .m-hero{padding:76px 0;text-align:right}
+.m-site[data-variant="corporate"] .m-hero .m-meta{justify-content:flex-start}
+.m-site[data-variant="corporate"] main > .m-sec:nth-of-type(even){background:#e9eef5}
+.m-site[data-variant="corporate"] .m-head h2{border-right:4px solid var(--accent);padding-right:14px}
+.m-site[data-variant="corporate"] .m-grid{grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.m-site[data-variant="corporate"] .m-card{border-top:3px solid var(--accent);box-shadow:0 2px 6px rgba(15,27,45,.07)}
 
-/* تحريري — editorial */
-.m-site[data-variant="editorial"]{--m-bg:#fbfaf7;--m-fg:#1a1814;--m-muted:#6b6357;--m-line:#e6e0d4;--m-card:#fffdf9}
-.m-site[data-variant="editorial"] .m-hero h1{font-size:clamp(42px,8vw,88px);font-weight:700;line-height:1.02}
-.m-site[data-variant="editorial"] .m-head{border-bottom:2px solid var(--m-fg);padding-bottom:14px}
-.m-site[data-variant="editorial"] .m-sec h2{font-size:clamp(28px,4.5vw,50px)}
-.m-site[data-variant="editorial"] .m-card{border:0;border-top:1px solid var(--m-line);border-radius:0;padding:18px 0;background:transparent}
+/* تحريري — editorial: magazine, numbered sections, flat 2-col list, huge type */
+.m-site[data-variant="editorial"]{--m-bg:#fbfaf7;--m-fg:#1a1814;--m-muted:#6b6357;--m-line:#e0d9c9;--m-card:#fffdf9}
+.m-site[data-variant="editorial"] .m-hero{text-align:right;padding:96px 0 64px}
+.m-site[data-variant="editorial"] .m-hero h1{font-size:clamp(46px,10vw,104px);font-weight:800;line-height:.98}
+.m-site[data-variant="editorial"] main{counter-reset:msec}
+.m-site[data-variant="editorial"] .m-sec{counter-increment:msec}
+.m-site[data-variant="editorial"] .m-head{border-bottom:2px solid var(--m-fg);padding-bottom:12px}
+.m-site[data-variant="editorial"] .m-head h2::before{content:counter(msec,decimal-leading-zero) " · ";color:var(--accent);font-weight:800}
+.m-site[data-variant="editorial"] .m-sec h2{font-size:clamp(30px,5vw,56px)}
+.m-site[data-variant="editorial"] .m-grid{grid-template-columns:1fr 1fr;gap:0 30px}
+.m-site[data-variant="editorial"] .m-card{border:0;border-bottom:1px solid var(--m-line);border-radius:0;background:transparent;padding:20px 0}
 .m-site[data-variant="editorial"] .m-card:hover{transform:none;box-shadow:none}
+@media(max-width:680px){.m-site[data-variant="editorial"] .m-grid{grid-template-columns:1fr}}
 
-/* جريء — bold */
-.m-site[data-variant="bold"]{--m-bg:#0d0d10;--m-fg:#ffffff;--m-muted:rgba(255,255,255,.66);--m-line:rgba(255,255,255,.14);--m-card:#17171c}
-.m-site[data-variant="bold"] .m-hero h1{font-weight:800;font-size:clamp(42px,9vw,98px);letter-spacing:-.02em}
-.m-site[data-variant="bold"] .m-ey{background:var(--accent);color:#0b0d10;padding:4px 12px;border-radius:6px;letter-spacing:.12em}
-.m-site[data-variant="bold"] .m-sec h2{font-weight:800}
+/* جريء — bold: centered, huge type, accent eyebrow chip, chunky cards */
+.m-site[data-variant="bold"]{--m-bg:#0d0d10;--m-fg:#ffffff;--m-muted:rgba(255,255,255,.66);--m-line:rgba(255,255,255,.16);--m-card:#17171c}
+.m-site[data-variant="bold"] .m-head{text-align:center}
+.m-site[data-variant="bold"] .m-head .m-lead{margin-inline:auto}
+.m-site[data-variant="bold"] .m-hero h1{font-weight:800;font-size:clamp(48px,11vw,120px);letter-spacing:-.025em;line-height:.92}
+.m-site[data-variant="bold"] .m-ey{background:var(--accent);color:#0b0d10;padding:5px 14px;border-radius:6px;letter-spacing:.12em}
+.m-site[data-variant="bold"] .m-sec h2{font-weight:800;font-size:clamp(30px,5.5vw,60px)}
+.m-site[data-variant="bold"] .m-grid{grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
 .m-site[data-variant="bold"] .m-card{border-width:2px}
+.m-site[data-variant="bold"] .m-card h3{font-size:20px;font-weight:700}
 
 /* Make reused form/calculator components readable on the minimal surface */
 .m-site .form .fld input,.m-site .form .fld textarea{color:var(--m-fg);border-bottom-color:var(--m-line)}
