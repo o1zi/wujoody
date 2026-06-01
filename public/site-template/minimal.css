@@ -34,11 +34,21 @@
 .m-hero h1{font-size:clamp(34px,6vw,66px);font-weight:700;margin:16px 0 14px;line-height:1.1}
 .m-hero p{max-width:680px;margin:0 auto;color:var(--m-muted);font-size:18px}
 
+/* Full-page media background — applies the chosen background to the whole site */
+.m-bgfixed{position:fixed;inset:0;z-index:-2;overflow:hidden}
+.m-bgfixed img,.m-bgfixed video{width:100%;height:100%;object-fit:cover}
+.m-bgfixed-ov{position:fixed;inset:0;z-index:-1;background:rgba(8,10,14,.72)}
+.m-site[data-mediabg]{background:transparent!important;color:#fff;
+  --m-fg:#fff; --m-muted:rgba(255,255,255,.72); --m-line:rgba(255,255,255,.16); --m-card:rgba(16,19,24,.5);}
+.m-site[data-mediabg] .m-header{background:rgba(8,10,14,.6);backdrop-filter:blur(8px)}
+.m-site[data-mediabg] .m-card,.m-site[data-mediabg] .m-badge{backdrop-filter:blur(10px)}
+.m-site[data-mediabg] .m-eyebrow{color:#fff}
+
 /* Reused cinematic gallery inside the minimal layout: there is no scroll engine
-   here, so neutralize reveal-hiding and give projects a simple grid. */
+   here, so neutralize reveal-hiding and give projects a uniform simple grid. */
 .m-site .reveal{opacity:1!important;transform:none!important}
 .m-site .proj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
-.m-site .proj{position:relative;height:230px;border-radius:var(--card-radius,14px);overflow:hidden;border:1px solid var(--m-line);cursor:pointer}
+.m-site .proj{grid-column:auto!important;grid-row:auto!important;position:relative;height:230px;border-radius:var(--card-radius,14px);overflow:hidden;border:1px solid var(--m-line);cursor:pointer}
 .m-site .proj .cap{position:absolute;inset:auto 0 0 0;padding:14px;background:linear-gradient(0deg,rgba(0,0,0,.75),transparent)}
 .m-site .proj .cap h3{color:#fff;margin:0;font-size:17px}
 .m-site .proj .cap .meta{color:rgba(255,255,255,.7);font-size:12px}

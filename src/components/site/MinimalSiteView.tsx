@@ -50,7 +50,20 @@ export default function MinimalSiteView({ content, slug, caps }: { content: Site
   };
 
   return (
-    <div className="m-site" data-bg={dark ? "dark" : undefined} data-card={t.dataCard} data-font={t.dataFont} style={t.style}>
+    <div className="m-site" data-bg={dark ? "dark" : undefined} data-mediabg={heroBg ? "" : undefined} data-card={t.dataCard} data-font={t.dataFont} style={t.style}>
+      {heroBg && (
+        <>
+          <div className="m-bgfixed">
+            {heroBgIsVideo ? (
+              <video src={heroBg} autoPlay muted loop playsInline />
+            ) : (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={heroBg} alt="" />
+            )}
+          </div>
+          <div className="m-bgfixed-ov" />
+        </>
+      )}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <script
         dangerouslySetInnerHTML={{
@@ -81,17 +94,6 @@ export default function MinimalSiteView({ content, slug, caps }: { content: Site
 
       <main id="top">
         <section className="m-hero" data-hasbg={heroBg ? "" : undefined}>
-          {heroBg && (
-            <div className="m-hero-bg">
-              {heroBgIsVideo ? (
-                <video src={heroBg} autoPlay muted loop playsInline />
-              ) : (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={heroBg} alt="" />
-              )}
-              <span className="m-hero-ov" />
-            </div>
-          )}
           <div className="m-wrap">
             <div className="m-eyebrow">{content.hero.eyebrow}</div>
             <h1>{brand.ar}</h1>
