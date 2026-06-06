@@ -8,6 +8,7 @@ import { BG_PRESETS } from "@/lib/bg-presets";
 import { SITE_FONTS } from "@/lib/site-fonts";
 import { SITE_SECTIONS } from "@/lib/sections";
 import { SITE_PRESETS, type SitePreset } from "@/lib/site-presets";
+import { SITE_TEMPLATES } from "@/lib/site-templates";
 import { Button, Alert } from "@/components/ui";
 
 const CARD_STYLES: { key: NonNullable<SiteContent["theme"]["cardStyle"]>; label: string; hint: string }[] = [
@@ -439,7 +440,37 @@ export default function Editor({
       </Section>
 
       <Section title="مظهر الموقع">
-        <p className="text-xs text-muted">غيّر خط الموقع وشكل البطاقات ولون التمييز. تظهر التغييرات بعد الحفظ وتحديث الموقع.</p>
+        <p className="text-xs text-muted">غيّر قالب التصميم وخط الموقع وشكل البطاقات ولون التمييز. تظهر التغييرات بعد الحفظ وتحديث الموقع.</p>
+
+        <div>
+          <span className="mb-2 block text-xs text-muted">قالب التصميم — يغيّر شكل الموقع بالكامل</span>
+          <div className="grid grid-cols-2 gap-3">
+            {SITE_TEMPLATES.map((t) => {
+              const active = (c.theme.layout ?? "cinematic") === t.id;
+              return (
+                <button
+                  key={t.id}
+                  type="button"
+                  onClick={() => set("theme.layout", t.id)}
+                  className={`overflow-hidden rounded-xl border text-right transition ${active ? "border-accent ring-1 ring-accent" : "border-border hover:border-accent"}`}
+                >
+                  <div className="flex h-20 items-center justify-between px-4" style={{ background: t.dark ? "#06070A" : "#F4F1EA" }}>
+                    <span className="text-lg font-bold" style={{ color: t.dark ? "#fff" : "#15110C" }}>
+                      أبجد<span style={{ color: "#C2974E" }}>.</span>
+                    </span>
+                    <span className="rounded-full px-2 py-0.5 text-[10px]" style={{ background: t.dark ? "rgba(255,255,255,.1)" : "rgba(21,17,12,.08)", color: t.dark ? "#fff" : "#15110C" }}>
+                      {t.dark ? "غامق" : "فاتح"}
+                    </span>
+                  </div>
+                  <div className="px-4 py-2.5">
+                    <div className="text-sm font-semibold">{t.name}{active && " ✓"}</div>
+                    <div className="mt-0.5 text-[11px] text-muted">{t.tagline}</div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
 
         <div>
           <span className="mb-2 block text-xs text-muted">أنماط جاهزة — طبّق مظهراً كاملاً بنقرة</span>

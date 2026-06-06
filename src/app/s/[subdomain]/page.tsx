@@ -6,8 +6,11 @@ import { googleFontsHref } from "@/lib/site-fonts";
 import { getPlanCaps } from "@/lib/plans-server";
 import { tenantUrl } from "@/lib/urls";
 import SiteView from "@/components/site/SiteView";
+import EditorialView from "@/components/site/EditorialView";
 import NotLive from "@/components/site/NotLive";
 import CinematicRuntime from "@/components/site/CinematicRuntime";
+import EditorialRuntime from "@/components/site/EditorialRuntime";
+import { resolveTemplate } from "@/lib/site-templates";
 
 type Params = Promise<{ subdomain: string }>;
 
@@ -131,15 +134,23 @@ export default async function TenantSite({ params }: { params: Params }) {
     return <NotLive variant={variant} slug={subdomain} name={data.office.name} />;
   }
 
-  const fontLink = googleFontsHref([data.content.theme.font || "readex"]);
+  const template = resolveTemplate(data.content.theme.layout);
+  const fontLink = googleFontsHref([data.content.theme.font || template.defaultFont]);
   return (
     <>
-      {/* eslint-disable-next-line @next/next/no-css-tags */}
-      <link rel="stylesheet" href="/site-template/site.css" precedence="high" />
-      {/* eslint-disable-next-line @next/next/no-css-tags */}
+      <link rel="stylesheet" href={template.stylesheet} precedence="high" />
       <link rel="stylesheet" href={fontLink} precedence="high" />
-      <SiteView content={data.content} slug={data.office.slug} caps={data.caps} />
-      <CinematicRuntime />
+      {template.id === "editorial" ? (
+        <>
+          <EditorialView content={data.content} slug={data.office.slug} caps={data.caps} />
+          <EditorialRuntime />
+        </>
+      ) : (
+        <>
+          <SiteView content={data.content} slug={data.office.slug} caps={data.caps} />
+          <CinematicRuntime />
+        </>
+      )}
     </>
   );
 }
