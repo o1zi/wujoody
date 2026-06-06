@@ -9,11 +9,13 @@ import SiteView from "@/components/site/SiteView";
 import EditorialView from "@/components/site/EditorialView";
 import LuxeView from "@/components/site/LuxeView";
 import HeritageView from "@/components/site/HeritageView";
+import KineticView from "@/components/site/KineticView";
 import NotLive from "@/components/site/NotLive";
 import CinematicRuntime from "@/components/site/CinematicRuntime";
 import EditorialRuntime from "@/components/site/EditorialRuntime";
 import LuxeRuntime from "@/components/site/LuxeRuntime";
 import HeritageRuntime from "@/components/site/HeritageRuntime";
+import KineticRuntime from "@/components/site/KineticRuntime";
 import { resolveTemplate } from "@/lib/site-templates";
 
 type Params = Promise<{ subdomain: string }>;
@@ -158,6 +160,11 @@ export default async function TenantSite({ params }: { params: Params }) {
         <>
           <HeritageView content={data.content} slug={data.office.slug} caps={data.caps} />
           <HeritageRuntime />
+        </>
+      ) : template.id === "kinetic" ? (
+        <>
+          <KineticView content={data.content} slug={data.office.slug} caps={data.caps} />
+          <KineticRuntime />
         </>
       ) : (
         <>

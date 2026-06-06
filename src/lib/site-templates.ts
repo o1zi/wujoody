@@ -3,7 +3,7 @@
 // implemented templates are listed — unknown/legacy values fall back to the
 // default (cinematic).
 
-export type TemplateId = "cinematic" | "editorial" | "luxe" | "heritage";
+export type TemplateId = "cinematic" | "editorial" | "luxe" | "heritage" | "kinetic";
 
 export type SiteTemplate = {
   id: TemplateId;
@@ -45,6 +45,14 @@ export const SITE_TEMPLATES: SiteTemplate[] = [
     tagline: "تراث سعودي · مثلّثات نجدية · طيني دافئ وخط كوفي معماري",
     stylesheet: "/site-template/heritage.css",
     defaultFont: "reemkufi",
+    dark: false,
+  },
+  {
+    id: "kinetic",
+    name: "حركي",
+    tagline: "استوديو جريء · أشرطة متحركة وختم دوّار · حروف ضخمة وإبداع غير تقليدي",
+    stylesheet: "/site-template/kinetic.css",
+    defaultFont: "changa",
     dark: false,
   },
 ];
