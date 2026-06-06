@@ -3,7 +3,7 @@
 // implemented templates are listed — unknown/legacy values fall back to the
 // default (cinematic).
 
-export type TemplateId = "cinematic" | "editorial" | "luxe" | "heritage" | "kinetic" | "aurora" | "blueprint";
+export type TemplateId = "cinematic" | "editorial" | "luxe" | "heritage" | "kinetic" | "aurora" | "blueprint" | "deco";
 
 export type SiteTemplate = {
   id: TemplateId;
@@ -69,6 +69,14 @@ export const SITE_TEMPLATES: SiteTemplate[] = [
     tagline: "لوحة هندسية · شبكة درافتنق وخطوط أبعاد · أزرق مخطط وخانة عنوان",
     stylesheet: "/site-template/blueprint.css",
     defaultFont: "ibmar",
+    dark: true,
+  },
+  {
+    id: "deco",
+    name: "ديكو",
+    tagline: "آرت ديكو · أخضر زمردي وذهبي · إطارات مزدوجة وزخارف متناظرة",
+    stylesheet: "/site-template/deco.css",
+    defaultFont: "elmessiri",
     dark: true,
   },
 ];

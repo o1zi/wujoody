@@ -12,6 +12,7 @@ import HeritageView from "@/components/site/HeritageView";
 import KineticView from "@/components/site/KineticView";
 import AuroraView from "@/components/site/AuroraView";
 import BlueprintView from "@/components/site/BlueprintView";
+import DecoView from "@/components/site/DecoView";
 import NotLive from "@/components/site/NotLive";
 import CinematicRuntime from "@/components/site/CinematicRuntime";
 import EditorialRuntime from "@/components/site/EditorialRuntime";
@@ -20,6 +21,7 @@ import HeritageRuntime from "@/components/site/HeritageRuntime";
 import KineticRuntime from "@/components/site/KineticRuntime";
 import AuroraRuntime from "@/components/site/AuroraRuntime";
 import BlueprintRuntime from "@/components/site/BlueprintRuntime";
+import DecoRuntime from "@/components/site/DecoRuntime";
 import { resolveTemplate } from "@/lib/site-templates";
 
 type Params = Promise<{ subdomain: string }>;
@@ -179,6 +181,11 @@ export default async function TenantSite({ params }: { params: Params }) {
         <>
           <BlueprintView content={data.content} slug={data.office.slug} caps={data.caps} />
           <BlueprintRuntime />
+        </>
+      ) : template.id === "deco" ? (
+        <>
+          <DecoView content={data.content} slug={data.office.slug} caps={data.caps} />
+          <DecoRuntime />
         </>
       ) : (
         <>
