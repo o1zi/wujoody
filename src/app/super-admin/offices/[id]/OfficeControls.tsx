@@ -10,6 +10,7 @@ import {
   updateOfficeOwner,
   setOfficeOwnerEmail,
   createResetLink,
+  startTrial,
   extendSubscription,
   endSubscriptionNow,
   deleteOffice,
@@ -44,6 +45,9 @@ export default function OfficeControls({
   const [phone, setPhone] = useState(owner.phone);
   const [emailV, setEmailV] = useState(owner.email);
   const [resetUrl, setResetUrl] = useState<string | null>(null);
+  const [trialPlan, setTrialPlan] = useState(
+    currentPlan || plans.find((p) => p.code === "pro")?.code || plans[0]?.code || "",
+  );
 
   function run(fn: () => Promise<unknown>, ok = "تم ✓") {
     setMsg(null);
@@ -124,6 +128,29 @@ export default function OfficeControls({
               ))}
             </select>
           </label>
+
+          <div className="rounded-xl border border-sky-500/25 bg-sky-500/5 p-3">
+            <span className="mb-1.5 block text-xs text-sky-200/90">تجربة مجانية — ٣ أيام بدون رسوم («جرّب ومعليك»)</span>
+            <div className="flex flex-wrap items-center gap-2">
+              <select
+                value={trialPlan}
+                onChange={(e) => setTrialPlan(e.target.value)}
+                disabled={pending}
+                className={input + " max-w-[180px]"}
+              >
+                {plans.map((p) => (
+                  <option key={p.code} value={p.code}>{p.name}</option>
+                ))}
+              </select>
+              <button
+                className="rounded-lg border border-sky-500/50 px-3 py-2 text-sm text-sky-300 hover:bg-sky-500/10 disabled:opacity-50"
+                disabled={pending || !trialPlan}
+                onClick={() => run(() => startTrial(officeId, trialPlan, 3), "تم بدء تجربة ٣ أيام ✓")}
+              >
+                ابدأ تجربة ٣ أيام
+              </button>
+            </div>
+          </div>
 
           <div>
             <span className="mb-1.5 block text-xs text-muted">تمديد المدة</span>

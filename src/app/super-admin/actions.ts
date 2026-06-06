@@ -59,6 +59,45 @@ export async function setOfficePlan(officeId: string, plan: string) {
   revalidateAdmin(officeId);
 }
 
+// Grant a short free trial (default 3 days) on the chosen plan, no charge —
+// "جرّب ومعليك". Sets the office live so the prospect sees their real site.
+// Recorded with amount 0 so it's distinguishable from a paid subscription.
+export async function startTrial(officeId: string, plan: string, days = 3) {
+  await assertSuperAdmin();
+  const admin = createAdminClient();
+
+  const planDef = await getPlanByCode(plan);
+  const now = new Date();
+  const ends = new Date(now.getTime() + days * 86400000);
+
+  const { data: existing } = await admin
+    .from("subscriptions")
+    .select("id")
+    .eq("office_id", officeId)
+    .eq("status", "active")
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  const row = {
+    plan,
+    status: "active" as const,
+    starts_at: now.toISOString(),
+    ends_at: ends.toISOString(),
+    amount: 0,
+    currency: planDef?.currency ?? "SAR",
+  };
+
+  if (existing?.id) {
+    await admin.from("subscriptions").update(row).eq("id", existing.id);
+  } else {
+    await admin.from("subscriptions").insert({ office_id: officeId, ...row });
+  }
+
+  await admin.from("offices").update({ status: "active" }).eq("id", officeId);
+  revalidateAdmin(officeId);
+}
+
 // Extend the latest subscription by N days (from its current end, or from now
 // if already expired). Keeps the office live.
 export async function extendSubscription(officeId: string, days: number) {

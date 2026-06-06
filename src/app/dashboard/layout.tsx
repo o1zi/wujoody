@@ -15,6 +15,11 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const ctx = await getSessionContext();
   if (!ctx) redirect("/login");
 
+  // An office that isn't active yet (pending activation, or suspended) can't use
+  // the dashboard — send it to the contact-to-activate page. Once activated the
+  // gate lifts automatically. Super-admins without an office are unaffected.
+  if (ctx.office && ctx.office.status !== "active") redirect("/activate");
+
   const office = ctx.office;
   const status = office ? STATUS_LABEL[office.status] : null;
 
