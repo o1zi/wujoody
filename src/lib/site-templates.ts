@@ -99,6 +99,9 @@ export const SITE_TEMPLATES: SiteTemplate[] = [
 
 const DEFAULT_TEMPLATE = SITE_TEMPLATES[0];
 
+// All template ids — used by plan caps to express "every template allowed".
+export const TEMPLATE_IDS: TemplateId[] = SITE_TEMPLATES.map((t) => t.id);
+
 export function resolveTemplate(layout?: string | null): SiteTemplate {
   return SITE_TEMPLATES.find((t) => t.id === layout) ?? DEFAULT_TEMPLATE;
 }

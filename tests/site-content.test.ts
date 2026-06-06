@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { mergeContent, clampMedia, isPresetUrl, isUploadedUrl, defaultContent } from "@/lib/site-content";
+import { mergeContent, clampMedia, clampTemplate, isPresetUrl, isUploadedUrl, defaultContent } from "@/lib/site-content";
 import { DEFAULT_CAPS } from "@/lib/plans";
 
 describe("site-content", () => {
@@ -28,6 +28,18 @@ describe("site-content", () => {
     const c = mergeContent({ media: { bgMode: "frames", frames: ["/backgrounds/a.jpg"], bgVideo: null, solid: "black" } });
     const out = clampMedia(c, DEFAULT_CAPS);
     expect(out.media.bgMode).toBe("frames");
+  });
+
+  it("clampTemplate forces a disallowed template onto an allowed one", () => {
+    const c = mergeContent({ theme: { layout: "atelier" } });
+    const basic = clampTemplate(c, { ...DEFAULT_CAPS, templates: ["editorial"] });
+    expect(basic.theme.layout).toBe("editorial"); // atelier not allowed → editorial
+  });
+
+  it("clampTemplate leaves an allowed template untouched", () => {
+    const c = mergeContent({ theme: { layout: "atelier" } });
+    const out = clampTemplate(c, DEFAULT_CAPS); // all templates allowed
+    expect(out.theme.layout).toBe("atelier");
   });
 
   it("url helpers classify preset vs uploaded media", () => {

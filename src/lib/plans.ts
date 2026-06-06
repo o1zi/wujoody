@@ -4,6 +4,7 @@
 // from the DB. This file is import-safe from client components (types only).
 
 import { SECTION_KEYS, STANDARD_SECTIONS } from "@/lib/sections";
+import { TEMPLATE_IDS } from "@/lib/site-templates";
 
 export type PlanCaps = {
   solidOnly: boolean;
@@ -23,6 +24,7 @@ export type PlanCaps = {
   aiMonthlyLimit: number; // max AI generations per office per month
   monthlyReport: boolean; // monthly performance email — Premium
   sections: string[]; // which site sections this plan may use (see lib/sections)
+  templates: string[]; // which design templates this plan may use (TemplateId[])
 };
 
 export type Plan = {
@@ -42,6 +44,7 @@ export const DEFAULT_CAPS: PlanCaps = {
   whatsapp: true, booking: true, blog: true, projectDetails: true, badges: true,
   profilePdf: true, customDomain: true, crm: true, aiContent: true, aiMonthlyLimit: 10, monthlyReport: true,
   sections: [...SECTION_KEYS],
+  templates: [...TEMPLATE_IDS],
 };
 
 export const FALLBACK_PLANS: Plan[] = [
@@ -57,6 +60,7 @@ export const FALLBACK_PLANS: Plan[] = [
       whatsapp: false, booking: false, blog: false, projectDetails: false, badges: false,
       profilePdf: false, customDomain: false, crm: false, aiContent: false, aiMonthlyLimit: 0, monthlyReport: false,
       sections: [...STANDARD_SECTIONS],
+      templates: ["editorial"],
     },
     features: [
       "موقع احترافي بنطاق فرعي خاص",
@@ -80,6 +84,7 @@ export const FALLBACK_PLANS: Plan[] = [
       whatsapp: true, booking: true, blog: true, projectDetails: true, badges: true,
       profilePdf: true, customDomain: true, crm: false, aiContent: false, aiMonthlyLimit: 0, monthlyReport: false,
       sections: [...SECTION_KEYS],
+      templates: [...TEMPLATE_IDS],
     },
     features: [
       "كل مزايا الأساسية",
@@ -102,6 +107,7 @@ export const FALLBACK_PLANS: Plan[] = [
       whatsapp: true, booking: true, blog: true, projectDetails: true, badges: true,
       profilePdf: true, customDomain: true, crm: true, aiContent: true, aiMonthlyLimit: 10, monthlyReport: true,
       sections: [...SECTION_KEYS],
+      templates: [...TEMPLATE_IDS],
     },
     features: [
       "كل مزايا الاحترافية",
@@ -129,6 +135,11 @@ export function normalizePlan(row: any): Plan {
     if (caps.blog) sections.push("blog");
   }
   const has = (k: string) => sections.includes(k);
+  // Allowed templates: explicit list wins; otherwise every template (so plans
+  // predating this cap aren't silently locked down).
+  const templates = Array.isArray(caps.templates)
+    ? caps.templates.map(String).filter((t: string) => (TEMPLATE_IDS as string[]).includes(t))
+    : [...TEMPLATE_IDS];
   return {
     code: row.code,
     name: row.name,
@@ -156,6 +167,7 @@ export function normalizePlan(row: any): Plan {
       aiMonthlyLimit: caps.aiMonthlyLimit == null ? (caps.aiContent ? 10 : 0) : Number(caps.aiMonthlyLimit),
       monthlyReport: !!caps.monthlyReport,
       sections,
+      templates,
     },
   };
 }

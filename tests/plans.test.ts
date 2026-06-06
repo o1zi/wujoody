@@ -43,4 +43,20 @@ describe("plans", () => {
     expect(p.caps.blog).toBe(true);
     expect(p.caps.badges).toBe(true); // credentials -> badges
   });
+
+  it("basic plan is limited to the editorial template; pro/premium get all", () => {
+    const byCode = Object.fromEntries(FALLBACK_PLANS.map((p) => [p.code, p]));
+    expect(byCode.basic.caps.templates).toEqual(["editorial"]);
+    expect(byCode.pro.caps.templates.length).toBeGreaterThan(1);
+    expect(byCode.pro.caps.templates).toContain("editorial");
+    expect(byCode.premium.caps.templates.length).toBeGreaterThan(1);
+  });
+
+  it("normalizePlan keeps an explicit templates list but defaults missing ones to all", () => {
+    const restricted = normalizePlan({ code: "basic", name: "x", price: 990, caps: { templates: ["editorial", "bogus"] }, features: [] });
+    expect(restricted.caps.templates).toEqual(["editorial"]); // invalid id filtered out
+
+    const legacy = normalizePlan({ code: "old", name: "x", price: 100, caps: {}, features: [] });
+    expect(legacy.caps.templates.length).toBeGreaterThan(1); // no list → every template
+  });
 });

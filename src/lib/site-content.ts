@@ -266,6 +266,18 @@ export function clampMedia(c: SiteContent, caps: PlanCaps): SiteContent {
   return { ...c, media: { ...m, bgMode: "solid", bgVideo: null, frames: null } };
 }
 
+// Force the site onto a template the plan is allowed to use. Basic offices, for
+// example, are limited to the editorial template — if they ever picked another
+// (or their plan was downgraded), the rendered site falls back to an allowed one.
+export function clampTemplate(c: SiteContent, caps: PlanCaps): SiteContent {
+  const allowed = caps.templates;
+  if (!allowed || allowed.length === 0) return c; // no restriction info → leave as-is
+  const current = c.theme.layout ?? "cinematic";
+  if (allowed.includes(current)) return c;
+  const fallback = (allowed.includes("editorial") ? "editorial" : allowed[0]) as SiteContent["theme"]["layout"];
+  return { ...c, theme: { ...c.theme, layout: fallback } };
+}
+
 // Deep-merge stored content over defaults so partial edits still render fully.
 export function mergeContent(stored: unknown): SiteContent {
   if (!stored || typeof stored !== "object") return defaultContent;

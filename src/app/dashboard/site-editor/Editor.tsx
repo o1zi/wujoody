@@ -79,6 +79,15 @@ export default function Editor({
 }) {
   const presets = Number.isFinite(caps.presetLimit) ? BG_PRESETS.slice(0, caps.presetLimit) : BG_PRESETS;
   const [c, setC] = useState<SiteContent>(initial);
+  // The plan may restrict templates (e.g. Basic = editorial only). Show only the
+  // allowed ones and reflect the template the site will actually render with.
+  const layoutNow = c.theme.layout ?? "cinematic";
+  const effectiveLayout = caps.templates.includes(layoutNow)
+    ? layoutNow
+    : caps.templates.includes("editorial")
+      ? "editorial"
+      : caps.templates[0] ?? "cinematic";
+  const lockedTemplates = SITE_TEMPLATES.filter((t) => !caps.templates.includes(t.id)).length;
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<{ kind: "success" | "error"; text: string } | null>(null);
   const [aiBusy, setAiBusy] = useState(false);
@@ -445,8 +454,8 @@ export default function Editor({
         <div>
           <span className="mb-2 block text-xs text-muted">قالب التصميم — يغيّر شكل الموقع بالكامل</span>
           <div className="grid grid-cols-2 gap-3">
-            {SITE_TEMPLATES.map((t) => {
-              const active = (c.theme.layout ?? "cinematic") === t.id;
+            {SITE_TEMPLATES.filter((t) => caps.templates.includes(t.id)).map((t) => {
+              const active = effectiveLayout === t.id;
               return (
                 <button
                   key={t.id}
@@ -470,6 +479,17 @@ export default function Editor({
               );
             })}
           </div>
+          {lockedTemplates > 0 && (
+            <a
+              href="/dashboard/subscription"
+              className="mt-3 flex items-center justify-between gap-3 rounded-xl border border-dashed border-border px-4 py-3 text-xs text-muted transition hover:border-accent hover:text-foreground"
+            >
+              <span>
+                🔒 {lockedTemplates} قالب تصميم إضافي متاح في الباقات الأعلى — قالبك الحالي ضمن باقتك.
+              </span>
+              <span className="shrink-0 font-semibold text-accent">ترقية ←</span>
+            </a>
+          )}
         </div>
 
         <div>
