@@ -14,6 +14,7 @@ import AuroraView from "@/components/site/AuroraView";
 import BlueprintView from "@/components/site/BlueprintView";
 import DecoView from "@/components/site/DecoView";
 import ConcreteView from "@/components/site/ConcreteView";
+import AtelierView from "@/components/site/AtelierView";
 import NotLive from "@/components/site/NotLive";
 import CinematicRuntime from "@/components/site/CinematicRuntime";
 import EditorialRuntime from "@/components/site/EditorialRuntime";
@@ -24,6 +25,7 @@ import AuroraRuntime from "@/components/site/AuroraRuntime";
 import BlueprintRuntime from "@/components/site/BlueprintRuntime";
 import DecoRuntime from "@/components/site/DecoRuntime";
 import ConcreteRuntime from "@/components/site/ConcreteRuntime";
+import AtelierRuntime from "@/components/site/AtelierRuntime";
 import { resolveTemplate } from "@/lib/site-templates";
 
 type Params = Promise<{ subdomain: string }>;
@@ -193,6 +195,11 @@ export default async function TenantSite({ params }: { params: Params }) {
         <>
           <ConcreteView content={data.content} slug={data.office.slug} caps={data.caps} />
           <ConcreteRuntime />
+        </>
+      ) : template.id === "atelier" ? (
+        <>
+          <AtelierView content={data.content} slug={data.office.slug} caps={data.caps} />
+          <AtelierRuntime />
         </>
       ) : (
         <>
