@@ -69,7 +69,7 @@ export default async function DashboardHome() {
         <div className="rounded-2xl glass-panel p-6">
           <div className="mono text-xs text-muted">الاشتراك</div>
           <div className="mt-2 text-xl font-semibold">
-            {subStatus === "active" ? "اشتراك نشط" : subStatus === "pending" ? "بانتظار الدفع" : "لا يوجد اشتراك"}
+            {subStatus === "active" ? "اشتراك نشط" : subStatus === "pending" ? "بانتظار التفعيل" : "لا يوجد اشتراك"}
           </div>
           {subEndsAt && (
             <div className="mt-3 text-sm text-muted">

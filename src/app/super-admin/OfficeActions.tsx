@@ -33,7 +33,7 @@ export default function OfficeActions({
         className="rounded-md border border-border bg-surface-2 px-2 py-1 text-xs"
       >
         <option value="" disabled>
-          الباقة…
+          فعّل باقة (سنة)…
         </option>
         {plans.map((p) => (
           <option key={p.code} value={p.code}>

@@ -110,7 +110,7 @@ export default function RegisterPage() {
         <Field label="البريد الإلكتروني — EMAIL">
           <Input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" dir="ltr" />
         </Field>
-        <Field label="رقم الجوال — MOBILE" hint="يُستخدم لربط دفعتك في سلة بمكتبك">
+        <Field label="رقم الجوال — MOBILE" hint="نتواصل معك عليه لتأكيد الاشتراك">
           <Input type="tel" required value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="05XXXXXXXX" dir="ltr" />
         </Field>
         <Field label="كلمة المرور — PASSWORD" hint="8 أحرف على الأقل">

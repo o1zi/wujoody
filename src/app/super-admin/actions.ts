@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getSessionContext, isAllowedSuperAdmin } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { getPlanByCode } from "@/lib/plans-server";
 
 async function assertSuperAdmin() {
   const ctx = await getSessionContext();
@@ -17,10 +18,18 @@ export async function setOfficeStatus(officeId: string, status: "active" | "pend
   revalidatePath("/super-admin");
 }
 
-// Change an office's plan: updates the latest active subscription, or creates one.
+// Manually activate (or renew) an office's subscription after a confirmed bank
+// transfer. Selecting a plan = the office paid for that plan: we open/extend an
+// active subscription for the plan's full term (annual) and set the site live.
 export async function setOfficePlan(officeId: string, plan: string) {
   await assertSuperAdmin();
   const admin = createAdminClient();
+
+  const planDef = await getPlanByCode(plan);
+  const durationDays = planDef?.durationDays ?? 365;
+  const now = new Date();
+  const ends = new Date(now.getTime() + durationDays * 86400000);
+
   const { data: existing } = await admin
     .from("subscriptions")
     .select("id")
@@ -30,19 +39,23 @@ export async function setOfficePlan(officeId: string, plan: string) {
     .limit(1)
     .maybeSingle();
 
+  const row = {
+    plan,
+    status: "active" as const,
+    starts_at: now.toISOString(),
+    ends_at: ends.toISOString(),
+    amount: planDef?.price ?? null,
+    currency: planDef?.currency ?? "SAR",
+  };
+
   if (existing?.id) {
-    await admin.from("subscriptions").update({ plan }).eq("id", existing.id);
+    await admin.from("subscriptions").update(row).eq("id", existing.id);
   } else {
-    const now = new Date();
-    const ends = new Date(now.getTime() + 30 * 86400000);
-    await admin.from("subscriptions").insert({
-      office_id: officeId,
-      plan,
-      status: "active",
-      starts_at: now.toISOString(),
-      ends_at: ends.toISOString(),
-    });
+    await admin.from("subscriptions").insert({ office_id: officeId, ...row });
   }
+
+  // Go live.
+  await admin.from("offices").update({ status: "active" }).eq("id", officeId);
   revalidatePath("/super-admin");
 }
 

@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { getPlans } from "@/lib/plans-server";
 import { getLanding } from "@/lib/landing-server";
-import { PAYMENT_METHODS } from "@/lib/payments";
 import CinematicRuntime from "@/components/site/CinematicRuntime";
 
 const FEATURE_ICONS = [
@@ -242,43 +241,37 @@ export default async function HomePage() {
           </div>
         </section>
 
-        <section className="sec" id="payments" data-screen-label="طرق الدفع">
+        <section className="sec" id="payments" data-screen-label="الاشتراك">
           <div className="wrap">
             <div className="glass-card reveal">
               <MacBar />
               <div className="glass-body">
                 <div className="eyebrow mono">
                   <span className="ln"></span>
-                  <span className="idx">04</span> طرق الدفع — <span className="en">PAYMENTS</span>
+                  <span className="idx">04</span> الاشتراك — <span className="en">SUBSCRIPTION</span>
                 </div>
-                <h2 className="sec-title" style={{ marginBottom: 6 }}>ادفع بالطريقة التي تناسبك.</h2>
+                <h2 className="sec-title" style={{ marginBottom: 6 }}>اشتراك سنوي بتحويل بنكي بسيط.</h2>
                 <p className="sec-lead" style={{ marginBottom: 28 }}>
-                  مدعومة عبر بوابة سلة الآمنة — بطاقات، محافظ رقمية، وتقسيط.
+                  اختر باقتك، حوّل قيمتها السنوية على حسابنا البنكي، وأرسل الإيصال عبر واتساب — ونفعّل موقعك يدوياً خلال وقت قصير.
                 </p>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(130px, 1fr))", gap: 12 }}>
-                  {PAYMENT_METHODS.map((p) => (
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 14 }}>
+                  {[
+                    { n: "١", t: "اختر باقتك", d: "باقة سنوية تناسب حجم مكتبك واحتياجه." },
+                    { n: "٢", t: "حوّل بنكياً", d: "حوّل قيمة الباقة على الحساب المعروض في لوحتك." },
+                    { n: "٣", t: "أرسل الإيصال", d: "عبر واتساب — ونفعّل اشتراكك وموقعك مباشرة." },
+                  ].map((s) => (
                     <div
-                      key={p.id}
+                      key={s.n}
                       style={{
-                        background: "#fff",
-                        color: "#0E1116",
-                        borderRadius: 12,
-                        padding: "12px 22px",
-                        height: 74,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        fontWeight: 600,
-                        fontSize: 16,
-                        boxShadow: "0 8px 24px rgba(0,0,0,.25)",
+                        background: "rgba(255,255,255,.04)",
+                        border: "1px solid rgba(255,255,255,.08)",
+                        borderRadius: 14,
+                        padding: "20px 22px",
                       }}
                     >
-                      {p.logo ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={p.logo} alt={p.name} style={{ height: 46, width: "auto", maxWidth: 110, objectFit: "contain", display: "block" }} />
-                      ) : (
-                        <span>{p.name}</span>
-                      )}
+                      <div className="mono" style={{ fontSize: 22, fontWeight: 700, opacity: 0.5 }}>{s.n}</div>
+                      <div style={{ fontWeight: 700, fontSize: 18, marginTop: 8 }}>{s.t}</div>
+                      <p style={{ marginTop: 6, opacity: 0.7, fontSize: 15, lineHeight: 1.6 }}>{s.d}</p>
                     </div>
                   ))}
                 </div>
