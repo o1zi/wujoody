@@ -102,8 +102,8 @@ export default function OfficesTable({
       </div>
 
       {/* table */}
-      <div className="mt-4 overflow-hidden rounded-2xl border border-border">
-        <table className="w-full text-sm">
+      <div className="mt-4 overflow-x-auto rounded-2xl border border-border">
+        <table className="w-full min-w-[600px] text-sm">
           <thead className="bg-surface text-muted">
             <tr>
               <th className="px-4 py-3 text-right font-medium">المكتب</th>
