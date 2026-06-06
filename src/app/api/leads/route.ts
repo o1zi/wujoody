@@ -2,10 +2,17 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendEmail, emailLayout } from "@/lib/email";
 import { sendTelegram } from "@/lib/telegram";
+import { rateLimit, clientIp } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 
 export async function POST(request: NextRequest) {
+  // Throttle submissions per IP to curb spam/bots (≈6 per minute).
+  const rl = rateLimit(`leads:${clientIp(request)}`, 6, 60_000);
+  if (!rl.ok) {
+    return NextResponse.json({ error: "too many requests" }, { status: 429, headers: { "Retry-After": String(rl.retryAfter) } });
+  }
+
   let body: {
     slug?: string;
     name?: string;

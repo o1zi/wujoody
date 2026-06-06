@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendEmail, emailLayout } from "@/lib/email";
+import { rateLimit, clientIp } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 
@@ -20,6 +21,12 @@ export async function POST(req: NextRequest) {
   // Always respond ok so we don't leak which emails are registered.
   const ok = NextResponse.json({ ok: true });
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return ok;
+
+  // Throttle reset requests to prevent email floods / targeting. We still
+  // return ok (no detail) when over the limit, just without sending.
+  const ipOk = rateLimit(`forgot:ip:${clientIp(req)}`, 5, 15 * 60_000).ok;
+  const emailOk = rateLimit(`forgot:email:${email}`, 3, 15 * 60_000).ok;
+  if (!ipOk || !emailOk) return ok;
 
   try {
     const admin = createAdminClient();
