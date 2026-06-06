@@ -23,7 +23,7 @@ export default function LoginPage() {
     if (error) {
       setError(
         error.message.includes("Email not confirmed")
-          ? "لم يتم تأكيد بريدك بعد. تحقّق من رسالة التفعيل في بريدك."
+          ? "حسابك بحاجة إلى تفعيل. تواصل معنا لتفعيله."
           : "البريد أو كلمة المرور غير صحيحة.",
       );
       return;

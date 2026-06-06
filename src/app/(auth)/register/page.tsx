@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
 import { normalizePhone } from "@/lib/phone";
 import { Field, Input, Button, Alert } from "@/components/ui";
 
@@ -47,38 +46,28 @@ export default function RegisterPage() {
       return;
     }
     setLoading(true);
-    const supabase = createClient();
 
-    const { data: available } = await supabase.rpc("slug_available", { s: cleanSlug });
-    if (available === false) {
-      setLoading(false);
-      setError(`النطاق "${cleanSlug}" محجوز. جرّب اسماً آخر.`);
-      return;
-    }
-
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback?next=/dashboard`,
-        data: {
-          full_name: fullName,
-          office_name: officeName,
-          office_slug: cleanSlug,
-          phone: cleanPhone,
-        },
-      },
+    const res = await fetch("/api/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        officeName,
+        slug: cleanSlug,
+        fullName,
+        email,
+        phone: cleanPhone,
+        password,
+      }),
     });
-    setLoading(false);
-    if (error) {
-      setError(
-        error.message.includes("already registered")
-          ? "هذا البريد مسجّل مسبقاً. سجّل الدخول بدلاً من ذلك."
-          : "تعذّر إنشاء الحساب. تأكد من البيانات وحاول مجدداً.",
-      );
+    const data = (await res.json().catch(() => ({ ok: false }))) as { ok?: boolean; signedIn?: boolean; error?: string };
+    if (!data.ok) {
+      setLoading(false);
+      setError(data.error || "تعذّر إنشاء الحساب. تأكد من البيانات وحاول مجدداً.");
       return;
     }
-    router.push(`/verify-email?email=${encodeURIComponent(email)}`);
+    // Hard navigation so the freshly-set session cookie is seen server-side.
+    if (data.signedIn) window.location.href = "/dashboard";
+    else router.push("/login");
   }
 
   return (
