@@ -190,7 +190,7 @@ html:has(.dc){scroll-behavior:smooth}
 /* case-study modal */
 .dc .proj-modal{position:fixed;inset:0;z-index:300;background:rgba(5,18,14,.7);
   backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:24px 16px}
-.dc .proj-study{width:min(880px,100%);max-height:calc(100vh - 48px);display:flex;flex-direction:column;overflow:hidden;
+.dc .proj-study{width:min(880px,100%);max-height:calc(100dvh - 24px);display:flex;flex-direction:column;overflow:hidden;
   background:var(--green-2);border:1px solid var(--line-2);box-shadow:inset 0 0 0 5px var(--green-2),inset 0 0 0 6px var(--line),0 50px 120px rgba(0,0,0,.55)}
 .dc .proj-study .glass-bar{display:flex;align-items:center;gap:8px;height:46px;padding:0 18px;border-bottom:1px solid var(--line);background:var(--surf)}
 .dc .glass-bar .dot{width:11px;height:11px;border-radius:50%}
@@ -198,7 +198,7 @@ html:has(.dc){scroll-behavior:smooth}
 .dc .proj-x{margin-inline-start:auto;width:28px;height:28px;display:flex;align-items:center;justify-content:center;
   background:transparent;border:1px solid var(--line-2);color:var(--text);font-size:12px}
 .dc .proj-x:hover{background:var(--accent);color:var(--green);border-color:var(--accent)}
-.dc .proj-scroll{overflow-y:auto}
+.dc .proj-scroll{flex:1;min-height:0;overflow-y:auto}
 .dc .proj-hero{width:100%;height:clamp(220px,40vh,440px);object-fit:cover;display:block}
 .dc .proj-study-body{padding:clamp(26px,3vw,46px)}
 .dc .proj-study-body .tag{display:inline-block;color:var(--accent);font-size:11px;letter-spacing:.18em;margin-bottom:12px;font-family:"IBM Plex Mono",monospace}

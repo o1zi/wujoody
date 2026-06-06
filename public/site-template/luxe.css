@@ -175,7 +175,7 @@ html:has(.lx){scroll-behavior:smooth}
 /* project case-study modal */
 .lx .proj-modal{position:fixed;inset:0;z-index:300;background:rgba(8,9,13,.7);
   backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:24px 16px}
-.lx .proj-study{width:min(880px,100%);max-height:calc(100vh - 48px);display:flex;flex-direction:column;
+.lx .proj-study{width:min(880px,100%);max-height:calc(100dvh - 24px);display:flex;flex-direction:column;
   overflow:hidden;background:var(--bg-2);border:1px solid var(--hair-2);border-radius:24px;
   box-shadow:0 60px 140px rgba(0,0,0,.6)}
 .lx .proj-study .glass-bar{display:flex;align-items:center;gap:8px;height:46px;padding:0 18px;
@@ -185,7 +185,7 @@ html:has(.lx){scroll-behavior:smooth}
 .lx .proj-x{margin-inline-start:auto;width:28px;height:28px;border-radius:8px;display:flex;align-items:center;
   justify-content:center;background:transparent;border:1px solid var(--hair-2);color:var(--text);font-size:12px}
 .lx .proj-x:hover{background:var(--accent);color:#0C0E13}
-.lx .proj-scroll{overflow-y:auto}
+.lx .proj-scroll{flex:1;min-height:0;overflow-y:auto}
 .lx .proj-hero{width:100%;height:clamp(220px,40vh,440px);object-fit:cover;display:block}
 .lx .proj-study-body{padding:clamp(26px,3vw,46px)}
 .lx .proj-study-body .tag{display:inline-block;color:var(--accent);font-size:11px;letter-spacing:.2em;margin-bottom:12px;font-family:"IBM Plex Mono",monospace}
