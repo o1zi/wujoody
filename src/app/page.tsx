@@ -409,10 +409,16 @@ export default async function HomePage() {
             <h4>الحساب</h4>
             <Link href="/register">أنشئ مكتبك</Link>
             <Link href="/login">تسجيل الدخول</Link>
+            <Link href="/terms">الشروط والأحكام</Link>
+            <Link href="/privacy">سياسة الخصوصية</Link>
           </div>
         </div>
         <div className="foot-bottom mono">
           <span>© {new Date().getFullYear()} {c.brand.en} · ENGINEERING OFFICES PLATFORM</span>
+          <span style={{ display: "flex", gap: 18 }}>
+            <Link href="/terms" style={{ textDecoration: "underline", textUnderlineOffset: 3 }}>الشروط</Link>
+            <Link href="/privacy" style={{ textDecoration: "underline", textUnderlineOffset: 3 }}>الخصوصية</Link>
+          </span>
           <span>RIYADH · KSA</span>
         </div>
       </footer>

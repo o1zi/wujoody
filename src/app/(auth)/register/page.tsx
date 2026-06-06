@@ -119,6 +119,12 @@ export default function RegisterPage() {
         <Button type="submit" loading={loading} className="w-full">
           إنشاء الحساب
         </Button>
+        <p className="text-center text-xs leading-5 text-muted">
+          بإنشائك الحساب فأنت توافق على{" "}
+          <Link href="/terms" className="text-accent hover:underline">الشروط والأحكام</Link>{" "}
+          و
+          <Link href="/privacy" className="text-accent hover:underline">سياسة الخصوصية</Link>.
+        </p>
       </form>
 
       <p className="mt-6 text-center text-sm text-muted">
