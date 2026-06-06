@@ -25,6 +25,7 @@ export default async function SuperAdminLayout({ children }: { children: React.R
             <nav className="hidden items-center gap-4 sm:flex">
               <Link href="/super-admin" className="text-sm text-muted hover:text-foreground">المكاتب</Link>
               <Link href="/super-admin/plans" className="text-sm text-muted hover:text-foreground">الباقات</Link>
+              <Link href="/super-admin/payment" className="text-sm text-muted hover:text-foreground">بيانات الدفع</Link>
               <Link href="/super-admin/landing" className="text-sm text-muted hover:text-foreground">صفحة الهبوط</Link>
               <Link href="/super-admin/support" className="flex items-center gap-1.5 text-sm text-muted hover:text-foreground">
                 الدعم

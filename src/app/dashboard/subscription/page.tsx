@@ -3,13 +3,15 @@ import { redirect } from "next/navigation";
 import { getSessionContext } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { getPlans } from "@/lib/plans-server";
-import { BANK_DETAILS, hasBankDetails, whatsappLink, SUPPORT_WHATSAPP } from "@/lib/bank";
+import { hasBankDetails, whatsappLink } from "@/lib/bank";
+import { getPaymentSettings } from "@/lib/bank-server";
 
 export default async function SubscriptionPage() {
   const ctx = await getSessionContext();
   if (!ctx) redirect("/login");
 
   const plans = await getPlans();
+  const pay = await getPaymentSettings();
   let current: { plan: string; status: string; ends_at: string | null } | null = null;
   if (ctx.office) {
     const supabase = await createClient();
@@ -35,9 +37,10 @@ export default async function SubscriptionPage() {
         `الجوال: ${ctx.profile?.phone || "—"}\n` +
         `البريد: ${ctx.email || "—"}\n` +
         `سأرفق إيصال التحويل البنكي.`,
+      pay.whatsapp,
     );
 
-  const bankConfigured = hasBankDetails();
+  const bankConfigured = hasBankDetails(pay);
 
   return (
     <div className="mx-auto max-w-4xl">
@@ -65,28 +68,28 @@ export default async function SubscriptionPage() {
         <h2 className="text-lg font-semibold">بيانات التحويل البنكي</h2>
         {bankConfigured ? (
           <dl className="mt-4 grid gap-3 sm:grid-cols-2">
-            {BANK_DETAILS.bankName && (
+            {pay.bankName && (
               <div>
                 <dt className="text-xs text-muted">البنك</dt>
-                <dd className="font-medium">{BANK_DETAILS.bankName}</dd>
+                <dd className="font-medium">{pay.bankName}</dd>
               </div>
             )}
-            {BANK_DETAILS.accountName && (
+            {pay.accountName && (
               <div>
                 <dt className="text-xs text-muted">اسم صاحب الحساب</dt>
-                <dd className="font-medium">{BANK_DETAILS.accountName}</dd>
+                <dd className="font-medium">{pay.accountName}</dd>
               </div>
             )}
-            {BANK_DETAILS.iban && (
+            {pay.iban && (
               <div className="sm:col-span-2">
                 <dt className="text-xs text-muted">رقم الآيبان (IBAN)</dt>
-                <dd dir="ltr" className="mono select-all break-all font-medium">{BANK_DETAILS.iban}</dd>
+                <dd dir="ltr" className="mono select-all break-all font-medium">{pay.iban}</dd>
               </div>
             )}
-            {BANK_DETAILS.accountNumber && (
+            {pay.accountNumber && (
               <div>
                 <dt className="text-xs text-muted">رقم الحساب</dt>
-                <dd dir="ltr" className="mono select-all font-medium">{BANK_DETAILS.accountNumber}</dd>
+                <dd dir="ltr" className="mono select-all font-medium">{pay.accountNumber}</dd>
               </div>
             )}
           </dl>
@@ -94,6 +97,10 @@ export default async function SubscriptionPage() {
           <p className="mt-3 text-sm text-amber-300">
             لم تُضف بيانات الحساب البنكي بعد. تواصل معنا عبر واتساب لإتمام الاشتراك.
           </p>
+        )}
+
+        {pay.instructions && (
+          <p className="mt-4 whitespace-pre-line rounded-lg border border-border bg-surface-2 p-3 text-sm text-muted">{pay.instructions}</p>
         )}
 
         <ol className="mt-5 space-y-1.5 text-sm text-muted">
@@ -151,9 +158,9 @@ export default async function SubscriptionPage() {
           الاشتراك سنوي ولا يُجدّد تلقائياً — لا تُسحب منك أي مبالغ دون علمك. قبل انتهاء السنة نُذكّرك،
           وللتجديد تُعيد التحويل وترسل الإيصال. إن لم ترغب بالتجديد، يبقى موقعك يعمل حتى نهاية الفترة المدفوعة ثم يُغلق.
         </p>
-        {SUPPORT_WHATSAPP && (
+        {whatsappLink("لدي استفسار بخصوص الاشتراك.", pay.whatsapp) && (
           <a
-            href={whatsappLink("لدي استفسار بخصوص الاشتراك.") || "#"}
+            href={whatsappLink("لدي استفسار بخصوص الاشتراك.", pay.whatsapp) || "#"}
             target="_blank"
             rel="noreferrer"
             className="mt-4 inline-block rounded-lg border border-border px-4 py-2 text-sm text-accent hover:bg-surface-2"

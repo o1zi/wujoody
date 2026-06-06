@@ -158,6 +158,18 @@ export async function replySupport(officeId: string, body: string) {
   revalidatePath("/super-admin/support");
 }
 
+// Save bank-transfer / payment settings (shown on the office subscription page).
+export async function savePayment(value: unknown) {
+  await assertSuperAdmin();
+  const admin = createAdminClient();
+  const { error } = await admin
+    .from("app_settings")
+    .upsert({ key: "payment", value, updated_at: new Date().toISOString() }, { onConflict: "key" });
+  if (error) throw new Error(error.message);
+  revalidatePath("/dashboard/subscription");
+  revalidatePath("/super-admin/payment");
+}
+
 // Save the editable landing-page content.
 export async function saveLanding(content: unknown) {
   await assertSuperAdmin();
