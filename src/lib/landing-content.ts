@@ -10,6 +10,7 @@ export type LandingContent = {
   steps: { title: string; items: { title: string; desc: string }[] };
   pricing: { title: string; lead: string };
   cta: { title: string; lead: string; button: string };
+  contact: { whatsapp: string; email: string }; // platform contact buttons on the landing
   footerTag: string;
 };
 
@@ -55,6 +56,7 @@ export const defaultLanding: LandingContent = {
     lead: "أنشئ حسابك خلال دقائق، وابدأ باستقبال عملائك من موقعٍ يليق بمكتبك.",
     button: "أنشئ مكتبك الآن",
   },
+  contact: { whatsapp: "", email: "" },
   footerTag: "منصّة سعودية لإطلاق مواقع المكاتب الهندسية بنطاقٍ فرعي خاص خلال دقائق.",
 };
 
@@ -72,6 +74,7 @@ export function mergeLanding(stored: unknown): LandingContent {
     steps: { ...d.steps, ...(obj("steps", d.steps) as object) },
     pricing: { ...d.pricing, ...(obj("pricing", d.pricing) as object) },
     cta: { ...d.cta, ...(obj("cta", d.cta) as object) },
+    contact: { ...d.contact, ...(obj("contact", d.contact) as object) },
     footerTag: typeof s.footerTag === "string" ? (s.footerTag as string) : d.footerTag,
   };
 }

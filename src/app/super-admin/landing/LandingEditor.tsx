@@ -194,6 +194,14 @@ export default function LandingEditor({ initial }: { initial: LandingContent }) 
         {text("نص الزر", "cta.button")}
       </Section>
 
+      <Section title="أزرار التواصل (واتساب + بريد)">
+        <p className="mb-3 text-xs text-muted">
+          تظهر هذه الأزرار في صفحة الهبوط (قسم «ابدأ» والفوتر). اترك الواتساب فارغاً ليُستخدم رقم واتساب الدفع تلقائياً.
+        </p>
+        {text("رقم واتساب (دولي، أرقام فقط — مثال: 9665XXXXXXXX)", "contact.whatsapp", "ltr")}
+        {text("بريد التواصل (اختياري)", "contact.email", "ltr")}
+      </Section>
+
       <Section title="الفوتر">
         {area("وصف الفوتر", "footerTag")}
       </Section>

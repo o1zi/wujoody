@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { getPlans } from "@/lib/plans-server";
 import { getLanding } from "@/lib/landing-server";
+import { getPaymentSettings } from "@/lib/bank-server";
+import { whatsappLink } from "@/lib/bank";
 import { SITE_TEMPLATES } from "@/lib/site-templates";
 import CinematicRuntime from "@/components/site/CinematicRuntime";
 
@@ -38,7 +40,16 @@ function MacBar() {
 }
 
 export default async function HomePage() {
-  const [plans, c] = await Promise.all([getPlans(), getLanding()]);
+  const [plans, c, pay] = await Promise.all([getPlans(), getLanding(), getPaymentSettings()]);
+
+  // Platform contact buttons: use the landing contact number, falling back to the
+  // payment WhatsApp so one number set in /super-admin powers everything.
+  const waHref = whatsappLink(
+    "السلام عليكم، عندي استفسار عن منصة وجود لمواقع المكاتب الهندسية.",
+    c.contact.whatsapp || pay.whatsapp,
+  );
+  const contactEmail = (c.contact.email || "").trim();
+  const mailHref = contactEmail ? `mailto:${contactEmail}` : null;
 
   const m = c.media;
   const isSolid = m.bgMode === "solid";
@@ -380,9 +391,15 @@ export default async function HomePage() {
                     <span>{c.cta.button}</span>
                     <span className="mono">→</span>
                   </Link>
-                  <Link className="btn-ghost" href="/login">
-                    تسجيل الدخول
-                  </Link>
+                  {waHref ? (
+                    <a className="btn-ghost" href={waHref} target="_blank" rel="noopener noreferrer">
+                      تواصل عبر واتساب
+                    </a>
+                  ) : (
+                    <Link className="btn-ghost" href="/login">
+                      تسجيل الدخول
+                    </Link>
+                  )}
                 </div>
               </div>
             </div>
@@ -412,6 +429,15 @@ export default async function HomePage() {
             <Link href="/terms">الشروط والأحكام</Link>
             <Link href="/privacy">سياسة الخصوصية</Link>
           </div>
+          {(waHref || mailHref) && (
+            <div className="col">
+              <h4>تواصل</h4>
+              {waHref && (
+                <a href={waHref} target="_blank" rel="noopener noreferrer">واتساب</a>
+              )}
+              {mailHref && <a href={mailHref} dir="ltr">{contactEmail}</a>}
+            </div>
+          )}
         </div>
         <div className="foot-bottom mono">
           <span>© {new Date().getFullYear()} {c.brand.en} · ENGINEERING OFFICES PLATFORM</span>

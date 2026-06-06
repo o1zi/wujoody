@@ -202,6 +202,20 @@ export async function createResetLink(officeId: string): Promise<{ url?: string;
   return { url: `${base}/auth/callback?token_hash=${encodeURIComponent(tokenHash)}&type=recovery&next=/reset-password` };
 }
 
+// Set a new password for the office owner directly (for when the client forgot
+// theirs and email reset isn't convenient). The admin hands the new password to
+// the client. Works without any email being sent.
+export async function setOfficePassword(officeId: string, password: string): Promise<{ ok: boolean; error?: string }> {
+  await assertSuperAdmin();
+  if (!password || password.length < 8) return { ok: false, error: "كلمة المرور 8 أحرف على الأقل" };
+  const admin = createAdminClient();
+  const { data: off } = await admin.from("offices").select("owner_id").eq("id", officeId).maybeSingle();
+  if (!off?.owner_id) return { ok: false, error: "لا يوجد مالك مرتبط" };
+  const { error } = await admin.auth.admin.updateUserById(off.owner_id, { password });
+  if (error) return { ok: false, error: error.message };
+  return { ok: true };
+}
+
 function normalizeSlug(raw: string): string {
   return (raw || "")
     .toLowerCase()

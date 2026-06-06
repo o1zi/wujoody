@@ -10,11 +10,19 @@ import {
   updateOfficeOwner,
   setOfficeOwnerEmail,
   createResetLink,
+  setOfficePassword,
   startTrial,
   extendSubscription,
   endSubscriptionNow,
   deleteOffice,
 } from "../../actions";
+
+function genPassword(): string {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789";
+  let s = "";
+  for (let i = 0; i < 10; i++) s += chars[Math.floor(Math.random() * chars.length)];
+  return `Wj-${s}`;
+}
 
 const input = "w-full rounded-lg glass-panel-2 px-3 py-2 text-sm outline-none focus:border-accent";
 const btn = "rounded-lg border border-border px-3 py-2 text-sm hover:bg-surface-2 disabled:opacity-50";
@@ -45,6 +53,7 @@ export default function OfficeControls({
   const [phone, setPhone] = useState(owner.phone);
   const [emailV, setEmailV] = useState(owner.email);
   const [resetUrl, setResetUrl] = useState<string | null>(null);
+  const [newPass, setNewPass] = useState("");
   const [trialPlan, setTrialPlan] = useState(
     currentPlan || plans.find((p) => p.code === "pro")?.code || plans[0]?.code || "",
   );
@@ -99,6 +108,17 @@ export default function OfficeControls({
         setMsg(res.error || "تعذّر إنشاء الرابط");
         setTimeout(() => setMsg(null), 4000);
       }
+    });
+  }
+
+  function savePassword() {
+    const pass = newPass.trim();
+    if (pass.length < 8) { setMsg("كلمة المرور 8 أحرف على الأقل"); setTimeout(() => setMsg(null), 3000); return; }
+    setMsg(null);
+    start(async () => {
+      const res = await setOfficePassword(officeId, pass);
+      setMsg(res.ok ? "تم تعيين كلمة المرور ✓ (انسخها وسلّمها للعميل)" : res.error || "تعذّر التغيير");
+      setTimeout(() => setMsg(null), res.ok ? 4000 : 3500);
     });
   }
 
@@ -241,6 +261,22 @@ export default function OfficeControls({
               <input className={input} dir="ltr" value={emailV} onChange={(e) => setEmailV(e.target.value)} />
             </label>
             <button className={btn} disabled={pending || emailV.trim().toLowerCase() === owner.email.toLowerCase()} onClick={saveEmail}>تغيير</button>
+          </div>
+
+          <div>
+            <span className="mb-1 block text-xs text-muted">تعيين كلمة مرور جديدة مباشرةً (إذا نسيها العميل)</span>
+            <div className="flex items-center gap-2">
+              <input
+                className={input}
+                dir="ltr"
+                value={newPass}
+                onChange={(e) => setNewPass(e.target.value)}
+                placeholder="كلمة مرور جديدة (8+ أحرف)"
+              />
+              <button type="button" className={btn} disabled={pending} onClick={() => setNewPass(genPassword())}>توليد</button>
+              <button type="button" className={btn} disabled={pending || newPass.trim().length < 8} onClick={savePassword}>تعيين</button>
+            </div>
+            <p className="mt-1 text-[11px] text-muted">يُغيّرها فوراً بدون بريد — انسخها وسلّمها للعميل.</p>
           </div>
 
           <div>
