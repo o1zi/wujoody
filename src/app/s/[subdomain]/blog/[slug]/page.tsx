@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { googleFontsHref } from "@/lib/site-fonts";
-import { themeAttrs } from "@/lib/site-theme";
+import { blogTheme } from "@/lib/blog-theme";
 import { tenantUrl } from "@/lib/urls";
 import NotLive from "@/components/site/NotLive";
 import { loadBlogContext, getPublishedPost } from "../data";
@@ -41,7 +41,7 @@ export default async function BlogArticle({ params }: { params: Params }) {
   const post = await getPublishedPost(ctx.office.id, decodeURIComponent(slug));
   if (!post) notFound();
 
-  const t = themeAttrs(ctx.content.theme);
+  const bt = blogTheme(ctx.content.theme);
   const home = tenantUrl(ctx.office.slug);
   const jsonLd = {
     "@context": "https://schema.org",
@@ -55,12 +55,12 @@ export default async function BlogArticle({ params }: { params: Params }) {
   return (
     <>
       {/* eslint-disable-next-line @next/next/no-css-tags */}
-      <link rel="stylesheet" href="/site-template/site.css" precedence="high" />
+      <link rel="stylesheet" href="/site-template/blog.css" precedence="high" />
       {/* eslint-disable-next-line @next/next/no-css-tags */}
-      <link rel="stylesheet" href={googleFontsHref([ctx.content.theme.font || "readex"])} precedence="high" />
+      <link rel="stylesheet" href={googleFontsHref([bt.fontKey])} precedence="high" />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
-      <div data-card={t.dataCard} data-font={t.dataFont} style={t.style} className="blog-page">
+      <div style={bt.style} className="blog-page">
         <header className="blog-top">
           <Link href={home} className="brand-link">{ctx.content.brand.ar || ctx.office.name}<span style={{ color: "var(--accent)" }}>.</span></Link>
           <Link href={`${home}/blog`} className="back-link">← كل المقالات</Link>

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { googleFontsHref } from "@/lib/site-fonts";
-import { themeAttrs } from "@/lib/site-theme";
+import { blogTheme } from "@/lib/blog-theme";
 import { tenantUrl } from "@/lib/urls";
 import NotLive from "@/components/site/NotLive";
 import { loadBlogContext, getPublishedPosts } from "./data";
@@ -30,17 +30,17 @@ export default async function BlogList({ params }: { params: Params }) {
   if (!ctx.blogEnabled || ctx.content.visible.blog === false) notFound();
 
   const posts = await getPublishedPosts(ctx.office.id);
-  const t = themeAttrs(ctx.content.theme);
+  const bt = blogTheme(ctx.content.theme);
   const home = tenantUrl(ctx.office.slug);
 
   return (
     <>
       {/* eslint-disable-next-line @next/next/no-css-tags */}
-      <link rel="stylesheet" href="/site-template/site.css" precedence="high" />
+      <link rel="stylesheet" href="/site-template/blog.css" precedence="high" />
       {/* eslint-disable-next-line @next/next/no-css-tags */}
-      <link rel="stylesheet" href={googleFontsHref([ctx.content.theme.font || "readex"])} precedence="high" />
+      <link rel="stylesheet" href={googleFontsHref([bt.fontKey])} precedence="high" />
 
-      <div data-card={t.dataCard} data-font={t.dataFont} style={t.style} className="blog-page">
+      <div style={bt.style} className="blog-page">
         <header className="blog-top">
           <Link href={home} className="brand-link">{ctx.content.brand.ar || ctx.office.name}<span style={{ color: "var(--accent)" }}>.</span></Link>
           <Link href={home} className="back-link">← العودة للموقع</Link>
@@ -52,7 +52,7 @@ export default async function BlogList({ params }: { params: Params }) {
 
           {posts.length === 0 ? (
             <div className="glass-card" style={{ marginTop: 24 }}>
-              <div className="glass-body" style={{ textAlign: "center", color: "rgba(255,255,255,.6)" }}>
+              <div className="glass-body" style={{ textAlign: "center", color: "var(--text-2)" }}>
                 لا توجد مقالات منشورة بعد.
               </div>
             </div>
