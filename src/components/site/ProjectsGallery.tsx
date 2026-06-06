@@ -95,14 +95,18 @@ export default function ProjectsGallery({ items, detailed = false }: { items: It
 
       {active && hasStudy(active) ? (
         <div className="proj-modal" onClick={() => setOpen(null)}>
-          <div className="glass-card proj-study" onClick={(e) => e.stopPropagation()}>
-            <div className="glass-bar">
+          <div
+            className="glass-card proj-study"
+            onClick={(e) => e.stopPropagation()}
+            style={{ maxHeight: "calc(100dvh - 24px)", display: "flex", flexDirection: "column", overflow: "hidden" }}
+          >
+            <div className="glass-bar" style={{ flex: "0 0 auto" }}>
               <span className="dot r"></span>
               <span className="dot y"></span>
               <span className="dot g"></span>
               <button aria-label="إغلاق" className="proj-x" onClick={() => setOpen(null)}>✕</button>
             </div>
-            <div className="proj-scroll">
+            <div className="proj-scroll" style={{ flex: 1, minHeight: 0, overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
               {active.image ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img className="proj-hero" src={active.image} alt={active.title} />
