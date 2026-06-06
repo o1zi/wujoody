@@ -1,7 +1,22 @@
 import Link from "next/link";
 import { getPlans } from "@/lib/plans-server";
 import { getLanding } from "@/lib/landing-server";
+import { SITE_TEMPLATES } from "@/lib/site-templates";
 import CinematicRuntime from "@/components/site/CinematicRuntime";
+
+// Signature colours for each template's preview swatch (bg / text / accent).
+const TEMPLATE_COLORS: Record<string, { bg: string; fg: string; accent: string }> = {
+  cinematic: { bg: "#06070A", fg: "#EDE8DE", accent: "#C2974E" },
+  editorial: { bg: "#F4F1EA", fg: "#15110C", accent: "#B5803A" },
+  luxe: { bg: "#0C0E13", fg: "#ECE6DC", accent: "#C9A86A" },
+  heritage: { bg: "#EDE3CE", fg: "#33271B", accent: "#B25430" },
+  kinetic: { bg: "#ECE8DF", fg: "#121110", accent: "#E8462E" },
+  aurora: { bg: "#E9EDF5", fg: "#1B2130", accent: "#6D5DF6" },
+  blueprint: { bg: "#0B2A45", fg: "#E6EFF8", accent: "#54C5E8" },
+  deco: { bg: "#082019", fg: "#EEE7D5", accent: "#C9A24B" },
+  concrete: { bg: "#CBC7BE", fg: "#26241F", accent: "#B5462A" },
+  atelier: { bg: "#141110", fg: "#F1E9D8", accent: "#C77B43" },
+};
 
 const FEATURE_ICONS = [
   "M3 21h18M5 21V8l7-5 7 5v13M9 21v-5h6v5",
@@ -235,6 +250,76 @@ export default async function HomePage() {
                       </Link>
                     </div>
                   ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="sec" id="templates" data-screen-label="القوالب">
+          <div className="wrap">
+            <div className="glass-card reveal">
+              <MacBar />
+              <div className="glass-body">
+                <div className="eyebrow mono">
+                  <span className="ln"></span>
+                  <span className="idx">✦</span> القوالب — <span className="en">TEMPLATES</span>
+                </div>
+                <h2 className="sec-title" style={{ marginBottom: 6 }}>عشرة تصاميم… بنقرة واحدة.</h2>
+                <p className="sec-lead" style={{ marginBottom: 30 }}>
+                  اختر مظهر موقعك من ١٠ قوالب احترافية — يبدّلها مكتبك متى شاء، والمحتوى يبقى كما هو. اضغط أي بطاقة لمعاينة نموذج حيّ.
+                </p>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(210px, 1fr))", gap: 16 }}>
+                  {SITE_TEMPLATES.map((t) => {
+                    const col = TEMPLATE_COLORS[t.id] || { bg: "#14171c", fg: "#fff", accent: "#C2974E" };
+                    return (
+                      <a
+                        key={t.id}
+                        href={`/s/${t.id}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        style={{
+                          display: "block",
+                          borderRadius: 14,
+                          overflow: "hidden",
+                          border: "1px solid rgba(255,255,255,.12)",
+                          background: "rgba(255,255,255,.03)",
+                          textDecoration: "none",
+                        }}
+                      >
+                        <div
+                          style={{
+                            height: 138,
+                            background: col.bg,
+                            padding: 18,
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 8 }}>
+                            <span style={{ fontWeight: 800, fontSize: 21, color: col.fg, letterSpacing: "-.02em" }}>
+                              أبجد<span style={{ color: col.accent }}>.</span>
+                            </span>
+                            <span style={{ fontFamily: "monospace", fontSize: 9, letterSpacing: ".18em", color: col.accent, direction: "ltr" }}>
+                              {t.id.toUpperCase()}
+                            </span>
+                          </div>
+                          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                            <span style={{ height: 6, width: "72%", borderRadius: 3, background: col.accent, opacity: 0.85 }}></span>
+                            <span style={{ height: 5, width: "46%", borderRadius: 3, background: col.fg, opacity: 0.22 }}></span>
+                          </div>
+                        </div>
+                        <div style={{ padding: "12px 14px" }}>
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
+                            <span style={{ fontWeight: 700, fontSize: 15 }}>{t.name}</span>
+                            <span className="mono" style={{ fontSize: 11, color: "var(--accent)", whiteSpace: "nowrap" }}>معاينة ↗</span>
+                          </div>
+                          <p style={{ marginTop: 5, fontSize: 12, color: "rgba(255,255,255,.6)", lineHeight: 1.5 }}>{t.tagline}</p>
+                        </div>
+                      </a>
+                    );
+                  })}
                 </div>
               </div>
             </div>
