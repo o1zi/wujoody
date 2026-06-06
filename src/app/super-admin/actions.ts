@@ -131,6 +131,92 @@ export async function setOfficeName(officeId: string, name: string) {
   revalidateAdmin(officeId);
 }
 
+// Change the office owner's login email (admin-confirmed, no verification step).
+export async function setOfficeOwnerEmail(officeId: string, email: string): Promise<{ ok: boolean; error?: string }> {
+  await assertSuperAdmin();
+  const clean = (email || "").trim().toLowerCase();
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(clean)) return { ok: false, error: "بريد غير صالح" };
+  const admin = createAdminClient();
+  const { data: off } = await admin.from("offices").select("owner_id").eq("id", officeId).maybeSingle();
+  if (!off?.owner_id) return { ok: false, error: "لا يوجد مالك مرتبط" };
+  const { error } = await admin.auth.admin.updateUserById(off.owner_id, { email: clean, email_confirm: true });
+  if (error) return { ok: false, error: /already|registered|exists/i.test(error.message) ? "البريد مستخدم لحساب آخر" : error.message };
+  await admin.from("profiles").update({ email: clean }).eq("id", off.owner_id);
+  revalidateAdmin(officeId);
+  return { ok: true };
+}
+
+// Mint a password-reset link for the office owner that the admin can copy and
+// hand to the client (works without email being configured).
+export async function createResetLink(officeId: string): Promise<{ url?: string; error?: string }> {
+  await assertSuperAdmin();
+  const admin = createAdminClient();
+  const { data: off } = await admin.from("offices").select("owner_id").eq("id", officeId).maybeSingle();
+  if (!off?.owner_id) return { error: "لا يوجد مالك مرتبط" };
+  const { data: prof } = await admin.from("profiles").select("email").eq("id", off.owner_id).maybeSingle();
+  const email = prof?.email as string | undefined;
+  if (!email) return { error: "لا يوجد بريد للمالك" };
+  const { data, error } = await admin.auth.admin.generateLink({ type: "recovery", email });
+  const tokenHash = data?.properties?.hashed_token;
+  if (error || !tokenHash) return { error: "تعذّر إنشاء الرابط" };
+  const base = (process.env.NEXT_PUBLIC_APP_URL || "https://wujoody.vercel.app").replace(/\/+$/, "");
+  return { url: `${base}/auth/callback?token_hash=${encodeURIComponent(tokenHash)}&type=recovery&next=/reset-password` };
+}
+
+function normalizeSlug(raw: string): string {
+  return (raw || "")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9-]/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+// Create an office account on the client's behalf (no public registration).
+// The on-auth-user-created trigger builds the office/profile/site_content; we
+// then optionally activate a plan.
+export async function createOfficeAccount(input: {
+  name: string;
+  slug: string;
+  email: string;
+  password: string;
+  fullName?: string;
+  phone?: string;
+  plan?: string;
+  activate?: boolean;
+}): Promise<{ ok: boolean; error?: string; officeId?: string }> {
+  await assertSuperAdmin();
+  const admin = createAdminClient();
+  const name = (input.name || "").trim().slice(0, 120);
+  const email = (input.email || "").trim().toLowerCase();
+  const slug = normalizeSlug(input.slug);
+
+  if (!name) return { ok: false, error: "اسم المكتب مطلوب" };
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return { ok: false, error: "بريد غير صالح" };
+  if (slug.length < 3) return { ok: false, error: "النطاق يجب أن يكون 3 أحرف على الأقل (إنجليزية/أرقام)" };
+  if (RESERVED_SLUGS.has(slug)) return { ok: false, error: "هذا النطاق محجوز للنظام" };
+  if ((input.password || "").length < 8) return { ok: false, error: "كلمة المرور 8 أحرف على الأقل" };
+
+  const { data: taken } = await admin.from("offices").select("id").eq("slug", slug).maybeSingle();
+  if (taken) return { ok: false, error: `النطاق "${slug}" مستخدم` };
+
+  const { data, error } = await admin.auth.admin.createUser({
+    email,
+    password: input.password,
+    email_confirm: true,
+    user_metadata: { office_slug: slug, office_name: name, full_name: (input.fullName || "").trim(), phone: (input.phone || "").trim() },
+  });
+  if (error) return { ok: false, error: /already|registered|exists/i.test(error.message) ? "البريد مسجّل مسبقاً" : error.message };
+
+  const { data: off } = await admin.from("offices").select("id").eq("owner_id", data.user.id).maybeSingle();
+  if (off?.id) {
+    if (input.activate && input.plan) await setOfficePlan(off.id, input.plan);
+    else if (input.activate) await admin.from("offices").update({ status: "active" }).eq("id", off.id);
+  }
+  revalidateAdmin(off?.id);
+  return { ok: true, officeId: off?.id };
+}
+
 // Refresh every admin surface that shows office/subscription data.
 function revalidateAdmin(officeId?: string) {
   revalidatePath("/super-admin");

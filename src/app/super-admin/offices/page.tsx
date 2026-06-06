@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getPlans } from "@/lib/plans-server";
 import { loadAdminData } from "../data";
 import OfficesTable from "./OfficesTable";
@@ -9,10 +10,17 @@ export default async function OfficesPage({ searchParams }: { searchParams: Prom
 
   return (
     <div>
-      <h1 className="text-2xl font-bold">المكاتب</h1>
-      <p className="mt-1 text-sm text-muted">
-        {data.rows.length} مكتب · {data.metrics.activeOffices} مُفعّل · {data.metrics.pending} بانتظار التفعيل
-      </p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold">المكاتب</h1>
+          <p className="mt-1 text-sm text-muted">
+            {data.rows.length} مكتب · {data.metrics.activeOffices} مُفعّل · {data.metrics.pending} بانتظار التفعيل
+          </p>
+        </div>
+        <Link href="/super-admin/offices/new" className="shrink-0 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-[#0b0d10] hover:bg-accent-soft">
+          + مكتب جديد
+        </Link>
+      </div>
       <div className="mt-6">
         <OfficesTable rows={data.rows} planNames={planNames} initialTab={sp.tab || "all"} />
       </div>

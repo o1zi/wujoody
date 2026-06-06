@@ -8,6 +8,8 @@ import {
   setOfficeName,
   setOfficeSlug,
   updateOfficeOwner,
+  setOfficeOwnerEmail,
+  createResetLink,
   extendSubscription,
   endSubscriptionNow,
   deleteOffice,
@@ -40,6 +42,8 @@ export default function OfficeControls({
   const [slugV, setSlugV] = useState(slug);
   const [fullName, setFullName] = useState(owner.fullName);
   const [phone, setPhone] = useState(owner.phone);
+  const [emailV, setEmailV] = useState(owner.email);
+  const [resetUrl, setResetUrl] = useState<string | null>(null);
 
   function run(fn: () => Promise<unknown>, ok = "تم ✓") {
     setMsg(null);
@@ -70,6 +74,34 @@ export default function OfficeControls({
       await deleteOffice(officeId);
       router.push("/super-admin/offices");
     });
+  }
+
+  function saveEmail() {
+    setMsg(null);
+    start(async () => {
+      const res = await setOfficeOwnerEmail(officeId, emailV);
+      setMsg(res.ok ? "تم تغيير البريد ✓" : res.error || "تعذّر التغيير");
+      setTimeout(() => setMsg(null), res.ok ? 2500 : 4000);
+    });
+  }
+
+  function genReset() {
+    setMsg(null);
+    setResetUrl(null);
+    start(async () => {
+      const res = await createResetLink(officeId);
+      if (res.url) setResetUrl(res.url);
+      else {
+        setMsg(res.error || "تعذّر إنشاء الرابط");
+        setTimeout(() => setMsg(null), 4000);
+      }
+    });
+  }
+
+  function impersonate() {
+    if (confirm("ستُسجَّل دخولك كهذا المكتب لرؤية لوحته. للعودة لحسابك الإداري: سجّل خروج ثم ادخل ببريدك. متابعة؟")) {
+      window.location.href = `/api/super-admin/impersonate?office=${officeId}`;
+    }
   }
 
   return (
@@ -161,6 +193,41 @@ export default function OfficeControls({
             حفظ بيانات المالك
           </button>
           <p className="text-[11px] text-muted">البريد ({owner.email || "—"}) لا يُعدّل من هنا — يغيّره المالك من حسابه.</p>
+        </div>
+      </section>
+
+      {/* owner account & support */}
+      <section className="rounded-2xl glass-panel p-5">
+        <h2 className="mb-3 text-sm font-semibold text-muted">حساب المالك والدعم</h2>
+        <div className="space-y-4">
+          <button
+            className="w-full rounded-lg border border-accent/50 px-3 py-2.5 text-sm font-medium text-accent hover:bg-accent/10 disabled:opacity-50"
+            disabled={pending}
+            onClick={impersonate}
+          >
+            الدخول كهذا المكتب (للدعم)
+          </button>
+
+          <div className="flex items-end gap-2">
+            <label className="flex-1">
+              <span className="mb-1 block text-xs text-muted">بريد دخول المالك</span>
+              <input className={input} dir="ltr" value={emailV} onChange={(e) => setEmailV(e.target.value)} />
+            </label>
+            <button className={btn} disabled={pending || emailV.trim().toLowerCase() === owner.email.toLowerCase()} onClick={saveEmail}>تغيير</button>
+          </div>
+
+          <div>
+            <button className={btn} disabled={pending} onClick={genReset}>إنشاء رابط استعادة كلمة المرور</button>
+            {resetUrl && (
+              <div className="mt-2 space-y-1.5">
+                <p className="text-[11px] text-muted">أرسل هذا الرابط للمالك (صالح لفترة محدودة):</p>
+                <div className="flex items-center gap-2">
+                  <input className={input + " text-[11px]"} dir="ltr" readOnly value={resetUrl} onFocus={(e) => e.currentTarget.select()} />
+                  <button className={btn} onClick={() => { navigator.clipboard?.writeText(resetUrl); setMsg("تم النسخ ✓"); setTimeout(() => setMsg(null), 2000); }}>نسخ</button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </section>
 
