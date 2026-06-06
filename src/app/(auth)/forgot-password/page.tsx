@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
 import { Field, Input, Button, Alert } from "@/components/ui";
 
 export default function ForgotPasswordPage() {
@@ -13,10 +12,16 @@ export default function ForgotPasswordPage() {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
-    const supabase = createClient();
-    await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/auth/callback?next=/reset-password`,
-    });
+    // Sent via our Resend-backed endpoint (reliable). Always succeeds for privacy.
+    try {
+      await fetch("/api/auth/forgot", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+    } catch {
+      // ignore — we show the same neutral message regardless
+    }
     setLoading(false);
     setSent(true);
   }
