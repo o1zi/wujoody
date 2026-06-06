@@ -344,3 +344,9 @@ html:has(.lx){scroll-behavior:smooth}
   .lx-glow{animation:none}
   html:has(.lx){scroll-behavior:auto}
 }
+
+/* keyboard focus rings (a11y) */
+.lx a:focus-visible, .lx button:focus-visible, .lx summary:focus-visible,
+.lx input:focus-visible, .lx textarea:focus-visible, .lx select:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px;
+}

@@ -342,3 +342,9 @@ html:has(.at){scroll-behavior:smooth}
   .at-scrollcue .m::after{animation:none}
   html:has(.at){scroll-behavior:auto}
 }
+
+/* keyboard focus rings (a11y) */
+.at a:focus-visible, .at button:focus-visible, .at summary:focus-visible,
+.at input:focus-visible, .at textarea:focus-visible, .at select:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px;
+}

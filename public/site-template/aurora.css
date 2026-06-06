@@ -348,3 +348,9 @@ html:has(.au){scroll-behavior:smooth}
   .au-scrollcue .m::after{animation:none}
   html:has(.au){scroll-behavior:auto}
 }
+
+/* keyboard focus rings (a11y) */
+.au a:focus-visible, .au button:focus-visible, .au summary:focus-visible,
+.au input:focus-visible, .au textarea:focus-visible, .au select:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px;
+}

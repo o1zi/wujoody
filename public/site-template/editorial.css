@@ -333,3 +333,9 @@ html:has(.ed){scroll-behavior:smooth}
   .ed-reveal{transition-duration:.4s;transform:none}
   html:has(.ed){scroll-behavior:auto}
 }
+
+/* keyboard focus rings (a11y) */
+.ed a:focus-visible, .ed button:focus-visible, .ed summary:focus-visible,
+.ed input:focus-visible, .ed textarea:focus-visible, .ed select:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px;
+}

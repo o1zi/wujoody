@@ -14,7 +14,7 @@
   --accent-ink:#0E1116;
   --line-light:rgba(255,255,255,0.16);
   --line-ink:rgba(14,17,22,0.12);
-  --muted-light:rgba(255,255,255,0.66);
+  --muted-light:rgba(255,255,255,0.74);
   --glass:rgba(246,245,242,0.86);
   --maxw:1240px;
   --ease:cubic-bezier(.2,.74,.2,1);
@@ -606,3 +606,8 @@ button{font-family:inherit;cursor:pointer}
 [data-card="outline"] .glass-card{
   background:transparent;-webkit-backdrop-filter:none;backdrop-filter:none;
   border-color:var(--accent);box-shadow:none}
+/* keyboard focus rings (a11y) */
+a:focus-visible, button:focus-visible, summary:focus-visible,
+input:focus-visible, textarea:focus-visible, select:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 3px;
+}

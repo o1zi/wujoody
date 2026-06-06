@@ -335,3 +335,9 @@ html:has(.cn){scroll-behavior:smooth}
   .cn-scrollcue .sq{animation:none}
   html:has(.cn){scroll-behavior:auto}
 }
+
+/* keyboard focus rings (a11y) */
+.cn a:focus-visible, .cn button:focus-visible, .cn summary:focus-visible,
+.cn input:focus-visible, .cn textarea:focus-visible, .cn select:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px;
+}

@@ -64,3 +64,9 @@
 @media (max-width: 560px) {
   .blog-grid { grid-template-columns: 1fr; }
 }
+
+/* keyboard focus rings (a11y) */
+.blog-page a:focus-visible, .blog-page button:focus-visible, .blog-page summary:focus-visible,
+.blog-page input:focus-visible, .blog-page textarea:focus-visible, .blog-page select:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px;
+}
