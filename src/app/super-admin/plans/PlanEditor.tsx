@@ -11,8 +11,6 @@ type PlanRow = {
   features: string[];
   highlight: boolean;
   active: boolean;
-  paymentLink: string;
-  sallaProductId: string;
   sections: string[];
 };
 
@@ -22,8 +20,6 @@ export default function PlanEditor({ plan }: { plan: PlanRow }) {
   const [highlight, setHighlight] = useState(plan.highlight);
   const [active, setActive] = useState(plan.active);
   const [features, setFeatures] = useState(plan.features.join("\n"));
-  const [paymentLink, setPaymentLink] = useState(plan.paymentLink);
-  const [sallaProductId, setSallaProductId] = useState(plan.sallaProductId);
   const [sections, setSections] = useState<string[]>(plan.sections || []);
   const [pending, start] = useTransition();
   const [saved, setSaved] = useState(false);
@@ -40,8 +36,6 @@ export default function PlanEditor({ plan }: { plan: PlanRow }) {
         highlight,
         active,
         features: features.split("\n").map((f) => f.trim()).filter(Boolean),
-        paymentLink: paymentLink.trim(),
-        sallaProductId: sallaProductId.trim(),
         sections,
       });
       setSaved(true);
@@ -60,21 +54,13 @@ export default function PlanEditor({ plan }: { plan: PlanRow }) {
           <input className={input} value={name} onChange={(e) => setName(e.target.value)} />
         </label>
         <label className="block">
-          <span className="mb-1 block text-xs text-muted">السعر (ر.س / شهر)</span>
+          <span className="mb-1 block text-xs text-muted">السعر (ر.س / سنة)</span>
           <input className={input} type="number" value={price} onChange={(e) => setPrice(e.target.value)} dir="ltr" />
         </label>
       </div>
       <label className="mt-3 block">
         <span className="mb-1 block text-xs text-muted">المزايا (ميزة في كل سطر)</span>
         <textarea className={input} rows={6} value={features} onChange={(e) => setFeatures(e.target.value)} />
-      </label>
-      <label className="mt-3 block">
-        <span className="mb-1 block text-xs text-muted">رابط الدفع (سلة)</span>
-        <input className={input} dir="ltr" value={paymentLink} onChange={(e) => setPaymentLink(e.target.value)} placeholder="https://salla.sa/.../checkout/..." />
-      </label>
-      <label className="mt-3 block">
-        <span className="mb-1 block text-xs text-muted">رقم منتج سلة (Product ID)</span>
-        <input className={input} dir="ltr" value={sallaProductId} onChange={(e) => setSallaProductId(e.target.value)} placeholder="1234567890" />
       </label>
       <div className="mt-3">
         <span className="mb-1 block text-xs text-muted">الأقسام المتاحة لهذه الباقة</span>

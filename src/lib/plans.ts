@@ -32,8 +32,6 @@ export type Plan = {
   currency: string;
   period: string;
   durationDays: number;
-  paymentLink: string;
-  sallaProductId: string;
   features: string[];
   caps: PlanCaps;
   highlight?: boolean;
@@ -54,8 +52,6 @@ export const FALLBACK_PLANS: Plan[] = [
     currency: "SAR",
     period: "سنوياً",
     durationDays: 365,
-    paymentLink: "",
-    sallaProductId: "",
     caps: {
       solidOnly: true, presets: false, presetLimit: 0, upload: false,
       whatsapp: false, booking: false, blog: false, projectDetails: false, badges: false,
@@ -79,8 +75,6 @@ export const FALLBACK_PLANS: Plan[] = [
     period: "سنوياً",
     durationDays: 365,
     highlight: true,
-    paymentLink: "",
-    sallaProductId: "",
     caps: {
       solidOnly: false, presets: true, presetLimit: 5, upload: false,
       whatsapp: true, booking: true, blog: true, projectDetails: true, badges: true,
@@ -103,8 +97,6 @@ export const FALLBACK_PLANS: Plan[] = [
     currency: "SAR",
     period: "سنوياً",
     durationDays: 365,
-    paymentLink: "",
-    sallaProductId: "",
     caps: {
       solidOnly: false, presets: true, presetLimit: Infinity, upload: true,
       whatsapp: true, booking: true, blog: true, projectDetails: true, badges: true,
@@ -144,8 +136,6 @@ export function normalizePlan(row: any): Plan {
     currency: row.currency || "SAR",
     period: row.period || "سنوياً",
     durationDays: row.duration_days ?? 365,
-    paymentLink: row.payment_link || "",
-    sallaProductId: row.salla_product_id || "",
     features: Array.isArray(row.features) ? row.features : [],
     highlight: !!row.highlight,
     caps: {

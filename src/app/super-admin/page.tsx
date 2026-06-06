@@ -11,12 +11,11 @@ const STATUS: Record<string, { text: string; cls: string }> = {
 export default async function SuperAdminPage() {
   const admin = createAdminClient();
 
-  const [{ data: offices }, { data: profiles }, { data: subs }, { data: events }, plans, viewsAgg, clicksAgg, leadsAgg] =
+  const [{ data: offices }, { data: profiles }, { data: subs }, plans, viewsAgg, clicksAgg, leadsAgg] =
     await Promise.all([
       admin.from("offices").select("id, name, slug, status, owner_id, created_at").order("created_at", { ascending: false }),
       admin.from("profiles").select("id, email, office_id, role"),
       admin.from("subscriptions").select("office_id, plan, status, ends_at, created_at").order("created_at", { ascending: false }),
-      admin.from("salla_events").select("id, event, created_at").order("created_at", { ascending: false }).limit(10),
       getPlans(),
       admin.from("site_events").select("id", { count: "exact", head: true }).eq("type", "view"),
       admin.from("site_events").select("id", { count: "exact", head: true }).neq("type", "view"),
@@ -116,30 +115,6 @@ export default async function SuperAdminPage() {
         </table>
       </div>
 
-      <h2 className="mt-10 text-lg font-semibold">أحدث أحداث سلة</h2>
-      <div className="mt-3 overflow-hidden rounded-2xl border border-border">
-        <table className="w-full text-sm">
-          <thead className="bg-surface text-muted">
-            <tr>
-              <th className="px-4 py-3 text-right font-medium">الحدث</th>
-              <th className="px-4 py-3 text-right font-medium">التاريخ</th>
-            </tr>
-          </thead>
-          <tbody>
-            {(events ?? []).map((e) => (
-              <tr key={e.id} className="border-t border-border bg-surface/40">
-                <td className="mono px-4 py-3 text-xs" dir="ltr">{e.event || "—"}</td>
-                <td className="px-4 py-3 text-xs text-muted">{new Date(e.created_at).toLocaleString("ar-SA")}</td>
-              </tr>
-            ))}
-            {(events?.length ?? 0) === 0 && (
-              <tr>
-                <td colSpan={2} className="px-4 py-8 text-center text-muted">لا توجد أحداث بعد.</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
     </div>
   );
 }

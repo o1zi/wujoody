@@ -25,10 +25,6 @@ export async function getPlanByCode(code: string | null | undefined): Promise<Pl
   return (await getPlans()).find((p) => p.code === code);
 }
 
-export async function getPlanByProductId(productId: string): Promise<Plan | undefined> {
-  return (await getPlans()).find((p) => p.sallaProductId === String(productId));
-}
-
 export async function getPlanCaps(code: string | null | undefined): Promise<PlanCaps> {
   const plan = await getPlanByCode(code);
   return plan?.caps ?? DEFAULT_CAPS;
