@@ -3,7 +3,7 @@
 // implemented templates are listed — unknown/legacy values fall back to the
 // default (cinematic).
 
-export type TemplateId = "cinematic" | "editorial" | "luxe" | "heritage" | "kinetic" | "aurora" | "blueprint" | "deco";
+export type TemplateId = "cinematic" | "editorial" | "luxe" | "heritage" | "kinetic" | "aurora" | "blueprint" | "deco" | "concrete";
 
 export type SiteTemplate = {
   id: TemplateId;
@@ -78,6 +78,14 @@ export const SITE_TEMPLATES: SiteTemplate[] = [
     stylesheet: "/site-template/deco.css",
     defaultFont: "elmessiri",
     dark: true,
+  },
+  {
+    id: "concrete",
+    name: "خرساني",
+    tagline: "عمارة خام · خرسانة رمادية وملمس حقيقي · حدود سميكة وظلال صلبة",
+    stylesheet: "/site-template/concrete.css",
+    defaultFont: "almarai",
+    dark: false,
   },
 ];
 

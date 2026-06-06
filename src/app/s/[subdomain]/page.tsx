@@ -13,6 +13,7 @@ import KineticView from "@/components/site/KineticView";
 import AuroraView from "@/components/site/AuroraView";
 import BlueprintView from "@/components/site/BlueprintView";
 import DecoView from "@/components/site/DecoView";
+import ConcreteView from "@/components/site/ConcreteView";
 import NotLive from "@/components/site/NotLive";
 import CinematicRuntime from "@/components/site/CinematicRuntime";
 import EditorialRuntime from "@/components/site/EditorialRuntime";
@@ -22,6 +23,7 @@ import KineticRuntime from "@/components/site/KineticRuntime";
 import AuroraRuntime from "@/components/site/AuroraRuntime";
 import BlueprintRuntime from "@/components/site/BlueprintRuntime";
 import DecoRuntime from "@/components/site/DecoRuntime";
+import ConcreteRuntime from "@/components/site/ConcreteRuntime";
 import { resolveTemplate } from "@/lib/site-templates";
 
 type Params = Promise<{ subdomain: string }>;
@@ -186,6 +188,11 @@ export default async function TenantSite({ params }: { params: Params }) {
         <>
           <DecoView content={data.content} slug={data.office.slug} caps={data.caps} />
           <DecoRuntime />
+        </>
+      ) : template.id === "concrete" ? (
+        <>
+          <ConcreteView content={data.content} slug={data.office.slug} caps={data.caps} />
+          <ConcreteRuntime />
         </>
       ) : (
         <>
