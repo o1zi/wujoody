@@ -15,7 +15,7 @@ export async function setOfficeStatus(officeId: string, status: "active" | "pend
   await assertSuperAdmin();
   const admin = createAdminClient();
   await admin.from("offices").update({ status }).eq("id", officeId);
-  revalidatePath("/super-admin");
+  revalidateAdmin(officeId);
 }
 
 // Manually activate (or renew) an office's subscription after a confirmed bank
@@ -56,7 +56,86 @@ export async function setOfficePlan(officeId: string, plan: string) {
 
   // Go live.
   await admin.from("offices").update({ status: "active" }).eq("id", officeId);
+  revalidateAdmin(officeId);
+}
+
+// Extend the latest subscription by N days (from its current end, or from now
+// if already expired). Keeps the office live.
+export async function extendSubscription(officeId: string, days: number) {
+  await assertSuperAdmin();
+  const admin = createAdminClient();
+  const { data: sub } = await admin
+    .from("subscriptions")
+    .select("id, plan, ends_at, amount, currency")
+    .eq("office_id", officeId)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  const now = new Date();
+  const base = sub?.ends_at && new Date(sub.ends_at) > now ? new Date(sub.ends_at) : now;
+  const ends = new Date(base.getTime() + days * 86400000);
+
+  if (sub?.id) {
+    await admin.from("subscriptions").update({ ends_at: ends.toISOString(), status: "active" }).eq("id", sub.id);
+  } else {
+    await admin.from("subscriptions").insert({
+      office_id: officeId,
+      plan: "basic",
+      status: "active",
+      starts_at: now.toISOString(),
+      ends_at: ends.toISOString(),
+    });
+  }
+  await admin.from("offices").update({ status: "active" }).eq("id", officeId);
+  revalidateAdmin(officeId);
+}
+
+// End the subscription immediately: set ends_at to now so the site goes offline
+// at the next load (the tenant page treats an elapsed ends_at as expired).
+export async function endSubscriptionNow(officeId: string) {
+  await assertSuperAdmin();
+  const admin = createAdminClient();
+  const { data: sub } = await admin
+    .from("subscriptions")
+    .select("id")
+    .eq("office_id", officeId)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (sub?.id) {
+    await admin.from("subscriptions").update({ ends_at: new Date().toISOString(), status: "expired" }).eq("id", sub.id);
+  }
+  revalidateAdmin(officeId);
+}
+
+// Edit the office owner's profile (name / phone shown in the admin).
+export async function updateOfficeOwner(officeId: string, patch: { full_name?: string; phone?: string }) {
+  await assertSuperAdmin();
+  const admin = createAdminClient();
+  const { data: off } = await admin.from("offices").select("owner_id").eq("id", officeId).maybeSingle();
+  if (!off?.owner_id) return;
+  const row: Record<string, unknown> = {};
+  if (patch.full_name !== undefined) row.full_name = patch.full_name.trim().slice(0, 120);
+  if (patch.phone !== undefined) row.phone = patch.phone.trim().slice(0, 30);
+  if (Object.keys(row).length) await admin.from("profiles").update(row).eq("id", off.owner_id);
+  revalidateAdmin(officeId);
+}
+
+// Rename an office.
+export async function setOfficeName(officeId: string, name: string) {
+  await assertSuperAdmin();
+  const clean = (name || "").trim().slice(0, 120);
+  if (!clean) return;
+  await createAdminClient().from("offices").update({ name: clean }).eq("id", officeId);
+  revalidateAdmin(officeId);
+}
+
+// Refresh every admin surface that shows office/subscription data.
+function revalidateAdmin(officeId?: string) {
   revalidatePath("/super-admin");
+  revalidatePath("/super-admin/offices");
+  if (officeId) revalidatePath(`/super-admin/offices/${officeId}`);
 }
 
 const RESERVED_SLUGS = new Set(["www", "app", "api", "admin", "mail", "dashboard", "super-admin"]);
@@ -88,7 +167,7 @@ export async function setOfficeSlug(
 
   const { error } = await admin.from("offices").update({ slug }).eq("id", officeId);
   if (error) return { ok: false, error: error.message };
-  revalidatePath("/super-admin");
+  revalidateAdmin(officeId);
   return { ok: true };
 }
 
@@ -96,7 +175,7 @@ export async function deleteOffice(officeId: string) {
   await assertSuperAdmin();
   const admin = createAdminClient();
   await admin.from("offices").delete().eq("id", officeId);
-  revalidatePath("/super-admin");
+  revalidateAdmin();
 }
 
 // Save an office's site content (super admin editing any office).
