@@ -195,67 +195,6 @@ export default async function HomePage() {
           </div>
         </section>
 
-        <section className="sec" id="steps" data-screen-label="كيف تبدأ">
-          <div className="wrap">
-            <div className="glass-card reveal">
-              <MacBar />
-              <div className="glass-body">
-                <div className="eyebrow mono">
-                  <span className="ln"></span>
-                  <span className="idx">02</span> كيف تبدأ — <span className="en">HOW IT WORKS</span>
-                </div>
-                <h2 className="sec-title" style={{ marginBottom: 10 }}>{c.steps.title}</h2>
-                <div className="proc">
-                  {c.steps.items.map((s, i) => (
-                    <div className="step reveal" data-d={i || undefined} key={i}>
-                      <span className="bn"></span>
-                      <div className="no mono">{String(i + 1).padStart(2, "0")}</div>
-                      <h3>{s.title}</h3>
-                      <p>{s.desc}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="sec" id="pricing" data-screen-label="الباقات">
-          <div className="wrap">
-            <div className="glass-card reveal">
-              <MacBar />
-              <div className="glass-body">
-                <div className="eyebrow mono">
-                  <span className="ln"></span>
-                  <span className="idx">03</span> الباقات — <span className="en">PRICING</span>
-                </div>
-                <h2 className="sec-title" style={{ marginBottom: 6 }}>{c.pricing.title}</h2>
-                <p className="sec-lead" style={{ marginBottom: 34 }}>{c.pricing.lead}</p>
-                <div className="pricing-grid">
-                  {plans.map((p) => (
-                    <div className={`price-card${p.highlight ? " featured" : ""}`} key={p.code}>
-                      {p.highlight && <span className="price-badge mono">الأكثر شيوعاً</span>}
-                      <h3>{p.name}</h3>
-                      <div className="price-amount">
-                        <b>{p.price}</b>
-                        <span className="mono">{p.currency} / {p.period}</span>
-                      </div>
-                      <ul className="price-feats">
-                        {p.features.map((f) => (
-                          <li key={f}>{f}</li>
-                        ))}
-                      </ul>
-                      <Link className="price-cta" href="/register">
-                        اشترك الآن
-                      </Link>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
         <section className="sec" id="templates" data-screen-label="القوالب">
           <div className="wrap">
             <div className="glass-card reveal">
@@ -320,6 +259,67 @@ export default async function HomePage() {
                       </a>
                     );
                   })}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="sec" id="steps" data-screen-label="كيف تبدأ">
+          <div className="wrap">
+            <div className="glass-card reveal">
+              <MacBar />
+              <div className="glass-body">
+                <div className="eyebrow mono">
+                  <span className="ln"></span>
+                  <span className="idx">02</span> كيف تبدأ — <span className="en">HOW IT WORKS</span>
+                </div>
+                <h2 className="sec-title" style={{ marginBottom: 10 }}>{c.steps.title}</h2>
+                <div className="proc">
+                  {c.steps.items.map((s, i) => (
+                    <div className="step reveal" data-d={i || undefined} key={i}>
+                      <span className="bn"></span>
+                      <div className="no mono">{String(i + 1).padStart(2, "0")}</div>
+                      <h3>{s.title}</h3>
+                      <p>{s.desc}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="sec" id="pricing" data-screen-label="الباقات">
+          <div className="wrap">
+            <div className="glass-card reveal">
+              <MacBar />
+              <div className="glass-body">
+                <div className="eyebrow mono">
+                  <span className="ln"></span>
+                  <span className="idx">03</span> الباقات — <span className="en">PRICING</span>
+                </div>
+                <h2 className="sec-title" style={{ marginBottom: 6 }}>{c.pricing.title}</h2>
+                <p className="sec-lead" style={{ marginBottom: 34 }}>{c.pricing.lead}</p>
+                <div className="pricing-grid">
+                  {plans.map((p) => (
+                    <div className={`price-card${p.highlight ? " featured" : ""}`} key={p.code}>
+                      {p.highlight && <span className="price-badge mono">الأكثر شيوعاً</span>}
+                      <h3>{p.name}</h3>
+                      <div className="price-amount">
+                        <b>{p.price}</b>
+                        <span className="mono">{p.currency} / {p.period}</span>
+                      </div>
+                      <ul className="price-feats">
+                        {p.features.map((f) => (
+                          <li key={f}>{f}</li>
+                        ))}
+                      </ul>
+                      <Link className="price-cta" href="/register">
+                        اشترك الآن
+                      </Link>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
