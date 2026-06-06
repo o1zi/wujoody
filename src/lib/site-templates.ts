@@ -3,7 +3,7 @@
 // implemented templates are listed — unknown/legacy values fall back to the
 // default (cinematic).
 
-export type TemplateId = "cinematic" | "editorial" | "luxe" | "heritage" | "kinetic";
+export type TemplateId = "cinematic" | "editorial" | "luxe" | "heritage" | "kinetic" | "aurora";
 
 export type SiteTemplate = {
   id: TemplateId;
@@ -53,6 +53,14 @@ export const SITE_TEMPLATES: SiteTemplate[] = [
     tagline: "استوديو جريء · أشرطة متحركة وختم دوّار · حروف ضخمة وإبداع غير تقليدي",
     stylesheet: "/site-template/kinetic.css",
     defaultFont: "changa",
+    dark: false,
+  },
+  {
+    id: "aurora",
+    name: "زجاجي",
+    tagline: "تدرّجات أورورا متحركة · بطاقات زجاجية مصنفرة · إحساس عصري ساحر",
+    stylesheet: "/site-template/aurora.css",
+    defaultFont: "tajawal",
     dark: false,
   },
 ];
