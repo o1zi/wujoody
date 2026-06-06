@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { mergeContent, clampMedia, clampTemplate } from "@/lib/site-content";
+import { siteLiveState } from "@/lib/subscription";
 import { googleFontsHref } from "@/lib/site-fonts";
 import { getPlanCaps } from "@/lib/plans-server";
 import { tenantUrl } from "@/lib/urls";
@@ -89,16 +90,17 @@ async function loadOffice(slug: string) {
     .from("subscriptions")
     .select("plan, status, ends_at")
     .eq("office_id", office.id)
-    .eq("status", "active")
     .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle();
 
-  // Close the site the moment the subscription lapses (don't wait for the daily cron).
-  const expired = !!sub?.ends_at && new Date(sub.ends_at).getTime() <= Date.now();
-  const live = office.status === "active" && !expired;
+  // Close the site as soon as the subscription lapses — whether its status was
+  // flipped to expired/cancelled, OR its term simply elapsed before the daily
+  // cron ran. (An active office with no subscription row at all — e.g. a manual
+  // comp activation — stays live.)
+  const { live, expired } = siteLiveState(office.status, sub);
 
-  const caps = await getPlanCaps(sub?.plan);
+  const caps = await getPlanCaps(expired ? undefined : sub?.plan);
   const content = clampTemplate(clampMedia(mergeContent(row?.content), caps), caps);
   content.contact.mapQuery = await resolveMapQuery(content.contact.mapQuery);
   return { office, content, live, expired, caps };
