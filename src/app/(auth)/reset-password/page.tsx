@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Field, Input, Button, Alert } from "@/components/ui";
@@ -11,6 +12,17 @@ export default function ResetPasswordPage() {
   const [confirm, setConfirm] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  // "checking" until we confirm the recovery link established a session.
+  const [status, setStatus] = useState<"checking" | "ready" | "invalid">("checking");
+
+  // The /auth/callback exchange sets a session cookie before redirecting here.
+  // If there's no session, the link was invalid or expired — tell the user.
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data }) => {
+      setStatus(data.user ? "ready" : "invalid");
+    });
+  }, []);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -35,6 +47,27 @@ export default function ResetPasswordPage() {
     router.refresh();
   }
 
+  if (status === "invalid") {
+    return (
+      <div>
+        <h1 className="text-2xl font-bold">رابط غير صالح</h1>
+        <p className="mt-1 text-sm text-muted">انتهت صلاحية رابط إعادة التعيين أو سبق استخدامه.</p>
+        <div className="mt-7">
+          <Alert>افتح الرابط من أحدث رسالة وصلتك، أو اطلب رابطاً جديداً.</Alert>
+          <Link
+            href="/forgot-password"
+            className="mt-6 block rounded-lg bg-accent px-5 py-2.5 text-center text-sm font-medium text-[#0b0d10] hover:bg-accent-soft"
+          >
+            اطلب رابطاً جديداً
+          </Link>
+          <Link href="/login" className="mt-4 block text-center text-sm text-muted hover:text-foreground">
+            العودة لتسجيل الدخول
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
       <h1 className="text-2xl font-bold">كلمة مرور جديدة</h1>
@@ -47,7 +80,7 @@ export default function ResetPasswordPage() {
         <Field label="تأكيد كلمة المرور — CONFIRM">
           <Input type="password" required value={confirm} onChange={(e) => setConfirm(e.target.value)} placeholder="••••••••" dir="ltr" />
         </Field>
-        <Button type="submit" loading={loading} className="w-full">
+        <Button type="submit" loading={loading || status === "checking"} className="w-full">
           حفظ كلمة المرور
         </Button>
       </form>
