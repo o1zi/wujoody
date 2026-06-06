@@ -8,7 +8,7 @@ export type SiteContent = {
     cardStyle?: "glass" | "solid" | "outline";
     cardRadius?: "sharp" | "soft" | "round";
     cardTint?: string | null; // hex tint for the cards (transparency preserved on glass)
-    layout?: "cinematic" | "minimal" | "luxe" | "corporate" | "editorial" | "bold"; // page template
+    layout?: "cinematic" | "minimal" | "luxe" | "corporate" | "editorial" | "bold" | "heritage"; // page template
   };
   seo: { googleVerification: string };
   media: {

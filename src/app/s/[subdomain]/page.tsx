@@ -8,10 +8,12 @@ import { tenantUrl } from "@/lib/urls";
 import SiteView from "@/components/site/SiteView";
 import EditorialView from "@/components/site/EditorialView";
 import LuxeView from "@/components/site/LuxeView";
+import HeritageView from "@/components/site/HeritageView";
 import NotLive from "@/components/site/NotLive";
 import CinematicRuntime from "@/components/site/CinematicRuntime";
 import EditorialRuntime from "@/components/site/EditorialRuntime";
 import LuxeRuntime from "@/components/site/LuxeRuntime";
+import HeritageRuntime from "@/components/site/HeritageRuntime";
 import { resolveTemplate } from "@/lib/site-templates";
 
 type Params = Promise<{ subdomain: string }>;
@@ -151,6 +153,11 @@ export default async function TenantSite({ params }: { params: Params }) {
         <>
           <LuxeView content={data.content} slug={data.office.slug} caps={data.caps} />
           <LuxeRuntime />
+        </>
+      ) : template.id === "heritage" ? (
+        <>
+          <HeritageView content={data.content} slug={data.office.slug} caps={data.caps} />
+          <HeritageRuntime />
         </>
       ) : (
         <>

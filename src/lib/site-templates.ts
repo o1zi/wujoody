@@ -3,7 +3,7 @@
 // implemented templates are listed — unknown/legacy values fall back to the
 // default (cinematic).
 
-export type TemplateId = "cinematic" | "editorial" | "luxe";
+export type TemplateId = "cinematic" | "editorial" | "luxe" | "heritage";
 
 export type SiteTemplate = {
   id: TemplateId;
@@ -38,6 +38,14 @@ export const SITE_TEMPLATES: SiteTemplate[] = [
     stylesheet: "/site-template/luxe.css",
     defaultFont: "markazi",
     dark: true,
+  },
+  {
+    id: "heritage",
+    name: "تراثي",
+    tagline: "تراث سعودي · مثلّثات نجدية · طيني دافئ وخط كوفي معماري",
+    stylesheet: "/site-template/heritage.css",
+    defaultFont: "reemkufi",
+    dark: false,
   },
 ];
 
