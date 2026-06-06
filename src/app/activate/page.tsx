@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getSessionContext } from "@/lib/auth";
 import { whatsappLink } from "@/lib/bank";
 import { getPaymentSettings } from "@/lib/bank-server";
+import { getLanding } from "@/lib/landing-server";
 
 export const metadata: Metadata = {
   title: "بانتظار التفعيل",
@@ -21,7 +22,7 @@ export default async function ActivatePage() {
 
   const office = ctx.office;
   const suspended = office.status === "suspended";
-  const pay = await getPaymentSettings();
+  const [pay, landing] = await Promise.all([getPaymentSettings(), getLanding()]);
 
   const message =
     `السلام عليكم، أرغب ب${suspended ? "تجديد" : "تفعيل"} اشتراك مكتبي في منصة وجود.\n` +
@@ -29,7 +30,8 @@ export default async function ActivatePage() {
     `النطاق: ${office.slug}\n` +
     `الجوال: ${ctx.profile?.phone || "—"}\n` +
     `البريد: ${ctx.email || "—"}`;
-  const wa = whatsappLink(message, pay.whatsapp);
+  // Use whichever number is configured — payment settings or the landing contact.
+  const wa = whatsappLink(message, pay.whatsapp || landing.contact.whatsapp);
 
   return (
     <main className="flex min-h-dvh items-center justify-center bg-background px-5 py-10">
