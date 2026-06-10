@@ -223,11 +223,24 @@ export default function KineticView({ content, slug, caps }: { content: SiteCont
 
           {marquee(heroBand)}
 
+          {/* PROJECTS */}
+          {show("projects") && (
+            <section className="kn-sec" id="projects">
+              <div className="kn-wrap">
+                {head("01", "SELECTED WORK / أعمالنا")}
+                <h2 className="kn-title kn-reveal" data-d="1" style={{ marginBottom: 40 }}>مشاريع <span className="stroke">تصنع الفرق</span>.</h2>
+                <div className="kn-reveal" data-d="2">
+                  <ProjectsGallery items={content.projects.items} detailed={caps.projectDetails} />
+                  {caps.models3d && content.visible.models3d !== false && <Models3D title={content.models.title} lead={content.models.lead} items={content.models.items} />}
+                </div>
+              </div>
+            </section>
+          )}
           {/* ABOUT */}
           {show("about") && (
             <section className="kn-sec" id="about">
               <div className="kn-wrap">
-                {head("01", "ABOUT / من نحن")}
+                {head("02", "ABOUT / من نحن")}
                 <div className="kn-about">
                   <div className="kn-reveal" data-d="1">
                     <h2 className="kn-about-lead">{content.about.lead}</h2>
@@ -250,7 +263,7 @@ export default function KineticView({ content, slug, caps }: { content: SiteCont
           {show("services") && (
             <section className="kn-sec" id="services">
               <div className="kn-wrap">
-                {head("02", "SERVICES / الخدمات")}
+                {head("03", "SERVICES / الخدمات")}
                 <h2 className="kn-title kn-reveal" data-d="1" style={{ marginBottom: 14 }}>{content.services.title}</h2>
                 <p className="kn-lead kn-reveal" data-d="2" style={{ marginBottom: 44 }}>{content.services.lead}</p>
                 <div className="kn-svc-list">
@@ -307,7 +320,7 @@ export default function KineticView({ content, slug, caps }: { content: SiteCont
           {show("stats") && (
             <section className="kn-sec" id="stats">
               <div className="kn-wrap">
-                {head("03", "BY THE NUMBERS / بالأرقام")}
+                {head("04", "BY THE NUMBERS / بالأرقام")}
                 <div className="kn-stats">
                   {content.stats.map((st, i) => {
                     const dec = st.value.includes(".") ? 1 : undefined;
@@ -333,7 +346,7 @@ export default function KineticView({ content, slug, caps }: { content: SiteCont
           {show("process") && (
             <section className="kn-sec" id="process">
               <div className="kn-wrap">
-                {head("04", "PROCESS / منهجية العمل")}
+                {head("05", "PROCESS / منهجية العمل")}
                 <div className="kn-proc">
                   {content.process.map((p, i) => (
                     <div className="kn-step kn-reveal" data-d={(i % 4) + 1} key={i}>
@@ -347,19 +360,6 @@ export default function KineticView({ content, slug, caps }: { content: SiteCont
             </section>
           )}
 
-          {/* PROJECTS */}
-          {show("projects") && (
-            <section className="kn-sec" id="projects">
-              <div className="kn-wrap">
-                {head("05", "SELECTED WORK / أعمالنا")}
-                <h2 className="kn-title kn-reveal" data-d="1" style={{ marginBottom: 40 }}>مشاريع <span className="stroke">تصنع الفرق</span>.</h2>
-                <div className="kn-reveal" data-d="2">
-                  <ProjectsGallery items={content.projects.items} detailed={caps.projectDetails} />
-                  {caps.models3d && content.visible.models3d !== false && <Models3D title={content.models.title} lead={content.models.lead} items={content.models.items} />}
-                </div>
-              </div>
-            </section>
-          )}
 
           {/* TEAM */}
           {show("team") && (

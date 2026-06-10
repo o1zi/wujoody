@@ -208,11 +208,24 @@ export default function AtelierView({ content, slug, caps }: { content: SiteCont
             </div>
           </section>
 
+          {/* PROJECTS */}
+          {show("projects") && (
+            <section className="at-sec" id="projects">
+              <div className="at-wrap">
+                {head("01", "أعمالنا · Selected work")}
+                <h2 className="at-title at-split" style={{ marginBottom: 40 }}>أعمالٌ مختارة بعناية.</h2>
+                <div className="at-reveal" data-d="2">
+                  <ProjectsGallery items={content.projects.items} detailed={caps.projectDetails} />
+                  {caps.models3d && content.visible.models3d !== false && <Models3D title={content.models.title} lead={content.models.lead} items={content.models.items} />}
+                </div>
+              </div>
+            </section>
+          )}
           {/* ABOUT */}
           {show("about") && (
             <section className="at-sec" id="about">
               <div className="at-wrap">
-                {head("01", "من نحن · About")}
+                {head("02", "من نحن · About")}
                 <div className="at-about">
                   <div className="at-reveal" data-d="1">
                     <h2 className="at-about-lead">{content.about.lead}</h2>
@@ -235,7 +248,7 @@ export default function AtelierView({ content, slug, caps }: { content: SiteCont
           {show("services") && (
             <section className="at-sec" id="services">
               <div className="at-wrap">
-                {head("02", "الخدمات · Services")}
+                {head("03", "الخدمات · Services")}
                 <h2 className="at-title at-split" style={{ marginBottom: 14 }}>{content.services.title}</h2>
                 <p className="at-lead at-reveal" data-d="1" style={{ marginBottom: 44 }}>{content.services.lead}</p>
                 <div className="at-svc-grid">
@@ -290,7 +303,7 @@ export default function AtelierView({ content, slug, caps }: { content: SiteCont
           {show("stats") && (
             <section className="at-sec" id="stats">
               <div className="at-wrap">
-                {head("03", "بالأرقام · By the numbers")}
+                {head("04", "بالأرقام · By the numbers")}
                 <div className="at-stats">
                   {content.stats.map((st, i) => {
                     const dec = st.value.includes(".") ? 1 : undefined;
@@ -314,7 +327,7 @@ export default function AtelierView({ content, slug, caps }: { content: SiteCont
           {show("process") && (
             <section className="at-sec" id="process">
               <div className="at-wrap">
-                {head("04", "منهجية العمل · Process")}
+                {head("05", "منهجية العمل · Process")}
                 <div className="at-proc">
                   {content.process.map((p, i) => (
                     <div className="at-step at-reveal" data-d={(i % 4) + 1} key={i}>
@@ -328,19 +341,6 @@ export default function AtelierView({ content, slug, caps }: { content: SiteCont
             </section>
           )}
 
-          {/* PROJECTS */}
-          {show("projects") && (
-            <section className="at-sec" id="projects">
-              <div className="at-wrap">
-                {head("05", "أعمالنا · Selected work")}
-                <h2 className="at-title at-split" style={{ marginBottom: 40 }}>أعمالٌ مختارة بعناية.</h2>
-                <div className="at-reveal" data-d="2">
-                  <ProjectsGallery items={content.projects.items} detailed={caps.projectDetails} />
-                  {caps.models3d && content.visible.models3d !== false && <Models3D title={content.models.title} lead={content.models.lead} items={content.models.items} />}
-                </div>
-              </div>
-            </section>
-          )}
 
           {/* TEAM */}
           {show("team") && (

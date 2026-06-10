@@ -203,6 +203,18 @@ export default function DecoView({ content, slug, caps }: { content: SiteContent
             </div>
           </section>
 
+          {/* PROJECTS */}
+          {show("projects") && (
+            <section className="dc-sec" id="projects">
+              <div className="dc-wrap">
+                {head("أعمالنا · Selected work", "مشاريع تليق بالطموح.")}
+                <div className="dc-reveal" data-d="2">
+                  <ProjectsGallery items={content.projects.items} detailed={caps.projectDetails} />
+                  {caps.models3d && content.visible.models3d !== false && <Models3D title={content.models.title} lead={content.models.lead} items={content.models.items} />}
+                </div>
+              </div>
+            </section>
+          )}
           {/* ABOUT */}
           {show("about") && (
             <section className="dc-sec" id="about">
@@ -321,18 +333,6 @@ export default function DecoView({ content, slug, caps }: { content: SiteContent
             </section>
           )}
 
-          {/* PROJECTS */}
-          {show("projects") && (
-            <section className="dc-sec" id="projects">
-              <div className="dc-wrap">
-                {head("أعمالنا · Selected work", "مشاريع تليق بالطموح.")}
-                <div className="dc-reveal" data-d="2">
-                  <ProjectsGallery items={content.projects.items} detailed={caps.projectDetails} />
-                  {caps.models3d && content.visible.models3d !== false && <Models3D title={content.models.title} lead={content.models.lead} items={content.models.items} />}
-                </div>
-              </div>
-            </section>
-          )}
 
           {/* TEAM */}
           {show("team") && (

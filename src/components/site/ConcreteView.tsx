@@ -204,11 +204,24 @@ export default function ConcreteView({ content, slug, caps }: { content: SiteCon
             </div>
           </section>
 
+          {/* PROJECTS */}
+          {show("projects") && (
+            <section className="cn-sec" id="projects">
+              <div className="cn-wrap">
+                {head("01", "أعمالنا · Selected work")}
+                <h2 className="cn-title cn-reveal" data-d="1" style={{ marginBottom: 40 }}>مشاريع راسخة.</h2>
+                <div className="cn-reveal" data-d="2">
+                  <ProjectsGallery items={content.projects.items} detailed={caps.projectDetails} />
+                  {caps.models3d && content.visible.models3d !== false && <Models3D title={content.models.title} lead={content.models.lead} items={content.models.items} />}
+                </div>
+              </div>
+            </section>
+          )}
           {/* ABOUT */}
           {show("about") && (
             <section className="cn-sec" id="about">
               <div className="cn-wrap">
-                {head("01", "من نحن · About")}
+                {head("02", "من نحن · About")}
                 <div className="cn-about">
                   <div className="cn-reveal" data-d="1">
                     <h2 className="cn-about-lead">{content.about.lead}</h2>
@@ -231,7 +244,7 @@ export default function ConcreteView({ content, slug, caps }: { content: SiteCon
           {show("services") && (
             <section className="cn-sec" id="services">
               <div className="cn-wrap">
-                {head("02", "الخدمات · Services")}
+                {head("03", "الخدمات · Services")}
                 <h2 className="cn-title cn-reveal" data-d="1" style={{ marginBottom: 14 }}>{content.services.title}</h2>
                 <p className="cn-lead cn-reveal" data-d="2" style={{ marginBottom: 44 }}>{content.services.lead}</p>
                 <div className="cn-svc-grid">
@@ -286,7 +299,7 @@ export default function ConcreteView({ content, slug, caps }: { content: SiteCon
           {show("stats") && (
             <section className="cn-sec" id="stats">
               <div className="cn-wrap">
-                {head("03", "بالأرقام · By the numbers")}
+                {head("04", "بالأرقام · By the numbers")}
                 <div className="cn-stats cn-tie cn-reveal" data-d="1">
                   {content.stats.map((st, i) => {
                     const dec = st.value.includes(".") ? 1 : undefined;
@@ -310,7 +323,7 @@ export default function ConcreteView({ content, slug, caps }: { content: SiteCon
           {show("process") && (
             <section className="cn-sec" id="process">
               <div className="cn-wrap">
-                {head("04", "منهجية العمل · Process")}
+                {head("05", "منهجية العمل · Process")}
                 <div className="cn-proc">
                   {content.process.map((p, i) => (
                     <div className="cn-step cn-reveal" data-d={(i % 4) + 1} key={i}>
@@ -324,19 +337,6 @@ export default function ConcreteView({ content, slug, caps }: { content: SiteCon
             </section>
           )}
 
-          {/* PROJECTS */}
-          {show("projects") && (
-            <section className="cn-sec" id="projects">
-              <div className="cn-wrap">
-                {head("05", "أعمالنا · Selected work")}
-                <h2 className="cn-title cn-reveal" data-d="1" style={{ marginBottom: 40 }}>مشاريع راسخة.</h2>
-                <div className="cn-reveal" data-d="2">
-                  <ProjectsGallery items={content.projects.items} detailed={caps.projectDetails} />
-                  {caps.models3d && content.visible.models3d !== false && <Models3D title={content.models.title} lead={content.models.lead} items={content.models.items} />}
-                </div>
-              </div>
-            </section>
-          )}
 
           {/* TEAM */}
           {show("team") && (

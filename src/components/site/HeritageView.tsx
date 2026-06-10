@@ -202,6 +202,19 @@ export default function HeritageView({ content, slug, caps }: { content: SiteCon
             </div>
           </section>
 
+          {/* PROJECTS */}
+          {show("projects") && (
+            <section className="hr-sec" id="projects">
+              <div className="hr-wrap">
+                {head("أعمالنا")}
+                <h2 className="hr-title hr-reveal" data-d="1" style={{ textAlign: "center", marginBottom: 48 }}>مشاريع تحكي الأصالة.</h2>
+                <div className="hr-reveal" data-d="2">
+                  <ProjectsGallery items={content.projects.items} detailed={caps.projectDetails} />
+                  {caps.models3d && content.visible.models3d !== false && <Models3D title={content.models.title} lead={content.models.lead} items={content.models.items} />}
+                </div>
+              </div>
+            </section>
+          )}
           {/* ABOUT */}
           {show("about") && (
             <section className="hr-sec" id="about">
@@ -322,19 +335,6 @@ export default function HeritageView({ content, slug, caps }: { content: SiteCon
             </section>
           )}
 
-          {/* PROJECTS */}
-          {show("projects") && (
-            <section className="hr-sec" id="projects">
-              <div className="hr-wrap">
-                {head("أعمالنا")}
-                <h2 className="hr-title hr-reveal" data-d="1" style={{ textAlign: "center", marginBottom: 48 }}>مشاريع تحكي الأصالة.</h2>
-                <div className="hr-reveal" data-d="2">
-                  <ProjectsGallery items={content.projects.items} detailed={caps.projectDetails} />
-                  {caps.models3d && content.visible.models3d !== false && <Models3D title={content.models.title} lead={content.models.lead} items={content.models.items} />}
-                </div>
-              </div>
-            </section>
-          )}
 
           {/* TEAM */}
           {show("team") && (

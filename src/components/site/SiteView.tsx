@@ -385,6 +385,22 @@ export default function SiteView({ content, slug, caps }: { content: SiteContent
           </div>
         </section>
 
+        {/* PROJECTS */}
+        <section className="sec" id="projects" data-screen-label="المشاريع / أعمالنا" style={{ display: show("projects") ? undefined : "none" }}>
+          <div className="wrap">
+            <div className="eyebrow mono reveal">
+              <span className="ln"></span>
+              <span className="idx">01</span> أعمالنا — <span className="en">SELECTED WORK</span>
+            </div>
+            <div className="svc-head" style={{ marginBottom: 0 }}>
+              <h2 className="sec-title reveal" data-d="1" style={{ marginBottom: 0 }}>مشاريع تحكي الرسوخ.</h2>
+              <p className="sec-lead reveal" data-d="2">نماذج من أعمالنا عبر القطاعات.</p>
+            </div>
+            <ProjectsGallery items={content.projects.items} detailed={caps.projectDetails} />
+            {caps.models3d && content.visible.models3d !== false && <Models3D title={content.models.title} lead={content.models.lead} items={content.models.items} />}
+          </div>
+        </section>
+
         {/* ABOUT */}
         <section className="sec" id="about" data-screen-label="من نحن" style={{ display: show("about") ? undefined : "none" }}>
           <div className="wrap">
@@ -393,7 +409,7 @@ export default function SiteView({ content, slug, caps }: { content: SiteContent
               <div className="glass-body">
                 <div className="eyebrow mono">
                   <span className="ln"></span>
-                  <span className="idx">01</span> من نحن — <span className="en">ABOUT</span>
+                  <span className="idx">02</span> من نحن — <span className="en">ABOUT</span>
                 </div>
                 <div className="about-grid">
                   <div>
@@ -467,7 +483,7 @@ export default function SiteView({ content, slug, caps }: { content: SiteContent
                   <div>
                     <div className="eyebrow mono">
                       <span className="ln"></span>
-                      <span className="idx">02</span> الخدمات — <span className="en">SERVICES</span>
+                      <span className="idx">03</span> الخدمات — <span className="en">SERVICES</span>
                     </div>
                     <h2 className="sec-title" style={{ marginBottom: 0 }}>{content.services.title}</h2>
                   </div>
@@ -501,7 +517,7 @@ export default function SiteView({ content, slug, caps }: { content: SiteContent
               <div className="glass-body">
                 <div className="eyebrow mono reveal">
                   <span className="ln"></span>
-                  <span className="idx">03</span> بالأرقام — <span className="en">BY THE NUMBERS</span>
+                  <span className="idx">04</span> بالأرقام — <span className="en">BY THE NUMBERS</span>
                 </div>
                 <h2 className="sec-title reveal" data-d="1" style={{ marginBottom: 54 }}>سجلٌّ يُبنى عاماً بعد عام.</h2>
                 <div className="stats-grid">
@@ -532,7 +548,7 @@ export default function SiteView({ content, slug, caps }: { content: SiteContent
               <div className="glass-body">
                 <div className="eyebrow mono reveal">
                   <span className="ln"></span>
-                  <span className="idx">04</span> منهجية العمل — <span className="en">PROCESS</span>
+                  <span className="idx">05</span> منهجية العمل — <span className="en">PROCESS</span>
                 </div>
                 <h2 className="sec-title reveal" data-d="1" style={{ marginBottom: 10 }}>من الأرض البِكر<br />إلى المفتاح في يدك.</h2>
                 <div className="proc">
@@ -547,22 +563,6 @@ export default function SiteView({ content, slug, caps }: { content: SiteContent
                 </div>
               </div>
             </div>
-          </div>
-        </section>
-
-        {/* PROJECTS */}
-        <section className="sec" id="projects" data-screen-label="المشاريع / أعمالنا" style={{ display: show("projects") ? undefined : "none" }}>
-          <div className="wrap">
-            <div className="eyebrow mono reveal">
-              <span className="ln"></span>
-              <span className="idx">05</span> أعمالنا — <span className="en">SELECTED WORK</span>
-            </div>
-            <div className="svc-head" style={{ marginBottom: 0 }}>
-              <h2 className="sec-title reveal" data-d="1" style={{ marginBottom: 0 }}>مشاريع تحكي الرسوخ.</h2>
-              <p className="sec-lead reveal" data-d="2">نماذج من أعمالنا عبر القطاعات.</p>
-            </div>
-            <ProjectsGallery items={content.projects.items} detailed={caps.projectDetails} />
-            {caps.models3d && content.visible.models3d !== false && <Models3D title={content.models.title} lead={content.models.lead} items={content.models.items} />}
           </div>
         </section>
 

@@ -201,6 +201,19 @@ export default function LuxeView({ content, slug, caps }: { content: SiteContent
             </div>
           </section>
 
+          {/* PROJECTS */}
+          {show("projects") && (
+            <section className="lx-sec" id="projects">
+              <div className="lx-wrap">
+                {head("أعمالنا")}
+                <h2 className="lx-title lx-reveal" data-d="1" style={{ textAlign: "center", marginBottom: 48 }}>مشاريع تحكي الرسوخ.</h2>
+                <div className="lx-reveal" data-d="2">
+                  <ProjectsGallery items={content.projects.items} detailed={caps.projectDetails} />
+                  {caps.models3d && content.visible.models3d !== false && <Models3D title={content.models.title} lead={content.models.lead} items={content.models.items} />}
+                </div>
+              </div>
+            </section>
+          )}
           {/* ABOUT */}
           {show("about") && (
             <section className="lx-sec" id="about">
@@ -321,19 +334,6 @@ export default function LuxeView({ content, slug, caps }: { content: SiteContent
             </section>
           )}
 
-          {/* PROJECTS */}
-          {show("projects") && (
-            <section className="lx-sec" id="projects">
-              <div className="lx-wrap">
-                {head("أعمالنا")}
-                <h2 className="lx-title lx-reveal" data-d="1" style={{ textAlign: "center", marginBottom: 48 }}>مشاريع تحكي الرسوخ.</h2>
-                <div className="lx-reveal" data-d="2">
-                  <ProjectsGallery items={content.projects.items} detailed={caps.projectDetails} />
-                  {caps.models3d && content.visible.models3d !== false && <Models3D title={content.models.title} lead={content.models.lead} items={content.models.items} />}
-                </div>
-              </div>
-            </section>
-          )}
 
           {/* TEAM */}
           {show("team") && (

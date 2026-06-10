@@ -209,11 +209,24 @@ export default function BlueprintView({ content, slug, caps }: { content: SiteCo
             </div>
           </section>
 
+          {/* PROJECTS */}
+          {show("projects") && (
+            <section className="bp-sec" id="projects">
+              <div className="bp-wrap">
+                {head("01", "أعمالنا", "SELECTED WORK")}
+                <h2 className="bp-title bp-reveal" data-d="1" style={{ marginBottom: 38 }}>مشاريع منفّذة بدقّة.</h2>
+                <div className="bp-reveal" data-d="2">
+                  <ProjectsGallery items={content.projects.items} detailed={caps.projectDetails} />
+                  {caps.models3d && content.visible.models3d !== false && <Models3D title={content.models.title} lead={content.models.lead} items={content.models.items} />}
+                </div>
+              </div>
+            </section>
+          )}
           {/* ABOUT */}
           {show("about") && (
             <section className="bp-sec" id="about">
               <div className="bp-wrap">
-                {head("01", "من نحن", "ABOUT")}
+                {head("02", "من نحن", "ABOUT")}
                 <div className="bp-about">
                   <div className="bp-reveal" data-d="1">
                     <h2 className="bp-about-lead">{content.about.lead}</h2>
@@ -236,7 +249,7 @@ export default function BlueprintView({ content, slug, caps }: { content: SiteCo
           {show("services") && (
             <section className="bp-sec" id="services">
               <div className="bp-wrap">
-                {head("02", "الخدمات", "SERVICES")}
+                {head("03", "الخدمات", "SERVICES")}
                 <h2 className="bp-title bp-reveal" data-d="1" style={{ marginBottom: 12 }}>{content.services.title}</h2>
                 <p className="bp-lead bp-reveal" data-d="2" style={{ marginBottom: 36 }}>{content.services.lead}</p>
                 <div className="bp-svc-grid bp-reveal" data-d="2">
@@ -291,7 +304,7 @@ export default function BlueprintView({ content, slug, caps }: { content: SiteCo
           {show("stats") && (
             <section className="bp-sec" id="stats">
               <div className="bp-wrap">
-                {head("03", "بالأرقام", "BY THE NUMBERS")}
+                {head("04", "بالأرقام", "BY THE NUMBERS")}
                 <div className="bp-stats bp-reveal" data-d="1">
                   {content.stats.map((st, i) => {
                     const dec = st.value.includes(".") ? 1 : undefined;
@@ -317,7 +330,7 @@ export default function BlueprintView({ content, slug, caps }: { content: SiteCo
           {show("process") && (
             <section className="bp-sec" id="process">
               <div className="bp-wrap">
-                {head("04", "منهجية العمل", "PROCESS")}
+                {head("05", "منهجية العمل", "PROCESS")}
                 <div className="bp-proc">
                   {content.process.map((p, i) => (
                     <div className="bp-step bp-reveal" data-d={(i % 4) + 1} key={i}>
@@ -331,19 +344,6 @@ export default function BlueprintView({ content, slug, caps }: { content: SiteCo
             </section>
           )}
 
-          {/* PROJECTS */}
-          {show("projects") && (
-            <section className="bp-sec" id="projects">
-              <div className="bp-wrap">
-                {head("05", "أعمالنا", "SELECTED WORK")}
-                <h2 className="bp-title bp-reveal" data-d="1" style={{ marginBottom: 38 }}>مشاريع منفّذة بدقّة.</h2>
-                <div className="bp-reveal" data-d="2">
-                  <ProjectsGallery items={content.projects.items} detailed={caps.projectDetails} />
-                  {caps.models3d && content.visible.models3d !== false && <Models3D title={content.models.title} lead={content.models.lead} items={content.models.items} />}
-                </div>
-              </div>
-            </section>
-          )}
 
           {/* TEAM */}
           {show("team") && (

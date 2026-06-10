@@ -195,6 +195,23 @@ export default function EditorialView({ content, slug, caps }: { content: SiteCo
           </div>
         </section>
 
+        {/* PROJECTS */}
+        {show("projects") && (
+          <section className="ed-sec" id="projects">
+            <div className="ed-wrap">
+              <div className="ed-head ed-reveal">
+                <span className="ed-index">05</span>
+                <span className="ed-kicker">أعمالنا · Selected work</span>
+                <span className="stem" />
+              </div>
+              <h2 className="ed-title ed-reveal" data-d="1" style={{ marginBottom: 40 }}>مشاريع تحكي الرسوخ.</h2>
+              <div className="ed-reveal" data-d="2">
+                <ProjectsGallery items={content.projects.items} detailed={caps.projectDetails} />
+                {caps.models3d && content.visible.models3d !== false && <Models3D title={content.models.title} lead={content.models.lead} items={content.models.items} />}
+              </div>
+            </div>
+          </section>
+        )}
         {/* ABOUT */}
         {show("about") && (
           <section className="ed-sec" id="about">
@@ -337,23 +354,6 @@ export default function EditorialView({ content, slug, caps }: { content: SiteCo
           </section>
         )}
 
-        {/* PROJECTS */}
-        {show("projects") && (
-          <section className="ed-sec" id="projects">
-            <div className="ed-wrap">
-              <div className="ed-head ed-reveal">
-                <span className="ed-index">05</span>
-                <span className="ed-kicker">أعمالنا · Selected work</span>
-                <span className="stem" />
-              </div>
-              <h2 className="ed-title ed-reveal" data-d="1" style={{ marginBottom: 40 }}>مشاريع تحكي الرسوخ.</h2>
-              <div className="ed-reveal" data-d="2">
-                <ProjectsGallery items={content.projects.items} detailed={caps.projectDetails} />
-                {caps.models3d && content.visible.models3d !== false && <Models3D title={content.models.title} lead={content.models.lead} items={content.models.items} />}
-              </div>
-            </div>
-          </section>
-        )}
 
         {/* TEAM */}
         {show("team") && (
