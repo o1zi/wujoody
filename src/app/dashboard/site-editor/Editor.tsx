@@ -383,7 +383,10 @@ export default function Editor({
           onChange={(e) => e.target.files?.[0] && uploadModel(e.target.files[0], path)}
         />
         {busy && <p className="mt-1.5 text-[11px] text-muted">جارٍ رفع الموديل…</p>}
-        {val && !busy && <p className="mt-1.5 text-[11px] text-emerald-300">✓ موديل مرفوع — يظهر بشارة «3D» على بطاقة المشروع، ويتفاعل معه الزائر.</p>}
+        {val && !busy && <p className="mt-1.5 text-[11px] text-emerald-300">✓ تم رفع الملف — يظهر النموذج في الموقع بعد الحفظ.</p>}
+        {!val && !busy && (
+          <p className="mt-1.5 text-[11px] text-amber-300">⚠️ لم تُرفع ملف الموديل بعد — اختر ملف ‎.glb‎ من الزر أعلاه. لن يظهر النموذج في الموقع بدون ملف.</p>
+        )}
         <p className="mt-1 text-[11px] text-muted">صدّر مشروعك من Revit إلى glTF/GLB — يفضّل أقل من 40MB لسرعة التحميل.</p>
       </div>
     );
