@@ -57,7 +57,7 @@ export default function Models3D({ title, lead, items }: { title: string; lead: 
             background: "linear-gradient(160deg, rgba(255,255,255,.05), rgba(0,0,0,.22))",
           }}
         >
-          <ModelViewer src={active.url as string} poster={active.poster} alt={active.title} />
+          <ModelViewer key={active.url} src={active.url as string} poster={active.poster} alt={active.title} />
         </div>
         <div className="glass-body" style={{ flex: "0 0 auto" }}>
           <h3 style={{ margin: 0 }}>{active.title || "نموذج ثلاثي الأبعاد"}</h3>

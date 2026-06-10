@@ -45,7 +45,6 @@ export default function ModelViewer({
 
   useEffect(() => {
     let cancelled = false;
-    setStatus("loading");
 
     loadModelViewer()
       .then(() => window.customElements.whenDefined("model-viewer"))
