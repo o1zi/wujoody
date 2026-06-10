@@ -50,19 +50,21 @@ export default function Models3D({ title, lead, items }: { title: string; lead: 
           <span className="dot g"></span>
           <button aria-label="إغلاق" className="proj-x" onClick={() => setOpen(null)}>✕</button>
         </div>
-        <div
-          style={{
-            flex: 1,
-            minHeight: "clamp(300px, 58vh, 560px)",
-            background: "linear-gradient(160deg, rgba(255,255,255,.05), rgba(0,0,0,.22))",
-          }}
-        >
-          <ModelViewer key={active.url} src={active.url as string} poster={active.poster} alt={active.title} />
-        </div>
-        <div className="glass-body" style={{ flex: "0 0 auto" }}>
-          <h3 style={{ margin: 0 }}>{active.title || "نموذج ثلاثي الأبعاد"}</h3>
-          {active.caption ? <p className="proj-text" style={{ marginTop: 6 }}>{active.caption}</p> : null}
-          <span className="mono" style={{ fontSize: 11, opacity: 0.7 }}>اسحب للتدوير · مرّر للتقريب · زر AR للعرض بكاميرتك</span>
+        <div className="proj-scroll" style={{ flex: 1, minHeight: 0, overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
+          {/* Explicit height (not flex/min-height) so the model-viewer's height:100% resolves. */}
+          <div
+            style={{
+              height: "clamp(320px, 62vh, 560px)",
+              background: "linear-gradient(160deg, rgba(255,255,255,.05), rgba(0,0,0,.22))",
+            }}
+          >
+            <ModelViewer key={active.url} src={active.url as string} poster={active.poster} alt={active.title} />
+          </div>
+          <div className="glass-body">
+            <h3 style={{ margin: 0 }}>{active.title || "نموذج ثلاثي الأبعاد"}</h3>
+            {active.caption ? <p className="proj-text" style={{ marginTop: 6 }}>{active.caption}</p> : null}
+            <span className="mono" style={{ fontSize: 11, opacity: 0.7 }}>اسحب للتدوير · مرّر للتقريب · زر AR للعرض بكاميرتك</span>
+          </div>
         </div>
       </div>
     </div>
