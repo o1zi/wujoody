@@ -7,6 +7,7 @@ import ContactForm from "./ContactForm";
 import BookingForm from "./BookingForm";
 import CostCalculator from "./CostCalculator";
 import ProjectsGallery from "./ProjectsGallery";
+import Models3D from "./Models3D";
 
 // Atelier palette — warm amber accents on obsidian.
 const ACCENTS: Record<string, { hex: string; rgb: string }> = {
@@ -335,6 +336,7 @@ export default function AtelierView({ content, slug, caps }: { content: SiteCont
                 <h2 className="at-title at-split" style={{ marginBottom: 40 }}>أعمالٌ مختارة بعناية.</h2>
                 <div className="at-reveal" data-d="2">
                   <ProjectsGallery items={content.projects.items} detailed={caps.projectDetails} />
+                  {show("models3d") && <Models3D title={content.models.title} lead={content.models.lead} items={content.models.items} />}
                 </div>
               </div>
             </section>

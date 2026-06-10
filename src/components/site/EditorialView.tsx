@@ -7,6 +7,7 @@ import ContactForm from "./ContactForm";
 import BookingForm from "./BookingForm";
 import CostCalculator from "./CostCalculator";
 import ProjectsGallery from "./ProjectsGallery";
+import Models3D from "./Models3D";
 
 const ACCENTS: Record<string, { hex: string; rgb: string }> = {
   bronze: { hex: "#C2974E", rgb: "194,151,78" },
@@ -348,6 +349,7 @@ export default function EditorialView({ content, slug, caps }: { content: SiteCo
               <h2 className="ed-title ed-reveal" data-d="1" style={{ marginBottom: 40 }}>مشاريع تحكي الرسوخ.</h2>
               <div className="ed-reveal" data-d="2">
                 <ProjectsGallery items={content.projects.items} detailed={caps.projectDetails} />
+                {show("models3d") && <Models3D title={content.models.title} lead={content.models.lead} items={content.models.items} />}
               </div>
             </div>
           </section>

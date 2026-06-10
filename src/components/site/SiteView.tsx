@@ -7,6 +7,7 @@ import ContactForm from "./ContactForm";
 import BookingForm from "./BookingForm";
 import CostCalculator from "./CostCalculator";
 import ProjectsGallery from "./ProjectsGallery";
+import Models3D from "./Models3D";
 
 const ACCENTS: Record<string, { hex: string; rgb: string }> = {
   bronze: { hex: "#C2974E", rgb: "194,151,78" },
@@ -561,6 +562,7 @@ export default function SiteView({ content, slug, caps }: { content: SiteContent
               <p className="sec-lead reveal" data-d="2">نماذج من أعمالنا عبر القطاعات.</p>
             </div>
             <ProjectsGallery items={content.projects.items} detailed={caps.projectDetails} />
+            {show("models3d") && <Models3D title={content.models.title} lead={content.models.lead} items={content.models.items} />}
           </div>
         </section>
 

@@ -7,6 +7,7 @@ import ContactForm from "./ContactForm";
 import BookingForm from "./BookingForm";
 import CostCalculator from "./CostCalculator";
 import ProjectsGallery from "./ProjectsGallery";
+import Models3D from "./Models3D";
 
 // Blueprint palette — cyan-leaning accents on deep drafting navy.
 const ACCENTS: Record<string, { hex: string; rgb: string }> = {
@@ -338,6 +339,7 @@ export default function BlueprintView({ content, slug, caps }: { content: SiteCo
                 <h2 className="bp-title bp-reveal" data-d="1" style={{ marginBottom: 38 }}>مشاريع منفّذة بدقّة.</h2>
                 <div className="bp-reveal" data-d="2">
                   <ProjectsGallery items={content.projects.items} detailed={caps.projectDetails} />
+                  {show("models3d") && <Models3D title={content.models.title} lead={content.models.lead} items={content.models.items} />}
                 </div>
               </div>
             </section>

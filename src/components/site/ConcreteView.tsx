@@ -7,6 +7,7 @@ import ContactForm from "./ContactForm";
 import BookingForm from "./BookingForm";
 import CostCalculator from "./CostCalculator";
 import ProjectsGallery from "./ProjectsGallery";
+import Models3D from "./Models3D";
 
 // Concrete palette — strong industrial accents on warm grey concrete.
 const ACCENTS: Record<string, { hex: string; rgb: string }> = {
@@ -331,6 +332,7 @@ export default function ConcreteView({ content, slug, caps }: { content: SiteCon
                 <h2 className="cn-title cn-reveal" data-d="1" style={{ marginBottom: 40 }}>مشاريع راسخة.</h2>
                 <div className="cn-reveal" data-d="2">
                   <ProjectsGallery items={content.projects.items} detailed={caps.projectDetails} />
+                  {show("models3d") && <Models3D title={content.models.title} lead={content.models.lead} items={content.models.items} />}
                 </div>
               </div>
             </section>

@@ -977,7 +977,6 @@ export default function Editor({
               </div>
               {text("اسم المشروع", `projects.items.${i}.title`)}
               {image("صورة المشروع", `projects.items.${i}.image`)}
-              {caps.models3d && model3d(`projects.items.${i}.model`)}
               {caps.projectDetails && (
                 <div className="mt-1 space-y-3 rounded-lg border border-dashed border-border p-3">
                   <p className="text-xs text-muted">دراسة حالة (تظهر عند الضغط على المشروع):</p>
@@ -1007,6 +1006,30 @@ export default function Editor({
           )}
         />
       </Section>
+
+      {caps.models3d && (
+        <Section title="النماذج ثلاثية الأبعاد (3D)">
+          <p className="text-xs text-muted">
+            يظهر هذا القسم أسفل المشاريع. صدّر مشروعك من Revit إلى GLB وارفعه — يتفاعل معه الزائر (دوران/تقريب/AR).
+          </p>
+          {text("عنوان القسم", "models.title")}
+          {area("وصف القسم", "models.lead")}
+          <ListEditor
+            title="النماذج"
+            items={c.models.items}
+            onChange={(v) => set("models.items", v)}
+            empty={{ title: "", caption: "", url: null, poster: null }}
+            render={(_, i) => (
+              <>
+                {text("اسم النموذج", `models.items.${i}.title`)}
+                {text("وصف مختصر (اختياري)", `models.items.${i}.caption`)}
+                {model3d(`models.items.${i}.url`)}
+                {image("صورة مصغّرة (اختياري — تظهر قبل التحميل)", `models.items.${i}.poster`)}
+              </>
+            )}
+          />
+        </Section>
+      )}
 
       <Section title="الفريق">
         <ListEditor

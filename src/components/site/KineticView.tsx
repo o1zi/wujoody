@@ -7,6 +7,7 @@ import ContactForm from "./ContactForm";
 import BookingForm from "./BookingForm";
 import CostCalculator from "./CostCalculator";
 import ProjectsGallery from "./ProjectsGallery";
+import Models3D from "./Models3D";
 
 // Kinetic palette — bold studio. Office-changeable accent drives the energy.
 const ACCENTS: Record<string, { hex: string; rgb: string }> = {
@@ -354,6 +355,7 @@ export default function KineticView({ content, slug, caps }: { content: SiteCont
                 <h2 className="kn-title kn-reveal" data-d="1" style={{ marginBottom: 40 }}>مشاريع <span className="stroke">تصنع الفرق</span>.</h2>
                 <div className="kn-reveal" data-d="2">
                   <ProjectsGallery items={content.projects.items} detailed={caps.projectDetails} />
+                  {show("models3d") && <Models3D title={content.models.title} lead={content.models.lead} items={content.models.items} />}
                 </div>
               </div>
             </section>

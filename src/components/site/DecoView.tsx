@@ -7,6 +7,7 @@ import ContactForm from "./ContactForm";
 import BookingForm from "./BookingForm";
 import CostCalculator from "./CostCalculator";
 import ProjectsGallery from "./ProjectsGallery";
+import Models3D from "./Models3D";
 
 // Deco palette — gold-leaning accents on deep emerald.
 const ACCENTS: Record<string, { hex: string; rgb: string }> = {
@@ -327,6 +328,7 @@ export default function DecoView({ content, slug, caps }: { content: SiteContent
                 {head("أعمالنا · Selected work", "مشاريع تليق بالطموح.")}
                 <div className="dc-reveal" data-d="2">
                   <ProjectsGallery items={content.projects.items} detailed={caps.projectDetails} />
+                  {show("models3d") && <Models3D title={content.models.title} lead={content.models.lead} items={content.models.items} />}
                 </div>
               </div>
             </section>

@@ -45,8 +45,13 @@ export type SiteContent = {
       body?: string; // case-study description (Pro)
       details?: { k: string; v: string }[]; // client/year/scope (Pro)
       gallery?: (string | null)[]; // extra images (Pro)
-      model?: string | null; // interactive 3D model (.glb) — Pro/Premium
     }[];
+  };
+  // Dedicated interactive 3D (Revit/GLB) showcase, shown below projects (Pro/Premium).
+  models: {
+    title: string;
+    lead: string;
+    items: { title: string; caption: string; url: string | null; poster: string | null }[];
   };
   team: {
     items: { name: string; role: string; roleEn: string; image: string | null }[];
@@ -87,6 +92,7 @@ export type SiteContent = {
     stats: boolean;
     process: boolean;
     projects: boolean;
+    models3d: boolean;
     team: boolean;
     testimonials: boolean;
     credentials: boolean;
@@ -159,6 +165,11 @@ export const defaultContent: SiteContent = {
       { tag: "INDUSTRIAL", title: "مصنع المنطقة الثانية", meta: "DAMMAM · 2021", image: null },
     ],
   },
+  models: {
+    title: "نماذج ثلاثية الأبعاد",
+    lead: "استعرض مجسّمات مشاريعنا تفاعلياً — اسحب للتدوير، قرّب، وشاهدها من كل زاوية.",
+    items: [],
+  },
   team: {
     items: [
       { name: "م. عبدالعزيز الراشد", role: "الشريك المؤسس · رئيس مجلس الإدارة", roleEn: "FOUNDING PARTNER", image: null },
@@ -228,6 +239,7 @@ export const defaultContent: SiteContent = {
     stats: true,
     process: true,
     projects: true,
+    models3d: true,
     team: true,
     testimonials: true,
     credentials: true,
@@ -267,15 +279,11 @@ export function clampMedia(c: SiteContent, caps: PlanCaps): SiteContent {
   return { ...c, media: { ...m, bgMode: "solid", bgVideo: null, frames: null } };
 }
 
-// Strip interactive 3D models from projects when the plan doesn't include the
-// feature (e.g. after a downgrade) so a Basic site can't keep serving heavy GLBs.
+// Empty the 3D showcase when the plan doesn't include the feature (e.g. after a
+// downgrade) so a Basic site can't keep serving heavy GLB models.
 export function clampModels(c: SiteContent, caps: PlanCaps): SiteContent {
-  if (caps.models3d) return c;
-  if (!c.projects.items.some((p) => p.model)) return c;
-  return {
-    ...c,
-    projects: { ...c.projects, items: c.projects.items.map((p) => (p.model ? { ...p, model: null } : p)) },
-  };
+  if (caps.models3d || c.models.items.length === 0) return c;
+  return { ...c, models: { ...c.models, items: [] } };
 }
 
 // Force the site onto a template the plan is allowed to use. Basic offices, for
@@ -309,6 +317,7 @@ export function mergeContent(stored: unknown): SiteContent {
     stats: pick("stats", d.stats),
     process: pick("process", d.process),
     projects: { ...d.projects, ...(pick("projects", {}) as object) },
+    models: { ...d.models, ...(pick("models", {}) as object) },
     team: { ...d.team, ...(pick("team", {}) as object) },
     testimonials: pick("testimonials", d.testimonials),
     credentials: { ...d.credentials, ...(pick("credentials", {}) as object) },

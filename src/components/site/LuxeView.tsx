@@ -7,6 +7,7 @@ import ContactForm from "./ContactForm";
 import BookingForm from "./BookingForm";
 import CostCalculator from "./CostCalculator";
 import ProjectsGallery from "./ProjectsGallery";
+import Models3D from "./Models3D";
 
 const ACCENTS: Record<string, { hex: string; rgb: string }> = {
   bronze: { hex: "#C9A86A", rgb: "201,168,106" },
@@ -328,6 +329,7 @@ export default function LuxeView({ content, slug, caps }: { content: SiteContent
                 <h2 className="lx-title lx-reveal" data-d="1" style={{ textAlign: "center", marginBottom: 48 }}>مشاريع تحكي الرسوخ.</h2>
                 <div className="lx-reveal" data-d="2">
                   <ProjectsGallery items={content.projects.items} detailed={caps.projectDetails} />
+                  {show("models3d") && <Models3D title={content.models.title} lead={content.models.lead} items={content.models.items} />}
                 </div>
               </div>
             </section>

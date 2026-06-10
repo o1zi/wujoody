@@ -42,12 +42,10 @@ describe("site-content", () => {
     expect(out.theme.layout).toBe("atelier");
   });
 
-  it("clampModels strips project 3D models when the plan lacks the feature", () => {
-    const c = mergeContent({ projects: { items: [{ tag: "T", title: "P", meta: "M", image: null, model: "/x.glb" }] } });
-    const basic = clampModels(c, { ...DEFAULT_CAPS, models3d: false });
-    expect(basic.projects.items[0].model).toBeNull();
-    const pro = clampModels(c, { ...DEFAULT_CAPS, models3d: true });
-    expect(pro.projects.items[0].model).toBe("/x.glb");
+  it("clampModels empties the 3D showcase when the plan lacks the feature", () => {
+    const c = mergeContent({ models: { items: [{ title: "نموذج", caption: "", url: "/x.glb", poster: null }] } });
+    expect(clampModels(c, { ...DEFAULT_CAPS, models3d: false }).models.items).toHaveLength(0);
+    expect(clampModels(c, { ...DEFAULT_CAPS, models3d: true }).models.items).toHaveLength(1);
   });
 
   it("url helpers classify preset vs uploaded media", () => {
