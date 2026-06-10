@@ -53,28 +53,26 @@ export default function ModelViewer({
     };
   }, [src]);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const mvProps: any = {
-    ref,
-    src,
-    alt,
-    "camera-controls": "",
-    "auto-rotate": "",
-    "auto-rotate-delay": "0",
-    "rotation-per-second": "20deg",
-    "interaction-prompt": "auto",
-    "touch-action": "pan-y",
-    "shadow-intensity": "1",
-    exposure: "1",
-    ar: "",
-    "ar-modes": "webxr scene-viewer quick-look",
-    style: { width: "100%", height: "100%", display: "block", backgroundColor: "transparent" },
-  };
-  if (poster) mvProps.poster = poster;
-
   return (
     <div style={{ position: "relative", width: "100%", height: "100%" }}>
-      {createElement("model-viewer", mvProps)}
+      {createElement("model-viewer", {
+        ref,
+        src,
+        alt,
+        poster: poster || undefined,
+        "camera-controls": "",
+        "auto-rotate": "",
+        "auto-rotate-delay": "0",
+        "rotation-per-second": "20deg",
+        "interaction-prompt": "auto",
+        "touch-action": "pan-y",
+        "shadow-intensity": "1",
+        exposure: "1",
+        ar: "",
+        "ar-modes": "webxr scene-viewer quick-look",
+        style: { width: "100%", height: "100%", display: "block", backgroundColor: "transparent" },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } as any)}
       {status !== "ready" && (
         <div
           style={{
