@@ -177,28 +177,50 @@ export default function Editor({
 
   const [uploadingModel, setUploadingModel] = useState<string | null>(null);
   async function uploadModel(file: File, path: string) {
-    if (!/\.(glb|gltf)$/i.test(file.name)) {
-      setMsg({ kind: "error", text: "الملف يجب أن يكون بصيغة GLB أو glTF (صدّره من Revit)." });
-      return;
-    }
-    if (file.size > 40 * 1024 * 1024) {
-      setMsg({ kind: "error", text: "حجم الموديل أكبر من 40 ميجابايت. صدّره بدقة أقل أو اضغطه (Draco)." });
+    const ext = (file.name.split(".").pop() || "").toLowerCase();
+    if (!["glb", "fbx", "obj"].includes(ext)) {
+      setMsg({ kind: "error", text: "الصيغة المدعومة: GLB أو FBX أو OBJ (صدّر FBX من Revit)." });
       return;
     }
     setUploadingModel(path);
+
+    // FBX/OBJ → convert to GLB in the browser (no Blender/server needed).
+    let blob: Blob = file;
+    const label = file.name;
+    if (ext === "fbx" || ext === "obj") {
+      setMsg({ kind: "success", text: "جارٍ تحويل الملف إلى GLB داخل المتصفح… قد يأخذ دقيقة للملفات الكبيرة." });
+      try {
+        const { convertModelToGlb } = await import("@/lib/convert-3d");
+        const res = await convertModelToGlb(file);
+        blob = res.blob;
+      } catch {
+        setUploadingModel(null);
+        setMsg({ kind: "error", text: "تعذّر تحويل الملف. صدّره FBX (ثنائي) من Revit، أو حوّله GLB ثم ارفعه." });
+        return;
+      }
+    }
+
+    if (blob.size > 40 * 1024 * 1024) {
+      setUploadingModel(null);
+      setMsg({ kind: "error", text: `الحجم ${Math.round(blob.size / 1048576)}MB — أكبر من 40MB. صدّر منظوراً أبسط أو أخفِ تفاصيل غير ضرورية.` });
+      return;
+    }
+
     const supabase = createClient();
-    const ext = file.name.split(".").pop() || "glb";
-    const key = `${officeId}/${crypto.randomUUID()}.${ext}`;
+    const key = `${officeId}/${crypto.randomUUID()}.glb`;
     const { error } = await supabase.storage
       .from("site-media")
-      .upload(key, file, { upsert: true, contentType: "model/gltf-binary" });
+      .upload(key, blob, { upsert: true, contentType: "model/gltf-binary" });
     setUploadingModel(null);
     if (error) {
       setMsg({ kind: "error", text: "تعذّر رفع الموديل. تأكد من حاوية التخزين site-media." });
       return;
     }
     set(path, supabase.storage.from("site-media").getPublicUrl(key).data.publicUrl);
-    setMsg({ kind: "success", text: "تم رفع الموديل ثلاثي الأبعاد. اضغط حفظ ثم حدّث موقعك." });
+    setMsg({
+      kind: "success",
+      text: ext === "glb" ? "تم رفع الموديل ثلاثي الأبعاد. اضغط حفظ ثم حدّث موقعك." : `تم تحويل «${label}» إلى GLB ورفعه. اضغط حفظ ثم حدّث موقعك.`,
+    });
   }
 
   const [uploadingVideo, setUploadingVideo] = useState(false);
@@ -370,24 +392,26 @@ export default function Editor({
     return (
       <div className="rounded-lg border border-dashed border-accent/40 p-3">
         <div className="flex items-center justify-between gap-2">
-          <span className="text-xs font-medium text-accent">موديل ثلاثي الأبعاد (.glb) — يدور تفاعلياً في الموقع</span>
+          <span className="text-xs font-medium text-accent">موديل ثلاثي الأبعاد — يدور تفاعلياً في الموقع</span>
           {val && (
             <button type="button" className="text-xs text-red-400" onClick={() => set(path, null)}>إزالة</button>
           )}
         </div>
         <input
           type="file"
-          accept=".glb,.gltf,model/gltf-binary"
+          accept=".glb,.fbx,.obj"
           disabled={busy}
           className="mt-2 block w-full text-xs text-muted file:mr-3 file:rounded-md file:border-0 file:bg-surface-2 file:px-3 file:py-1.5 file:text-foreground disabled:opacity-50"
           onChange={(e) => e.target.files?.[0] && uploadModel(e.target.files[0], path)}
         />
-        {busy && <p className="mt-1.5 text-[11px] text-muted">جارٍ رفع الموديل…</p>}
+        {busy && <p className="mt-1.5 text-[11px] text-muted">جارٍ المعالجة… (التحويل يتم داخل متصفحك)</p>}
         {val && !busy && <p className="mt-1.5 text-[11px] text-emerald-300">✓ تم رفع الملف — يظهر النموذج في الموقع بعد الحفظ.</p>}
         {!val && !busy && (
-          <p className="mt-1.5 text-[11px] text-amber-300">⚠️ لم تُرفع ملف الموديل بعد — اختر ملف ‎.glb‎ من الزر أعلاه. لن يظهر النموذج في الموقع بدون ملف.</p>
+          <p className="mt-1.5 text-[11px] text-amber-300">⚠️ لم تُرفع ملف بعد — اختر ملف 3D من الزر أعلاه. لن يظهر النموذج بدون ملف.</p>
         )}
-        <p className="mt-1 text-[11px] text-muted">صدّر مشروعك من Revit إلى glTF/GLB — يفضّل أقل من 40MB لسرعة التحميل.</p>
+        <p className="mt-1 text-[11px] text-muted">
+          ارفع <b>FBX</b> مصدّراً من Revit وسنحوّله تلقائياً، أو ارفع <b>GLB</b> مباشرةً. (يفضّل أقل من 40MB.)
+        </p>
       </div>
     );
   };
