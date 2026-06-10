@@ -52,6 +52,16 @@ describe("plans", () => {
     expect(byCode.premium.caps.templates.length).toBeGreaterThan(1);
   });
 
+  it("3D viewer is off for Basic, on for Pro/Premium, and defaults to projectDetails", () => {
+    const byCode = Object.fromEntries(FALLBACK_PLANS.map((p) => [p.code, p]));
+    expect(byCode.basic.caps.models3d).toBe(false);
+    expect(byCode.pro.caps.models3d).toBe(true);
+    expect(byCode.premium.caps.models3d).toBe(true);
+    // A legacy plan row without models3d follows projectDetails.
+    expect(normalizePlan({ code: "x", name: "x", price: 1, caps: { projectDetails: true }, features: [] }).caps.models3d).toBe(true);
+    expect(normalizePlan({ code: "y", name: "y", price: 1, caps: { projectDetails: false }, features: [] }).caps.models3d).toBe(false);
+  });
+
   it("normalizePlan keeps an explicit templates list but defaults missing ones to all", () => {
     const restricted = normalizePlan({ code: "basic", name: "x", price: 990, caps: { templates: ["editorial", "bogus"] }, features: [] });
     expect(restricted.caps.templates).toEqual(["editorial"]); // invalid id filtered out

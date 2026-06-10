@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import ModelViewer from "./ModelViewer";
 
 const SHAPES = ["big", "tall", "wide", "wide"];
 
@@ -20,14 +21,16 @@ type Item = {
   body?: string;
   details?: { k: string; v: string }[];
   gallery?: (string | null)[];
+  model?: string | null;
 };
 
 export default function ProjectsGallery({ items, detailed = false }: { items: Item[]; detailed?: boolean }) {
   const [open, setOpen] = useState<number | null>(null);
   const active = open !== null ? items[open] : null;
-  // A project is openable if it has an image, or (with the Pro feature) a case study.
+  // A project opens a rich modal if it has a case study (Pro) or a 3D model.
   const hasStudy = (pr: Item) => detailed && !!(pr.body || (pr.gallery && pr.gallery.some(Boolean)) || (pr.details && pr.details.length));
-  const canOpen = (pr: Item) => !!pr.image || hasStudy(pr);
+  const isRich = (pr: Item) => hasStudy(pr) || !!pr.model;
+  const canOpen = (pr: Item) => !!pr.image || isRich(pr);
 
   // Resolve the portal host once mounted: the template root (parent of the
   // content wrapper), falling back to the editorial root or <body>.
@@ -41,7 +44,7 @@ export default function ProjectsGallery({ items, detailed = false }: { items: It
   }, []);
 
   const overlay =
-    active && hasStudy(active) ? (
+    active && isRich(active) ? (
       <div className="proj-modal" onClick={() => setOpen(null)}>
         <div
           className="glass-card proj-study"
@@ -55,7 +58,34 @@ export default function ProjectsGallery({ items, detailed = false }: { items: It
             <button aria-label="إغلاق" className="proj-x" onClick={() => setOpen(null)}>✕</button>
           </div>
           <div className="proj-scroll" style={{ flex: 1, minHeight: 0, overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
-            {active.image ? (
+            {active.model ? (
+              <div
+                style={{
+                  position: "relative",
+                  height: "clamp(280px, 52vh, 460px)",
+                  background: "linear-gradient(160deg, rgba(255,255,255,.06), rgba(0,0,0,.18))",
+                }}
+              >
+                <ModelViewer src={active.model} poster={active.image} alt={active.title} />
+                <span
+                  className="mono"
+                  style={{
+                    position: "absolute",
+                    top: 12,
+                    right: 12,
+                    padding: "4px 10px",
+                    borderRadius: 999,
+                    fontSize: 11,
+                    background: "rgba(0,0,0,.55)",
+                    color: "#fff",
+                    backdropFilter: "blur(4px)",
+                    pointerEvents: "none",
+                  }}
+                >
+                  3D · اسحب للتدوير
+                </span>
+              </div>
+            ) : active.image ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img className="proj-hero" src={active.image} alt={active.title} />
             ) : null}
@@ -148,6 +178,32 @@ export default function ProjectsGallery({ items, detailed = false }: { items: It
             style={canOpen(pr) ? { cursor: "zoom-in" } : undefined}
           >
             <span className="tag mono">{pr.tag}</span>
+            {pr.model ? (
+              <span
+                className="mono"
+                style={{
+                  position: "absolute",
+                  top: 14,
+                  left: 14,
+                  zIndex: 4,
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 5,
+                  padding: "4px 9px",
+                  borderRadius: 999,
+                  fontSize: 11,
+                  fontWeight: 600,
+                  background: "rgba(0,0,0,.6)",
+                  color: "#fff",
+                  backdropFilter: "blur(4px)",
+                }}
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 2 2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                </svg>
+                3D
+              </span>
+            ) : null}
             {pr.image ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img

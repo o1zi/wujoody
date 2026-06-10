@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { mergeContent, clampMedia, clampTemplate, isPresetUrl, isUploadedUrl, defaultContent } from "@/lib/site-content";
+import { mergeContent, clampMedia, clampTemplate, clampModels, isPresetUrl, isUploadedUrl, defaultContent } from "@/lib/site-content";
 import { DEFAULT_CAPS } from "@/lib/plans";
 
 describe("site-content", () => {
@@ -40,6 +40,14 @@ describe("site-content", () => {
     const c = mergeContent({ theme: { layout: "atelier" } });
     const out = clampTemplate(c, DEFAULT_CAPS); // all templates allowed
     expect(out.theme.layout).toBe("atelier");
+  });
+
+  it("clampModels strips project 3D models when the plan lacks the feature", () => {
+    const c = mergeContent({ projects: { items: [{ tag: "T", title: "P", meta: "M", image: null, model: "/x.glb" }] } });
+    const basic = clampModels(c, { ...DEFAULT_CAPS, models3d: false });
+    expect(basic.projects.items[0].model).toBeNull();
+    const pro = clampModels(c, { ...DEFAULT_CAPS, models3d: true });
+    expect(pro.projects.items[0].model).toBe("/x.glb");
   });
 
   it("url helpers classify preset vs uploaded media", () => {

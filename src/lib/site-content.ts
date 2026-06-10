@@ -45,6 +45,7 @@ export type SiteContent = {
       body?: string; // case-study description (Pro)
       details?: { k: string; v: string }[]; // client/year/scope (Pro)
       gallery?: (string | null)[]; // extra images (Pro)
+      model?: string | null; // interactive 3D model (.glb) — Pro/Premium
     }[];
   };
   team: {
@@ -264,6 +265,17 @@ export function clampMedia(c: SiteContent, caps: PlanCaps): SiteContent {
 
   if (allowed) return c;
   return { ...c, media: { ...m, bgMode: "solid", bgVideo: null, frames: null } };
+}
+
+// Strip interactive 3D models from projects when the plan doesn't include the
+// feature (e.g. after a downgrade) so a Basic site can't keep serving heavy GLBs.
+export function clampModels(c: SiteContent, caps: PlanCaps): SiteContent {
+  if (caps.models3d) return c;
+  if (!c.projects.items.some((p) => p.model)) return c;
+  return {
+    ...c,
+    projects: { ...c.projects, items: c.projects.items.map((p) => (p.model ? { ...p, model: null } : p)) },
+  };
 }
 
 // Force the site onto a template the plan is allowed to use. Basic offices, for

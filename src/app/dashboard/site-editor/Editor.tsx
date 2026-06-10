@@ -175,6 +175,32 @@ export default function Editor({
     set(path, data.publicUrl);
   }
 
+  const [uploadingModel, setUploadingModel] = useState<string | null>(null);
+  async function uploadModel(file: File, path: string) {
+    if (!/\.(glb|gltf)$/i.test(file.name)) {
+      setMsg({ kind: "error", text: "الملف يجب أن يكون بصيغة GLB أو glTF (صدّره من Revit)." });
+      return;
+    }
+    if (file.size > 40 * 1024 * 1024) {
+      setMsg({ kind: "error", text: "حجم الموديل أكبر من 40 ميجابايت. صدّره بدقة أقل أو اضغطه (Draco)." });
+      return;
+    }
+    setUploadingModel(path);
+    const supabase = createClient();
+    const ext = file.name.split(".").pop() || "glb";
+    const key = `${officeId}/${crypto.randomUUID()}.${ext}`;
+    const { error } = await supabase.storage
+      .from("site-media")
+      .upload(key, file, { upsert: true, contentType: "model/gltf-binary" });
+    setUploadingModel(null);
+    if (error) {
+      setMsg({ kind: "error", text: "تعذّر رفع الموديل. تأكد من حاوية التخزين site-media." });
+      return;
+    }
+    set(path, supabase.storage.from("site-media").getPublicUrl(key).data.publicUrl);
+    setMsg({ kind: "success", text: "تم رفع الموديل ثلاثي الأبعاد. اضغط حفظ ثم حدّث موقعك." });
+  }
+
   const [uploadingVideo, setUploadingVideo] = useState(false);
   const [extracting, setExtracting] = useState(false);
   const [extractInfo, setExtractInfo] = useState("");
@@ -334,6 +360,31 @@ export default function Editor({
             إزالة
           </button>
         )}
+      </div>
+    );
+  };
+
+  const model3d = (path: string) => {
+    const val = deepGet(c, path) as string | null;
+    const busy = uploadingModel === path;
+    return (
+      <div className="rounded-lg border border-dashed border-accent/40 p-3">
+        <div className="flex items-center justify-between gap-2">
+          <span className="text-xs font-medium text-accent">موديل ثلاثي الأبعاد (.glb) — يدور تفاعلياً في الموقع</span>
+          {val && (
+            <button type="button" className="text-xs text-red-400" onClick={() => set(path, null)}>إزالة</button>
+          )}
+        </div>
+        <input
+          type="file"
+          accept=".glb,.gltf,model/gltf-binary"
+          disabled={busy}
+          className="mt-2 block w-full text-xs text-muted file:mr-3 file:rounded-md file:border-0 file:bg-surface-2 file:px-3 file:py-1.5 file:text-foreground disabled:opacity-50"
+          onChange={(e) => e.target.files?.[0] && uploadModel(e.target.files[0], path)}
+        />
+        {busy && <p className="mt-1.5 text-[11px] text-muted">جارٍ رفع الموديل…</p>}
+        {val && !busy && <p className="mt-1.5 text-[11px] text-emerald-300">✓ موديل مرفوع — يظهر بشارة «3D» على بطاقة المشروع، ويتفاعل معه الزائر.</p>}
+        <p className="mt-1 text-[11px] text-muted">صدّر مشروعك من Revit إلى glTF/GLB — يفضّل أقل من 40MB لسرعة التحميل.</p>
       </div>
     );
   };
@@ -926,6 +977,7 @@ export default function Editor({
               </div>
               {text("اسم المشروع", `projects.items.${i}.title`)}
               {image("صورة المشروع", `projects.items.${i}.image`)}
+              {caps.models3d && model3d(`projects.items.${i}.model`)}
               {caps.projectDetails && (
                 <div className="mt-1 space-y-3 rounded-lg border border-dashed border-border p-3">
                   <p className="text-xs text-muted">دراسة حالة (تظهر عند الضغط على المشروع):</p>

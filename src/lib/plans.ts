@@ -23,6 +23,7 @@ export type PlanCaps = {
   aiContent: boolean; // AI content generation — Premium
   aiMonthlyLimit: number; // max AI generations per office per month
   monthlyReport: boolean; // monthly performance email — Premium
+  models3d: boolean; // interactive 3D (Revit/GLB) project viewer — Pro/Premium
   sections: string[]; // which site sections this plan may use (see lib/sections)
   templates: string[]; // which design templates this plan may use (TemplateId[])
 };
@@ -43,6 +44,7 @@ export const DEFAULT_CAPS: PlanCaps = {
   solidOnly: false, presets: true, presetLimit: Infinity, upload: true,
   whatsapp: true, booking: true, blog: true, projectDetails: true, badges: true,
   profilePdf: true, customDomain: true, crm: true, aiContent: true, aiMonthlyLimit: 10, monthlyReport: true,
+  models3d: true,
   sections: [...SECTION_KEYS],
   templates: [...TEMPLATE_IDS],
 };
@@ -59,6 +61,7 @@ export const FALLBACK_PLANS: Plan[] = [
       solidOnly: true, presets: false, presetLimit: 0, upload: false,
       whatsapp: false, booking: false, blog: false, projectDetails: false, badges: false,
       profilePdf: false, customDomain: false, crm: false, aiContent: false, aiMonthlyLimit: 0, monthlyReport: false,
+      models3d: false,
       sections: [...STANDARD_SECTIONS],
       templates: ["editorial"],
     },
@@ -83,6 +86,7 @@ export const FALLBACK_PLANS: Plan[] = [
       solidOnly: false, presets: true, presetLimit: 5, upload: false,
       whatsapp: true, booking: true, blog: true, projectDetails: true, badges: true,
       profilePdf: true, customDomain: true, crm: false, aiContent: false, aiMonthlyLimit: 0, monthlyReport: false,
+      models3d: true,
       sections: [...SECTION_KEYS],
       templates: [...TEMPLATE_IDS],
     },
@@ -106,6 +110,7 @@ export const FALLBACK_PLANS: Plan[] = [
       solidOnly: false, presets: true, presetLimit: Infinity, upload: true,
       whatsapp: true, booking: true, blog: true, projectDetails: true, badges: true,
       profilePdf: true, customDomain: true, crm: true, aiContent: true, aiMonthlyLimit: 10, monthlyReport: true,
+      models3d: true,
       sections: [...SECTION_KEYS],
       templates: [...TEMPLATE_IDS],
     },
@@ -166,6 +171,10 @@ export function normalizePlan(row: any): Plan {
       aiContent: !!caps.aiContent,
       aiMonthlyLimit: caps.aiMonthlyLimit == null ? (caps.aiContent ? 10 : 0) : Number(caps.aiMonthlyLimit),
       monthlyReport: !!caps.monthlyReport,
+      // 3D viewer: explicit value wins; otherwise it follows projectDetails
+      // (true for Pro/Premium, false for Basic) so existing plan rows get it
+      // without a migration.
+      models3d: caps.models3d != null ? !!caps.models3d : !!caps.projectDetails,
       sections,
       templates,
     },

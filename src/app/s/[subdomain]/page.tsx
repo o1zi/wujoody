@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { mergeContent, clampMedia, clampTemplate } from "@/lib/site-content";
+import { mergeContent, clampMedia, clampTemplate, clampModels } from "@/lib/site-content";
 import { siteLiveState } from "@/lib/subscription";
 import { googleFontsHref } from "@/lib/site-fonts";
 import { getPlanCaps } from "@/lib/plans-server";
@@ -101,7 +101,7 @@ async function loadOffice(slug: string) {
   const { live, expired } = siteLiveState(office.status, sub);
 
   const caps = await getPlanCaps(expired ? undefined : sub?.plan);
-  const content = clampTemplate(clampMedia(mergeContent(row?.content), caps), caps);
+  const content = clampModels(clampTemplate(clampMedia(mergeContent(row?.content), caps), caps), caps);
   content.contact.mapQuery = await resolveMapQuery(content.contact.mapQuery);
   return { office, content, live, expired, caps };
 }
