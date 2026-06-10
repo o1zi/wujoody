@@ -1,34 +1,26 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { createElement, useEffect, useRef, useState } from "react";
 
-// Google's <model-viewer> web component (glTF/GLB, orbit/zoom/pan + AR). We load
-// the module from a CDN once and build the element imperatively so the custom
-// element gets clean attributes (React's custom-element attribute handling is
-// unreliable for boolean attrs like camera-controls). Surfaces load/error state.
+// Google's <model-viewer> web component (glTF/GLB, orbit/zoom/pan + AR). The
+// element is rendered BY REACT (no manual DOM insertion — doing that corrupts
+// React's reconciliation and throws removeChild errors). We just inject the
+// CDN module once; the custom element upgrades retroactively when it loads.
 const SCRIPT_SRC = "https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js";
-let loadPromise: Promise<void> | null = null;
+let injected = false;
 
-function loadModelViewer(): Promise<void> {
-  if (typeof window === "undefined") return Promise.resolve();
-  if (window.customElements?.get("model-viewer")) return Promise.resolve();
-  if (loadPromise) return loadPromise;
-  loadPromise = new Promise<void>((resolve, reject) => {
-    const existing = document.querySelector<HTMLScriptElement>("script[data-model-viewer]");
-    if (existing) {
-      existing.addEventListener("load", () => resolve());
-      existing.addEventListener("error", () => reject(new Error("script")));
-      return;
-    }
-    const s = document.createElement("script");
-    s.type = "module";
-    s.src = SCRIPT_SRC;
-    s.setAttribute("data-model-viewer", "");
-    s.addEventListener("load", () => resolve());
-    s.addEventListener("error", () => reject(new Error("script")));
-    document.head.appendChild(s);
-  });
-  return loadPromise;
+function ensureScript() {
+  if (injected || typeof document === "undefined") return;
+  if (document.querySelector("script[data-model-viewer]")) {
+    injected = true;
+    return;
+  }
+  const s = document.createElement("script");
+  s.type = "module";
+  s.src = SCRIPT_SRC;
+  s.setAttribute("data-model-viewer", "");
+  document.head.appendChild(s);
+  injected = true;
 }
 
 export default function ModelViewer({
@@ -40,49 +32,49 @@ export default function ModelViewer({
   poster?: string | null;
   alt?: string;
 }) {
-  const mount = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLElement | null>(null);
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
 
   useEffect(() => {
-    let cancelled = false;
+    ensureScript();
+  }, []);
 
-    loadModelViewer()
-      .then(() => window.customElements.whenDefined("model-viewer"))
-      .then(() => {
-        if (cancelled || !mount.current) return;
-        const mv = document.createElement("model-viewer");
-        mv.setAttribute("src", src);
-        if (poster) mv.setAttribute("poster", poster);
-        mv.setAttribute("alt", alt);
-        mv.setAttribute("camera-controls", "");
-        mv.setAttribute("auto-rotate", "");
-        mv.setAttribute("auto-rotate-delay", "0");
-        mv.setAttribute("rotation-per-second", "20deg");
-        mv.setAttribute("interaction-prompt", "auto");
-        mv.setAttribute("touch-action", "pan-y");
-        mv.setAttribute("shadow-intensity", "1");
-        mv.setAttribute("exposure", "1");
-        mv.setAttribute("ar", "");
-        mv.setAttribute("ar-modes", "webxr scene-viewer quick-look");
-        mv.style.width = "100%";
-        mv.style.height = "100%";
-        mv.style.display = "block";
-        mv.style.backgroundColor = "transparent";
-        mv.addEventListener("load", () => !cancelled && setStatus("ready"));
-        mv.addEventListener("error", () => !cancelled && setStatus("error"));
-        mount.current.replaceChildren(mv);
-      })
-      .catch(() => {
-        if (!cancelled) setStatus("error");
-      });
-
+  // Listen for the element's load/error to drive the overlay.
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const onLoad = () => setStatus("ready");
+    const onError = () => setStatus("error");
+    el.addEventListener("load", onLoad);
+    el.addEventListener("error", onError);
     return () => {
-      cancelled = true;
+      el.removeEventListener("load", onLoad);
+      el.removeEventListener("error", onError);
     };
-  }, [src, poster, alt]);
+  }, [src]);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const mvProps: any = {
+    ref,
+    src,
+    alt,
+    "camera-controls": "",
+    "auto-rotate": "",
+    "auto-rotate-delay": "0",
+    "rotation-per-second": "20deg",
+    "interaction-prompt": "auto",
+    "touch-action": "pan-y",
+    "shadow-intensity": "1",
+    exposure: "1",
+    ar: "",
+    "ar-modes": "webxr scene-viewer quick-look",
+    style: { width: "100%", height: "100%", display: "block", backgroundColor: "transparent" },
+  };
+  if (poster) mvProps.poster = poster;
 
   return (
-    <div ref={mount} style={{ position: "relative", width: "100%", height: "100%" }}>
+    <div style={{ position: "relative", width: "100%", height: "100%" }}>
+      {createElement("model-viewer", mvProps)}
       {status !== "ready" && (
         <div
           style={{
@@ -115,7 +107,7 @@ export default function ModelViewer({
             </>
           ) : (
             <span className="mono" style={{ fontSize: 12, opacity: 0.9, maxWidth: 280 }}>
-              تعذّر تحميل النموذج. تأكد أن الملف بصيغة GLB صحيحة، وأن مانع الإعلانات لا يحجب العرض.
+              تعذّر تحميل النموذج. تأكد أن الملف بصيغة GLB صحيحة.
             </span>
           )}
         </div>
