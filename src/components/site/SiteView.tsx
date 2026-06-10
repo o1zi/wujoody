@@ -562,7 +562,7 @@ export default function SiteView({ content, slug, caps }: { content: SiteContent
               <p className="sec-lead reveal" data-d="2">نماذج من أعمالنا عبر القطاعات.</p>
             </div>
             <ProjectsGallery items={content.projects.items} detailed={caps.projectDetails} />
-            {show("models3d") && <Models3D title={content.models.title} lead={content.models.lead} items={content.models.items} />}
+            {caps.models3d && content.visible.models3d !== false && <Models3D title={content.models.title} lead={content.models.lead} items={content.models.items} />}
           </div>
         </section>
 

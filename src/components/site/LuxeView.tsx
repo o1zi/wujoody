@@ -329,7 +329,7 @@ export default function LuxeView({ content, slug, caps }: { content: SiteContent
                 <h2 className="lx-title lx-reveal" data-d="1" style={{ textAlign: "center", marginBottom: 48 }}>مشاريع تحكي الرسوخ.</h2>
                 <div className="lx-reveal" data-d="2">
                   <ProjectsGallery items={content.projects.items} detailed={caps.projectDetails} />
-                  {show("models3d") && <Models3D title={content.models.title} lead={content.models.lead} items={content.models.items} />}
+                  {caps.models3d && content.visible.models3d !== false && <Models3D title={content.models.title} lead={content.models.lead} items={content.models.items} />}
                 </div>
               </div>
             </section>

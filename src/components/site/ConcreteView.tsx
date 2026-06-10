@@ -332,7 +332,7 @@ export default function ConcreteView({ content, slug, caps }: { content: SiteCon
                 <h2 className="cn-title cn-reveal" data-d="1" style={{ marginBottom: 40 }}>مشاريع راسخة.</h2>
                 <div className="cn-reveal" data-d="2">
                   <ProjectsGallery items={content.projects.items} detailed={caps.projectDetails} />
-                  {show("models3d") && <Models3D title={content.models.title} lead={content.models.lead} items={content.models.items} />}
+                  {caps.models3d && content.visible.models3d !== false && <Models3D title={content.models.title} lead={content.models.lead} items={content.models.items} />}
                 </div>
               </div>
             </section>

@@ -328,7 +328,7 @@ export default function DecoView({ content, slug, caps }: { content: SiteContent
                 {head("أعمالنا · Selected work", "مشاريع تليق بالطموح.")}
                 <div className="dc-reveal" data-d="2">
                   <ProjectsGallery items={content.projects.items} detailed={caps.projectDetails} />
-                  {show("models3d") && <Models3D title={content.models.title} lead={content.models.lead} items={content.models.items} />}
+                  {caps.models3d && content.visible.models3d !== false && <Models3D title={content.models.title} lead={content.models.lead} items={content.models.items} />}
                 </div>
               </div>
             </section>
