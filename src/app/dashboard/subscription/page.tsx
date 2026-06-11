@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import { getSessionContext } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { getPlans } from "@/lib/plans-server";
+import { planFeaturesFor } from "@/lib/plans";
+import { verticalConfig } from "@/lib/vertical";
 import { hasBankDetails, whatsappLink } from "@/lib/bank";
 import { getPaymentSettings } from "@/lib/bank-server";
 
@@ -29,11 +31,12 @@ export default async function SubscriptionPage() {
 
   // Build a prefilled WhatsApp request for a given plan, carrying the office's
   // identity so the admin can match the transfer and activate the subscription.
+  const cfg = verticalConfig(ctx.office?.kind);
   const officeLabel = ctx.office?.name || ctx.office?.slug || "—";
   const requestLink = (planName: string, price: number, currency: string) =>
     whatsappLink(
       `السلام عليكم، أرغب بالاشتراك في باقة «${planName}» (${price} ${currency} سنوياً).\n` +
-        `المكتب: ${officeLabel}\n` +
+        `${cfg.entityLabel}: ${officeLabel}\n` +
         `الجوال: ${ctx.profile?.phone || "—"}\n` +
         `البريد: ${ctx.email || "—"}\n` +
         `سأرفق إيصال التحويل البنكي.`,
@@ -122,7 +125,7 @@ export default async function SubscriptionPage() {
                 <span className="text-muted">{p.currency} / {p.period}</span>
               </div>
               <ul className="mt-5 space-y-2">
-                {p.features.map((f) => (
+                {planFeaturesFor(ctx.office?.kind, p).map((f) => (
                   <li key={f} className="flex items-start gap-2 text-sm text-muted">
                     <span className="mt-0.5 text-accent">✓</span>
                     {f}

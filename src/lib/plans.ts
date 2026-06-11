@@ -125,6 +125,40 @@ export const FALLBACK_PLANS: Plan[] = [
   },
 ];
 
+// Clinic-facing marketing copy for each plan tier. Pricing + capabilities are
+// shared with engineering offices; only the displayed feature bullets differ so
+// a clinic doesn't see "معرض مشاريع / حاسبة هندسية". Keyed by plan code.
+export const CLINIC_PLAN_FEATURES: Record<string, string[]> = {
+  basic: [
+    "موقع احترافي للعيادة بنطاق فرعي خاص",
+    "حجز مواعيد أونلاين + إشعار فوري بكل حجز",
+    "إدارة الأطباء والخدمات وأوقات العمل",
+    "أقسام: التخصصات، الأطباء، الأسعار، الأسئلة الشائعة",
+    "تحسين الظهور في جوجل + خريطة الموقع",
+    "أزرار تواصل (واتساب/سناب/إنستغرام)",
+  ],
+  pro: [
+    "كل مزايا الأساسية",
+    "قسم «قبل وبعد» لعرض نتائج الحالات",
+    "شارات الاعتماد (وزارة الصحة، هيئة التخصصات)",
+    "آراء المرضى + رحلة المريض",
+    "ربط نطاقك الخاص (.com/.sa)",
+    "تخصيص كامل للألوان والخطوط والقالب",
+  ],
+  premium: [
+    "كل مزايا الاحترافية",
+    "رفع صور الحالات والشعار بلا حدود",
+    "تقرير أداء شهري بالبريد",
+    "أولوية في الدعم الفني",
+  ],
+};
+
+// The feature bullets to display for a plan, tailored to the office vertical.
+export function planFeaturesFor(kind: string | null | undefined, plan: Plan): string[] {
+  if (kind === "clinic") return CLINIC_PLAN_FEATURES[plan.code] ?? plan.features;
+  return plan.features;
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function normalizePlan(row: any): Plan {
   const caps = row.caps || {};
