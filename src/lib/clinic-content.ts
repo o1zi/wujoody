@@ -15,7 +15,7 @@ export type ClinicContent = {
     cardStyle?: "glass" | "solid" | "outline";
     cardRadius?: "sharp" | "soft" | "round";
     cardTint?: string | null;
-    layout?: "care" | "clean" | "calm"; // clinic page templates (see clinic-templates)
+    layout?: "safa" | "noor"; // clinic page template
   };
   seo: { googleVerification: string };
   media: {
@@ -112,7 +112,7 @@ export type ClinicContent = {
 };
 
 export const clinicDefaultContent: ClinicContent = {
-  theme: { accent: "azure", accentHex: null, font: "readex", cardStyle: "solid", cardRadius: "round", cardTint: null, layout: "clean" },
+  theme: { accent: "azure", accentHex: null, font: "readex", cardStyle: "solid", cardRadius: "round", cardTint: null, layout: "safa" },
   seo: { googleVerification: "" },
   media: { bgVideo: null, bgMode: "solid", frames: null, solid: "white" },
   brand: { ar: "عيادة", en: "CLINIC", logo: null },

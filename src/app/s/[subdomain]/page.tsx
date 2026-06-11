@@ -4,6 +4,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { mergeContent, clampMedia, clampTemplate, clampModels, type SiteContent } from "@/lib/site-content";
 import { mergeClinicContent, type ClinicContent } from "@/lib/clinic-content";
 import ClinicSiteView from "@/components/site/ClinicSiteView";
+import ClinicSiteNoor from "@/components/site/ClinicSiteNoor";
 import type { BookingService } from "@/components/site/ClinicBookingForm";
 import type { PublicDoctor } from "@/lib/clinic-booking";
 import type { PlanCaps } from "@/lib/plans";
@@ -187,12 +188,17 @@ export default async function TenantSite({ params }: { params: Params }) {
   // Clinic vertical: self-contained medical template.
   if (data.view === "clinic") {
     const clinic: ClinicContent = data.clinic;
-    // The "Safa" clinic template uses El Messiri (headings) + IBM Plex Sans Arabic (body).
-    const fontLink = googleFontsHref(["elmessiri", "ibmar"]);
+    const isNoor = clinic.theme.layout === "noor";
+    // Each template loads its own font pairing.
+    const fontLink = googleFontsHref(isNoor ? ["cairo", "tajawal"] : ["elmessiri", "ibmar"]);
     return (
       <>
         <link rel="stylesheet" href={fontLink} precedence="high" />
-        <ClinicSiteView content={clinic} slug={data.office.slug} services={data.services} doctors={data.doctors} />
+        {isNoor ? (
+          <ClinicSiteNoor content={clinic} slug={data.office.slug} services={data.services} doctors={data.doctors} />
+        ) : (
+          <ClinicSiteView content={clinic} slug={data.office.slug} services={data.services} doctors={data.doctors} />
+        )}
       </>
     );
   }

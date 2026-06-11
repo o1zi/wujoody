@@ -36,9 +36,8 @@ const ACCENTS: { key: ClinicContent["theme"]["accent"]; label: string; hex: stri
 ];
 
 const LAYOUTS: { key: NonNullable<ClinicContent["theme"]["layout"]>; label: string; hint: string }[] = [
-  { key: "clean", label: "نظيف", hint: "أبيض واسع، احترافي" },
-  { key: "care", label: "دافئ", hint: "ألوان هادئة تبعث الطمأنينة" },
-  { key: "calm", label: "هادئ", hint: "بسيط ومركّز على الحجز" },
+  { key: "safa", label: "صَفا", hint: "دافئ · كريمي وأخضر وذهبي · خط El Messiri" },
+  { key: "noor", label: "نور", hint: "عصري · أبيض وتركوازي نقي · مساحات واسعة" },
 ];
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
@@ -197,14 +196,14 @@ export default function ClinicEditor({
           </div>
           <div>
             <span className="mb-1 block text-xs text-muted">قالب التصميم</span>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 gap-2">
               {LAYOUTS.map((l) => (
                 <button
                   key={l.key}
                   type="button"
                   onClick={() => set("theme.layout", l.key)}
-                  className={`rounded-lg border p-2.5 text-right ${
-                    (c.theme.layout ?? "clean") === l.key ? "border-accent ring-1 ring-accent" : "border-border"
+                  className={`rounded-lg border p-3 text-right ${
+                    (c.theme.layout ?? "safa") === l.key ? "border-accent ring-1 ring-accent" : "border-border"
                   }`}
                 >
                   <div className="text-sm font-medium">{l.label}</div>
