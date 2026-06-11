@@ -10,6 +10,11 @@ const STATUS: Record<string, { text: string; cls: string }> = {
   suspended: { text: "موقوف", cls: "bg-red-500/15 text-red-300" },
 };
 
+const KIND: Record<string, { text: string; cls: string }> = {
+  clinic: { text: "🩺 عيادة", cls: "bg-sky-500/15 text-sky-300" },
+  engineering: { text: "🏛️ مكتب هندسي", cls: "bg-violet-500/15 text-violet-300" },
+};
+
 const TABS = [
   { key: "all", label: "الكل" },
   { key: "active", label: "مُفعّل" },
@@ -52,6 +57,7 @@ export default function OfficesTable({
   );
   const [q, setQ] = useState("");
   const [sort, setSort] = useState<"new" | "ends" | "name">("new");
+  const [kind, setKind] = useState<"all" | "engineering" | "clinic">("all");
 
   const counts = useMemo(() => {
     const c: Record<string, number> = {};
@@ -62,13 +68,14 @@ export default function OfficesTable({
   const filtered = useMemo(() => {
     const s = q.trim().toLowerCase();
     let r = rows.filter((x) => inTab(x, tab));
+    if (kind !== "all") r = r.filter((x) => (kind === "clinic" ? x.kind === "clinic" : x.kind !== "clinic"));
     if (s) r = r.filter((x) => x.name.toLowerCase().includes(s) || x.slug.toLowerCase().includes(s) || x.ownerEmail.toLowerCase().includes(s));
     r = [...r];
     if (sort === "name") r.sort((a, b) => a.name.localeCompare(b.name, "ar"));
     else if (sort === "ends") r.sort((a, b) => (a.daysLeft ?? 1e9) - (b.daysLeft ?? 1e9));
     else r.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     return r;
-  }, [rows, tab, q, sort]);
+  }, [rows, tab, q, sort, kind]);
 
   return (
     <div>
@@ -94,6 +101,11 @@ export default function OfficesTable({
           placeholder="ابحث بالاسم أو النطاق أو البريد…"
           className="flex-1 rounded-lg glass-panel-2 px-3 py-2 text-sm outline-none focus:border-accent"
         />
+        <select value={kind} onChange={(e) => setKind(e.target.value as typeof kind)} className="rounded-lg glass-panel-2 px-3 py-2 text-sm outline-none">
+          <option value="all">كل القطاعات</option>
+          <option value="engineering">🏛️ مكاتب هندسية</option>
+          <option value="clinic">🩺 عيادات</option>
+        </select>
         <select value={sort} onChange={(e) => setSort(e.target.value as typeof sort)} className="rounded-lg glass-panel-2 px-3 py-2 text-sm outline-none">
           <option value="new">الأحدث</option>
           <option value="ends">الأقرب انتهاءً</option>
@@ -107,6 +119,7 @@ export default function OfficesTable({
           <thead className="bg-surface text-muted">
             <tr>
               <th className="px-4 py-3 text-right font-medium">المكتب</th>
+              <th className="px-4 py-3 text-right font-medium">النوع</th>
               <th className="px-4 py-3 text-right font-medium">المالك</th>
               <th className="px-4 py-3 text-right font-medium">الباقة</th>
               <th className="px-4 py-3 text-right font-medium">ينتهي</th>
@@ -122,6 +135,12 @@ export default function OfficesTable({
                   <td className="px-4 py-3">
                     <Link href={`/super-admin/offices/${r.id}`} className="font-medium hover:text-accent">{r.name}</Link>
                     <div className="mono text-[11px] text-muted" dir="ltr">{r.slug}</div>
+                  </td>
+                  <td className="px-4 py-3">
+                    {(() => {
+                      const k = KIND[r.kind] ?? KIND.engineering;
+                      return <span className={`whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs ${k.cls}`}>{k.text}</span>;
+                    })()}
                   </td>
                   <td className="px-4 py-3 text-xs text-muted" dir="ltr">{r.ownerEmail || "—"}</td>
                   <td className="px-4 py-3 text-xs">{r.plan ? planNames[r.plan] || r.plan : "—"}</td>
@@ -146,7 +165,7 @@ export default function OfficesTable({
             })}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-4 py-10 text-center text-muted">لا توجد مكاتب مطابقة.</td>
+                <td colSpan={7} className="px-4 py-10 text-center text-muted">لا توجد جهات مطابقة.</td>
               </tr>
             )}
           </tbody>

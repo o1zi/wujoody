@@ -6,6 +6,7 @@ export type OfficeRow = {
   name: string;
   slug: string;
   status: string; // active | pending | suspended
+  kind: string; // engineering | clinic
   createdAt: string;
   ownerEmail: string;
   ownerName: string;
@@ -34,6 +35,8 @@ export type AdminData = {
     expiringSoon: number;
     expired: number;
     newThisMonth: number;
+    clinics: number; // offices with kind = clinic
+    engineering: number; // offices with kind = engineering
   };
   planCounts: Record<string, number>; // active subs per plan code
 };
@@ -41,7 +44,7 @@ export type AdminData = {
 export async function loadAdminData(): Promise<AdminData> {
   const admin = createAdminClient();
   const [{ data: offices }, { data: profiles }, { data: subs }] = await Promise.all([
-    admin.from("offices").select("id, name, slug, status, owner_id, created_at").order("created_at", { ascending: false }),
+    admin.from("offices").select("id, name, slug, status, kind, owner_id, created_at").order("created_at", { ascending: false }),
     admin.from("profiles").select("id, email, full_name, phone"),
     admin
       .from("subscriptions")
@@ -68,6 +71,7 @@ export async function loadAdminData(): Promise<AdminData> {
       name: o.name,
       slug: o.slug,
       status: o.status,
+      kind: (o as { kind?: string }).kind ?? "engineering",
       createdAt: o.created_at,
       ownerEmail: (owner?.email as string) ?? "",
       ownerName: (owner?.full_name as string) ?? "",
@@ -108,6 +112,8 @@ export async function loadAdminData(): Promise<AdminData> {
       expiringSoon: rows.filter((r) => r.expiringSoon).length,
       expired: rows.filter((r) => r.expired).length,
       newThisMonth: rows.filter((r) => new Date(r.createdAt) >= startOfMonth).length,
+      clinics: rows.filter((r) => r.kind === "clinic").length,
+      engineering: rows.filter((r) => r.kind !== "clinic").length,
     },
     planCounts,
   };

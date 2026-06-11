@@ -49,7 +49,7 @@ export default async function SuperAdminDashboard() {
 
       {/* KPIs */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-3">
-        <Kpi label="إجمالي المكاتب" value={fmt(m.total)} sub={`${m.newThisMonth} جديد هذا الشهر`} />
+        <Kpi label="إجمالي الجهات" value={fmt(m.total)} sub={`🏛️ ${m.engineering} مكتب · 🩺 ${m.clinics} عيادة`} />
         <Kpi label="مكاتب مُفعّلة" value={fmt(m.activeOffices)} sub={`${m.activeSubs} اشتراك نشط`} tone="emerald" />
         <Kpi label="بانتظار التفعيل" value={fmt(m.pending)} sub={m.pending ? "يحتاج إجراء" : "لا شيء معلّق"} tone={m.pending ? "amber" : undefined} href="/super-admin/offices?tab=pending" />
         <Kpi label="الإيراد السنوي المتكرر" value={`${fmt(m.arr)} ر.س`} sub="ARR" tone="accent" />
