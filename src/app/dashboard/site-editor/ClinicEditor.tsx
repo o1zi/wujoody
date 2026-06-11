@@ -36,8 +36,8 @@ const ACCENTS: { key: ClinicContent["theme"]["accent"]; label: string; hex: stri
 ];
 
 const LAYOUTS: { key: NonNullable<ClinicContent["theme"]["layout"]>; label: string; hint: string }[] = [
-  { key: "safa", label: "صَفا", hint: "دافئ · كريمي وأخضر وذهبي · خط El Messiri" },
-  { key: "noor", label: "نور", hint: "عصري · أبيض وتركوازي نقي · مساحات واسعة" },
+  { key: "safa", label: "صَفا", hint: "دافئ · كريمي وأخضر وذهبي · كلاسيكي راقٍ" },
+  { key: "luxe", label: "لُمى", hint: "فاخر · أسود وذهبي · إحساس سينمائي" },
 ];
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
