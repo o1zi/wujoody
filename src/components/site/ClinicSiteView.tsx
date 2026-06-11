@@ -438,7 +438,8 @@ const SAFA_CSS = `
   background:var(--cream);color:var(--ink);font-family:'IBM Plex Sans Arabic',system-ui,sans-serif;line-height:1.8;-webkit-font-smoothing:antialiased;
 }
 .safa *{box-sizing:border-box}
-.safa a{text-decoration:none;color:inherit}
+.safa a{text-decoration:none}
+:where(.safa) a{color:inherit}
 .safa .serif{font-family:'El Messiri',serif}
 .sf-wrap{max-width:1240px;margin:0 auto;padding:0 clamp(20px,5vw,64px)}
 .sf-sec{padding:clamp(72px,9vw,128px) 0}
