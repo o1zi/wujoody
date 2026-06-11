@@ -4,6 +4,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { mergeContent, clampMedia, clampTemplate, clampModels, type SiteContent } from "@/lib/site-content";
 import { mergeClinicContent, type ClinicContent } from "@/lib/clinic-content";
 import ClinicSiteView from "@/components/site/ClinicSiteView";
+import type { BookingService, BookingDoctor } from "@/components/site/ClinicBookingForm";
 import type { PlanCaps } from "@/lib/plans";
 import { siteLiveState } from "@/lib/subscription";
 import { googleFontsHref } from "@/lib/site-fonts";
@@ -36,7 +37,7 @@ type Params = Promise<{ subdomain: string }>;
 
 type OfficeRow = { id: string; name: string; slug: string; status: string; kind: string };
 type LoadResult =
-  | { view: "clinic"; office: OfficeRow; clinic: ClinicContent; live: boolean; expired: boolean }
+  | { view: "clinic"; office: OfficeRow; clinic: ClinicContent; services: BookingService[]; doctors: BookingDoctor[]; live: boolean; expired: boolean }
   | { view: "engineering"; office: OfficeRow; content: SiteContent; caps: PlanCaps; live: boolean; expired: boolean };
 
 function extractCoords(s: string): string | null {
@@ -113,7 +114,14 @@ async function loadOffice(slug: string): Promise<LoadResult | null> {
   if (office.kind === "clinic") {
     const clinicContent = mergeClinicContent(row?.content);
     clinicContent.contact.mapQuery = await resolveMapQuery(clinicContent.contact.mapQuery);
-    return { view: "clinic", office, clinic: clinicContent, live, expired };
+    // Operational booking data (tolerant if the booking tables aren't created yet).
+    const [{ data: svc }, { data: docs }] = await Promise.all([
+      supabase.from("clinic_services").select("id, name").eq("office_id", office.id).eq("active", true).order("sort"),
+      supabase.from("clinic_doctors").select("id, name").eq("office_id", office.id).eq("active", true).order("sort"),
+    ]);
+    const services: BookingService[] = (svc ?? []).map((s) => ({ id: s.id as string, name: s.name as string }));
+    const doctors: BookingDoctor[] = (docs ?? []).map((d) => ({ id: d.id as string, name: d.name as string }));
+    return { view: "clinic", office, clinic: clinicContent, services, doctors, live, expired };
   }
 
   const caps = await getPlanCaps(expired ? undefined : sub?.plan);
@@ -177,7 +185,7 @@ export default async function TenantSite({ params }: { params: Params }) {
     return (
       <>
         <link rel="stylesheet" href={fontLink} precedence="high" />
-        <ClinicSiteView content={clinic} slug={data.office.slug} />
+        <ClinicSiteView content={clinic} slug={data.office.slug} services={data.services} doctors={data.doctors} />
       </>
     );
   }

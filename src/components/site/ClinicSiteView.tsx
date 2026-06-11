@@ -1,6 +1,6 @@
 import type { ClinicContent } from "@/lib/clinic-content";
 import { fontByKey } from "@/lib/site-fonts";
-import ClinicBookingForm from "./ClinicBookingForm";
+import ClinicBookingForm, { type BookingService, type BookingDoctor } from "./ClinicBookingForm";
 
 const ACCENT_HEX: Record<string, string> = {
   azure: "#2563EB",
@@ -19,13 +19,28 @@ function waLink(num: string): string | null {
   return digits.length >= 8 ? `https://wa.me/${digits}` : null;
 }
 
-export default function ClinicSiteView({ content, slug }: { content: ClinicContent; slug: string }) {
+export default function ClinicSiteView({
+  content,
+  slug,
+  services = [],
+  doctors = [],
+}: {
+  content: ClinicContent;
+  slug: string;
+  services?: BookingService[];
+  doctors?: BookingDoctor[];
+}) {
   const c = content;
   const v = c.visible;
   const accent = accentOf(c.theme);
   const fontFamily = `${fontByKey(c.theme.font).family}, system-ui, sans-serif`;
   const wa = waLink(c.contact.whatsapp);
-  const services = c.specialties.items.map((s) => s.title).filter(Boolean);
+  // Booking services: prefer the operational list (clinic_services); fall back
+  // to the names from the editable specialties section for a fresh clinic.
+  const bookingServices: BookingService[] =
+    services.length > 0
+      ? services
+      : c.specialties.items.map((s) => s.title).filter(Boolean).map((name) => ({ id: null, name }));
   const mapQ = c.contact.mapQuery?.trim();
   const mapSrc = mapQ ? `https://www.google.com/maps?q=${encodeURIComponent(mapQ)}&hl=ar&output=embed` : null;
 
@@ -103,7 +118,7 @@ export default function ClinicSiteView({ content, slug }: { content: ClinicConte
       )}
 
       {/* Specialties */}
-      {v.specialties && services.length > 0 && (
+      {v.specialties && c.specialties.items.length > 0 && (
         <section id="specialties" className="cl-section cl-tinted">
           <div className="cl-container">
             <h2 className="cl-h2">{c.specialties.title}</h2>
@@ -288,7 +303,7 @@ export default function ClinicSiteView({ content, slug }: { content: ClinicConte
             <h2 className="cl-h2 cl-center">{c.booking.title}</h2>
             <p className="cl-sub cl-center">{c.booking.lead}</p>
             <div className="cl-booking-card">
-              <ClinicBookingForm slug={slug} services={services} />
+              <ClinicBookingForm slug={slug} services={bookingServices} doctors={doctors} />
               <p className="cl-booking-note">{c.booking.note}</p>
             </div>
           </div>
@@ -449,6 +464,11 @@ const CLINIC_CSS = `
 .cl-fld label{font-size:.82rem;color:var(--muted);font-weight:600}
 .cl-fld input,.cl-fld select,.cl-fld textarea{border:1px solid var(--line);border-radius:10px;padding:11px 13px;font:inherit;background:#fff;outline:none;width:100%}
 .cl-fld input:focus,.cl-fld select:focus,.cl-fld textarea:focus{border-color:var(--accent)}
+.cl-slots{display:flex;flex-wrap:wrap;gap:8px}
+.cl-slot{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 14px;font:inherit;cursor:pointer;color:var(--ink);transition:all .15s}
+.cl-slot:hover{border-color:var(--accent)}
+.cl-slot-on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.cl-slots-msg{color:var(--muted);font-size:.88rem;margin:0}
 /* contact */
 .cl-contact{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
 @media(max-width:760px){.cl-contact{grid-template-columns:1fr}}
