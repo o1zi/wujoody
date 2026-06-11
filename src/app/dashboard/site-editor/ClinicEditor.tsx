@@ -227,6 +227,8 @@ export default function ClinicEditor({
 
         {/* الواجهة (Hero) */}
         <Section title="الواجهة الرئيسية">
+          {imageField("صورة خلفية الواجهة (اختياري)", "hero.image")}
+          <p className="text-xs text-muted">يُفضّل صورة أفقية عالية الجودة (مثل واجهة العيادة أو صورة طبية احترافية). تُعرض مع تظليل ليبقى النص واضحاً.</p>
           {text("نص علوي (إنجليزي)", "hero.eyebrow", "ltr")}
           {area("الوصف", "hero.subtitle")}
           <div className="space-y-2">
@@ -244,6 +246,7 @@ export default function ClinicEditor({
 
         {/* عن العيادة */}
         <Section title="عن العيادة">
+          {imageField("صورة القسم (اختياري)", "about.image")}
           {area("جملة افتتاحية", "about.lead")}
           {area("النص", "about.body")}
           <div className="space-y-2">

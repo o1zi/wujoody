@@ -22,6 +22,28 @@ function waLink(num: string): string | null {
   return digits.length >= 8 ? `https://wa.me/${digits}` : null;
 }
 
+const SOCIAL_SVG: Record<string, string> = {
+  instagram: "M7 3h10a4 4 0 014 4v10a4 4 0 01-4 4H7a4 4 0 01-4-4V7a4 4 0 014-4z M12 8.2a3.8 3.8 0 100 7.6 3.8 3.8 0 000-7.6z M17.3 6.7h.01",
+  snapchat: "M12 3c2.4 0 3.7 1.8 3.7 4.2 0 1 .1 1.7.1 1.9.3.6 1.2.4 1.7.6.4.2.3.7-.2 1-.6.3-1.4.4-1.5.9-.1.4.8 1.8 2.6 2.6.5.2.4.6 0 .8-.6.3-1.4.2-1.7.7-.2.4 0 .9-.6 1-.6.1-1.3-.4-2.1-.1-.8.3-1.3 1.2-2.5 1.2s-1.7-.9-2.5-1.2c-.8-.3-1.5.2-2.1.1-.6-.1-.4-.6-.6-1-.3-.5-1.1-.4-1.7-.7-.4-.2-.5-.6 0-.8 1.8-.8 2.7-2.2 2.6-2.6-.1-.5-.9-.6-1.5-.9-.5-.3-.6-.8-.2-1 .5-.2 1.4 0 1.7-.6 0-.2.1-.9.1-1.9C8.3 4.8 9.6 3 12 3z",
+  tiktok: "M16 4c.3 2 1.6 3.4 3.5 3.6v2.6c-1.3.1-2.5-.3-3.5-1v5.4a5.3 5.3 0 11-5.3-5.3c.3 0 .6 0 .9.1v2.7a2.6 2.6 0 102 2.5V4h2.4z",
+  linkedin: "M5 4a2 2 0 100 4 2 2 0 000-4z M4 9h2v11H4z M9 9h2v1.5a3 3 0 015 2.3V20h-2v-5a1.5 1.5 0 00-3 0v5H9z",
+  x: "M4 4l16 16 M20 4L4 20",
+};
+
+function socialHref(kind: string, raw: string): string {
+  const v = raw.trim();
+  if (/^https?:\/\//i.test(v)) return v;
+  const handle = v.replace(/^@/, "");
+  switch (kind) {
+    case "instagram": return `https://instagram.com/${handle}`;
+    case "snapchat": return `https://snapchat.com/add/${handle}`;
+    case "tiktok": return `https://tiktok.com/@${handle}`;
+    case "linkedin": return `https://www.linkedin.com/in/${handle}`;
+    case "x": return `https://x.com/${handle}`;
+    default: return v;
+  }
+}
+
 // ---- Inline SVG icon set (no emoji; consistent 1.6 stroke) ----
 const I = {
   spark: "M12 3l1.8 4.7L18.5 9l-4.7 1.8L12 15l-1.8-4.2L5.5 9l4.7-1.3L12 3z",
@@ -71,6 +93,19 @@ export default function ClinicSiteView({
       : c.specialties.items.map((s) => s.title).filter(Boolean).map((name) => ({ id: null, name }));
   const mapQ = c.contact.mapQuery?.trim();
   const mapSrc = mapQ ? `https://www.google.com/maps?q=${encodeURIComponent(mapQ)}&hl=ar&output=embed` : null;
+  const heroImg = c.hero.image?.trim() || null;
+
+  // Footer social links (only those the clinic filled in).
+  const socials = (
+    [
+      ["instagram", c.contact.instagram],
+      ["snapchat", c.contact.snapchat],
+      ["tiktok", c.contact.tiktok],
+      ["linkedin", c.contact.linkedin],
+    ] as const
+  )
+    .filter(([, val]) => val && val.trim())
+    .map(([kind, val]) => ({ kind, href: socialHref(kind, val) }));
 
   const nav = [
     v.specialties && { href: "#specialties", label: "الخدمات" },
@@ -102,9 +137,19 @@ export default function ClinicSiteView({
       </header>
 
       {/* Hero */}
-      <section id="top" className="cl-hero">
-        <span className="cl-blob cl-blob-1" aria-hidden="true" />
-        <span className="cl-blob cl-blob-2" aria-hidden="true" />
+      <section
+        id="top"
+        className={`cl-hero${heroImg ? " cl-hero-img" : ""}`}
+        style={heroImg ? { backgroundImage: `url(${heroImg})` } : undefined}
+      >
+        {heroImg ? (
+          <span className="cl-hero-overlay" aria-hidden="true" />
+        ) : (
+          <>
+            <span className="cl-blob cl-blob-1" aria-hidden="true" />
+            <span className="cl-blob cl-blob-2" aria-hidden="true" />
+          </>
+        )}
         <div className="cl-container cl-hero-in">
           <span className="cl-chip"><Svg d={I.shield} size={15} /> {c.hero.eyebrow}</span>
           <h1 className="cl-h1">{c.brand.ar}</h1>
@@ -140,17 +185,27 @@ export default function ClinicSiteView({
               <span className="cl-eyebrow">عن العيادة</span>
               <p className="cl-lead">{c.about.lead}</p>
               <p className="cl-body">{c.about.body}</p>
-            </div>
-            <div className="cl-about-side">
-              {c.about.side.map((s, i) => (
-                <div key={i} className="cl-side-row">
-                  <span className="cl-side-ic"><Svg d={I.check} size={15} /></span>
-                  <div>
-                    <span className="cl-side-k">{s.k}</span>
-                    <span className="cl-side-v">{s.v}</span>
+              <div className="cl-about-facts">
+                {c.about.side.map((s, i) => (
+                  <div key={i} className="cl-side-row">
+                    <span className="cl-side-ic"><Svg d={I.check} size={15} /></span>
+                    <div>
+                      <span className="cl-side-k">{s.k}</span>
+                      <span className="cl-side-v">{s.v}</span>
+                    </div>
                   </div>
+                ))}
+              </div>
+            </div>
+            <div className="cl-about-media">
+              {c.about.image ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={c.about.image} alt={c.brand.ar} className="cl-about-img" />
+              ) : (
+                <div className="cl-about-deco" aria-hidden="true">
+                  <Svg d={I.heart} size={56} fill />
                 </div>
-              ))}
+              )}
             </div>
           </div>
         </section>
@@ -414,9 +469,53 @@ export default function ClinicSiteView({
       </section>
 
       <footer className="cl-footer">
-        <div className="cl-container cl-footer-in">
-          <span className="cl-brand"><span className="cl-logo-mark"><Svg d={I.heart} size={16} fill /></span>{c.brand.ar}</span>
-          <span className="cl-footer-by">صُمم عبر منصة وجود</span>
+        <div className="cl-container cl-footer-grid">
+          <div className="cl-foot-brand">
+            <span className="cl-brand cl-brand-light">
+              <span className="cl-logo-mark"><Svg d={I.heart} size={16} fill /></span>{c.brand.ar}
+            </span>
+            <p>{c.about.lead}</p>
+            {(wa || socials.length > 0) && (
+              <div className="cl-socials">
+                {wa && (
+                  <a href={wa} target="_blank" rel="noreferrer" aria-label="واتساب" className="cl-soc">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 00-8.6 15l-1.4 5 5.1-1.3A10 10 0 1012 2zm4.6 12c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.6.8-.8 1-.3.2-.5.1a6.5 6.5 0 01-1.9-1.2 7.3 7.3 0 01-1.3-1.7c-.1-.2 0-.4.1-.5l.4-.5.3-.5v-.5l-.8-1.8c-.2-.5-.4-.4-.5-.4h-.5a1 1 0 00-.7.3 3 3 0 00-1 2.2 5.3 5.3 0 001.1 2.8 12 12 0 004.6 4c1.6.6 1.9.5 2.3.5s1.3-.5 1.5-1.1.2-1.1.1-1.2-.2-.2-.4-.3z"/></svg>
+                  </a>
+                )}
+                {socials.map((s) => (
+                  <a key={s.kind} href={s.href} target="_blank" rel="noreferrer" aria-label={s.kind} className="cl-soc">
+                    <Svg d={SOCIAL_SVG[s.kind]} size={18} />
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="cl-foot-col">
+            <h4>روابط سريعة</h4>
+            {nav.map((n) => (
+              <a key={n.href} href={n.href}>{n.label}</a>
+            ))}
+          </div>
+
+          <div className="cl-foot-col">
+            <h4>تواصل</h4>
+            <a href={`tel:${c.contact.phone}`} dir="ltr" className="cl-foot-ltr">{c.contact.phone}</a>
+            <a href={`mailto:${c.contact.email}`} dir="ltr" className="cl-foot-ltr">{c.contact.email}</a>
+            <span>{c.contact.office}</span>
+          </div>
+
+          <div className="cl-foot-col">
+            <h4>أوقات العمل</h4>
+            <span>{c.contact.phoneNote || "يومياً"}</span>
+            <a href="#booking" className="cl-btn cl-btn-sm cl-foot-cta">احجز موعد</a>
+          </div>
+        </div>
+        <div className="cl-footer-bottom">
+          <div className="cl-container cl-footer-bottom-in">
+            <span>© {c.brand.ar} — جميع الحقوق محفوظة</span>
+            <span className="cl-footer-by">صُمم عبر منصة وجود</span>
+          </div>
         </div>
       </footer>
 
@@ -612,5 +711,39 @@ const CLINIC_CSS = `
 /* whatsapp float */
 .cl-wa-float{position:fixed;bottom:24px;inset-inline-start:24px;height:58px;width:58px;border-radius:50%;background:#25D366;color:#fff;display:grid;place-items:center;box-shadow:0 10px 28px rgba(37,211,102,.45);z-index:40;transition:transform .2s}
 .cl-wa-float:hover{transform:scale(1.08)}
+/* hero image variant */
+.cl-hero-img{background-size:cover;background-position:center;min-height:90vh;display:flex;align-items:center;padding:0}
+.cl-hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,32,38,.45),rgba(10,32,38,.82))}
+.cl-hero-img .cl-hero-in{padding-top:96px;padding-bottom:64px}
+.cl-hero-img .cl-h1,.cl-hero-img .cl-hero-sub{color:#fff}
+.cl-hero-img .cl-chip{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.35);color:#fff}
+.cl-hero-img .cl-meta-item{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.22);backdrop-filter:blur(8px)}
+.cl-hero-img .cl-meta-val{color:#fff}
+.cl-hero-img .cl-meta-lbl{color:rgba(255,255,255,.82)}
+.cl-hero-img .cl-btn-ghost{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.4)}
+/* about media */
+.cl-about-facts{display:flex;flex-direction:column;gap:13px;margin-top:26px}
+.cl-about-media{display:flex;align-items:center;justify-content:center}
+.cl-about-img{width:100%;border-radius:24px;object-fit:cover;aspect-ratio:4/5;box-shadow:var(--sh-lg)}
+.cl-about-deco{width:100%;aspect-ratio:4/5;border-radius:24px;background:linear-gradient(150deg,var(--accent-soft),var(--tint));display:grid;place-items:center;color:var(--accent);box-shadow:var(--sh-md)}
+@media(max-width:820px){.cl-about-img,.cl-about-deco{aspect-ratio:16/10}}
+/* rich footer */
+.cl-footer{border-top:none;padding:0;background:#0E2A30;color:rgba(255,255,255,.7)}
+.cl-footer-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:40px;padding:66px 24px 42px}
+@media(max-width:820px){.cl-footer-grid{grid-template-columns:1fr 1fr;gap:32px}}
+@media(max-width:520px){.cl-footer-grid{grid-template-columns:1fr}}
+.cl-brand-light{color:#fff}
+.cl-foot-brand p{margin:14px 0 18px;font-size:.92rem;line-height:1.8;max-width:320px;color:rgba(255,255,255,.58)}
+.cl-socials{display:flex;gap:10px}
+.cl-soc{display:grid;place-items:center;height:40px;width:40px;border-radius:50%;background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.14);transition:background .2s,transform .2s}
+.cl-soc:hover{background:var(--accent);border-color:var(--accent);transform:translateY(-2px)}
+.cl-foot-col h4{color:#fff;font-size:1rem;margin:0 0 16px;font-weight:700}
+.cl-foot-col a,.cl-foot-col span{display:block;color:rgba(255,255,255,.6);font-size:.92rem;margin-bottom:11px;transition:color .2s}
+.cl-foot-col a:hover{color:#fff}
+.cl-foot-ltr{direction:ltr;text-align:right}
+.cl-foot-cta{margin-top:8px;color:#fff!important}
+.cl-footer-bottom{border-top:1px solid rgba(255,255,255,.1)}
+.cl-footer-bottom-in{display:flex;justify-content:space-between;align-items:center;padding:20px 24px;font-size:.84rem;color:rgba(255,255,255,.5);flex-wrap:wrap;gap:10px}
+.cl-footer-by{opacity:.85}
 @media(prefers-reduced-motion:reduce){.clinic-site *{transition:none!important;animation:none!important}}
 `;

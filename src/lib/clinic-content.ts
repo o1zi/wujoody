@@ -29,11 +29,13 @@ export type ClinicContent = {
   hero: {
     eyebrow: string;
     subtitle: string;
+    image: string | null; // full-bleed hero background (optional)
     meta: { value: string; label: string }[];
   };
   about: {
     lead: string;
     body: string;
+    image: string | null; // photo beside the about text (optional)
     side: { k: string; v: string }[];
   };
   // Medical services / specialties offered by the clinic.
@@ -118,6 +120,7 @@ export const clinicDefaultContent: ClinicContent = {
     eyebrow: "DENTAL & MEDICAL CARE — RIYADH",
     subtitle:
       "ابتسامتك وصحتك تستحقان أفضل عناية. عيادة متخصصة بفريق طبي معتمد وأحدث الأجهزة — احجز موعدك اليوم.",
+    image: null,
     meta: [
       { value: "12", label: "تخصص طبي" },
       { value: "8K+", label: "مريض سعيد" },
@@ -127,6 +130,7 @@ export const clinicDefaultContent: ClinicContent = {
   about: {
     lead: "نعتني بك كما نعتني بأهلنا — تشخيص دقيق، علاج بأحدث التقنيات، وفريق يصغي لك.",
     body: "تأسست العيادة لتقديم رعاية صحية متكاملة بمعايير عالمية. نوفّر بيئة مريحة وآمنة، وفريقاً من الاستشاريين والأخصائيين، وأجهزة حديثة تضمن لك أفضل النتائج وأقل وقت انتظار.",
+    image: null,
     side: [
       { k: "EST.", v: "تأسست عام 2010 في مدينة الرياض" },
       { k: "LICENSE", v: "مرخّصة من وزارة الصحة وهيئة التخصصات الصحية" },
