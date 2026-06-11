@@ -28,8 +28,9 @@ export type ClinicContent = {
   coordinates: { lat: string; lng: string; label: string };
   hero: {
     eyebrow: string;
+    title: string; // big headline (separate from the brand name)
     subtitle: string;
-    image: string | null; // full-bleed hero background (optional)
+    image: string | null; // hero image (shown in the framed slot)
     meta: { value: string; label: string }[];
   };
   about: {
@@ -117,9 +118,10 @@ export const clinicDefaultContent: ClinicContent = {
   brand: { ar: "عيادة", en: "CLINIC", logo: null },
   coordinates: { lat: "24.7136°N", lng: "46.6753°E", label: "RIYADH · KSA" },
   hero: {
-    eyebrow: "DENTAL & MEDICAL CARE — RIYADH",
+    eyebrow: "عيادة معتمدة · رعاية بمعايير عالمية",
+    title: "عناية طبية تليق بك، في مكانٍ يبعث على الطمأنينة",
     subtitle:
-      "ابتسامتك وصحتك تستحقان أفضل عناية. عيادة متخصصة بفريق طبي معتمد وأحدث الأجهزة — احجز موعدك اليوم.",
+      "نخبة من الاستشاريين، أحدث التقنيات، وتجربة رعاية مُصمَّمة حول راحتك. احجز موعدك اليوم واختبر فرقاً حقيقياً في العناية بصحتك وصحة عائلتك.",
     image: null,
     meta: [
       { value: "12", label: "تخصص طبي" },

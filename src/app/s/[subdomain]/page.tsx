@@ -187,7 +187,8 @@ export default async function TenantSite({ params }: { params: Params }) {
   // Clinic vertical: self-contained medical template.
   if (data.view === "clinic") {
     const clinic: ClinicContent = data.clinic;
-    const fontLink = googleFontsHref([clinic.theme.font || "readex"]);
+    // The "Safa" clinic template uses El Messiri (headings) + IBM Plex Sans Arabic (body).
+    const fontLink = googleFontsHref(["elmessiri", "ibmar"]);
     return (
       <>
         <link rel="stylesheet" href={fontLink} precedence="high" />
