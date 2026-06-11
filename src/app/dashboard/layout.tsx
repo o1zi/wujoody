@@ -23,8 +23,11 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const office = ctx.office;
   const status = office ? STATUS_LABEL[office.status] : null;
 
+  const isClinic = office?.kind === "clinic";
+
   let newLeads = 0;
   let newSupport = 0;
+  let upcomingAppointments = 0;
   if (office) {
     const supabase = await createClient();
     const [{ count: leadsCount }, { count: supportCount }] = await Promise.all([
@@ -42,6 +45,16 @@ export default async function DashboardLayout({ children }: { children: React.Re
     ]);
     newLeads = leadsCount ?? 0;
     newSupport = supportCount ?? 0;
+
+    if (isClinic) {
+      const { count: apptCount } = await supabase
+        .from("appointments")
+        .select("id", { count: "exact", head: true })
+        .eq("office_id", office.id)
+        .gte("starts_at", new Date().toISOString())
+        .in("status", ["booked", "confirmed"]);
+      upcomingAppointments = apptCount ?? 0;
+    }
   }
 
   let caps = await getPlanCaps(undefined);
@@ -58,18 +71,32 @@ export default async function DashboardLayout({ children }: { children: React.Re
     caps = await getPlanCaps(sub?.plan);
   }
 
-  const nav = [
-    { href: "/dashboard", label: "نظرة عامة", badge: 0 },
-    { href: "/dashboard/leads", label: "الرسائل", badge: newLeads },
-    { href: "/dashboard/notifications", label: "الإشعارات", badge: 0 },
-    ...(caps.upload ? [{ href: "/dashboard/analytics", label: "التحليلات", badge: 0 }] : []),
-    { href: "/dashboard/site-editor", label: "محرّر الموقع", badge: 0 },
-    ...(caps.blog ? [{ href: "/dashboard/blog", label: "المدوّنة", badge: 0 }] : []),
-    ...(caps.customDomain ? [{ href: "/dashboard/domain", label: "النطاق الخاص", badge: 0 }] : []),
-    { href: "/dashboard/subscription", label: "الاشتراك", badge: 0 },
-    { href: "/dashboard/settings", label: "الإعدادات", badge: 0 },
-    { href: "/dashboard/support", label: "الدعم الفني", badge: newSupport },
-  ];
+  const nav = isClinic
+    ? [
+        { href: "/dashboard", label: "نظرة عامة", badge: 0 },
+        { href: "/dashboard/appointments", label: "المواعيد", badge: upcomingAppointments },
+        { href: "/dashboard/doctors", label: "الأطباء", badge: 0 },
+        { href: "/dashboard/services", label: "الخدمات", badge: 0 },
+        { href: "/dashboard/hours", label: "أوقات العمل", badge: 0 },
+        { href: "/dashboard/notifications", label: "الإشعارات", badge: 0 },
+        { href: "/dashboard/site-editor", label: "محرّر الموقع", badge: 0 },
+        ...(caps.customDomain ? [{ href: "/dashboard/domain", label: "النطاق الخاص", badge: 0 }] : []),
+        { href: "/dashboard/subscription", label: "الاشتراك", badge: 0 },
+        { href: "/dashboard/settings", label: "الإعدادات", badge: 0 },
+        { href: "/dashboard/support", label: "الدعم الفني", badge: newSupport },
+      ]
+    : [
+        { href: "/dashboard", label: "نظرة عامة", badge: 0 },
+        { href: "/dashboard/leads", label: "الرسائل", badge: newLeads },
+        { href: "/dashboard/notifications", label: "الإشعارات", badge: 0 },
+        ...(caps.upload ? [{ href: "/dashboard/analytics", label: "التحليلات", badge: 0 }] : []),
+        { href: "/dashboard/site-editor", label: "محرّر الموقع", badge: 0 },
+        ...(caps.blog ? [{ href: "/dashboard/blog", label: "المدوّنة", badge: 0 }] : []),
+        ...(caps.customDomain ? [{ href: "/dashboard/domain", label: "النطاق الخاص", badge: 0 }] : []),
+        { href: "/dashboard/subscription", label: "الاشتراك", badge: 0 },
+        { href: "/dashboard/settings", label: "الإعدادات", badge: 0 },
+        { href: "/dashboard/support", label: "الدعم الفني", badge: newSupport },
+      ];
 
   return (
     <div className="admin-shell grid min-h-dvh md:grid-cols-[260px_1fr]">
