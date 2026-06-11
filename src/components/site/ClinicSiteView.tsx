@@ -100,7 +100,9 @@ export default function ClinicSiteView({
       {/* NAV */}
       <nav className="sf-nav">
         <a href="#top" className="sf-brand">
-          <span className="sf-logo"><Leaf /></span>
+          <span className={`sf-logo${c.brand.logo ? " sf-logo-img-wrap" : ""}`}>
+            {c.brand.logo ? <img src={c.brand.logo} alt={c.brand.ar} className="sf-logo-img" /> : <Leaf />}
+          </span>
           <span className="sf-brand-txt">
             <span className="serif sf-brand-ar">{c.brand.ar}</span>
             {c.brand.en && <span className="sf-brand-en">{c.brand.en}</span>}
@@ -395,7 +397,7 @@ export default function ClinicSiteView({
       <footer className="sf-footer">
         <div className="sf-wrap sf-foot-grid">
           <div className="sf-foot-brand">
-            <div className="sf-brand"><span className="sf-logo sf-logo-foot"><Leaf /></span><span className="serif sf-foot-name">{c.brand.ar}</span></div>
+            <div className="sf-brand"><span className={`sf-logo sf-logo-foot${c.brand.logo ? " sf-logo-img-wrap" : ""}`}>{c.brand.logo ? <img src={c.brand.logo} alt={c.brand.ar} className="sf-logo-img" /> : <Leaf />}</span><span className="serif sf-foot-name">{c.brand.ar}</span></div>
             <p>{c.about.lead}</p>
           </div>
           <div className="sf-foot-col">
@@ -459,7 +461,9 @@ const SAFA_CSS = `
 /* nav */
 .sf-nav{position:fixed;top:0;right:0;left:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:24px;padding:16px clamp(20px,5vw,64px);background:rgba(246,241,231,.8);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}
 .sf-brand{display:flex;align-items:center;gap:12px}
-.sf-logo{display:grid;place-items:center;width:42px;height:42px;border-radius:13px;background:linear-gradient(150deg,var(--green),var(--green2));box-shadow:0 8px 22px -8px rgba(30,74,59,.6)}
+.sf-logo{display:grid;place-items:center;width:42px;height:42px;border-radius:13px;background:linear-gradient(150deg,var(--green),var(--green2));box-shadow:0 8px 22px -8px rgba(30,74,59,.6);overflow:hidden}
+.sf-logo-img-wrap{background:#fff;border:1px solid var(--line);box-shadow:0 8px 22px -10px rgba(30,74,59,.4)}
+.sf-logo-img{width:100%;height:100%;object-fit:contain;border-radius:10px}
 .sf-brand-txt{display:flex;flex-direction:column;line-height:1}
 .sf-brand-ar{font-weight:700;font-size:23px;letter-spacing:.5px}
 .sf-brand-en{font-size:11.5px;color:var(--muted);margin-top:3px;direction:ltr}
@@ -504,8 +508,8 @@ const SAFA_CSS = `
 .sf-head-center .sf-lead{margin-left:auto;margin-right:auto}
 /* grids */
 .sf-grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:24px}
-.sf-grid-auto{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:22px}
-.sf-grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:22px}
+.sf-grid-auto{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,360px));gap:22px;justify-content:center}
+.sf-grid-2{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,520px));gap:22px;justify-content:center}
 /* features */
 .sf-feat{padding:34px 30px;border-radius:24px;background:#fff;border:1px solid rgba(23,36,29,.07);box-shadow:0 24px 50px -34px rgba(22,58,46,.4);transition:transform .3s}
 .sf-feat:hover{transform:translateY(-6px)}
