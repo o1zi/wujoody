@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { mergeContent, clampMedia, clampTemplate, clampModels } from "@/lib/site-content";
+import { mergeContent, clampMedia, clampTemplate, clampModels, type SiteContent } from "@/lib/site-content";
+import { mergeClinicContent, type ClinicContent } from "@/lib/clinic-content";
+import ClinicSiteView from "@/components/site/ClinicSiteView";
+import type { PlanCaps } from "@/lib/plans";
 import { siteLiveState } from "@/lib/subscription";
 import { googleFontsHref } from "@/lib/site-fonts";
 import { getPlanCaps } from "@/lib/plans-server";
@@ -30,6 +33,11 @@ import AtelierRuntime from "@/components/site/AtelierRuntime";
 import { resolveTemplate } from "@/lib/site-templates";
 
 type Params = Promise<{ subdomain: string }>;
+
+type OfficeRow = { id: string; name: string; slug: string; status: string; kind: string };
+type LoadResult =
+  | { view: "clinic"; office: OfficeRow; clinic: ClinicContent; live: boolean; expired: boolean }
+  | { view: "engineering"; office: OfficeRow; content: SiteContent; caps: PlanCaps; live: boolean; expired: boolean };
 
 function extractCoords(s: string): string | null {
   let m = s.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
@@ -68,11 +76,11 @@ async function resolveMapQuery(q: string): Promise<string> {
   return v; // plain address / place name
 }
 
-async function loadOffice(slug: string) {
+async function loadOffice(slug: string): Promise<LoadResult | null> {
   const supabase = await createClient();
   const { data: office } = await supabase
     .from("offices")
-    .select("id, name, slug, status")
+    .select("id, name, slug, status, kind")
     .eq("slug", slug.toLowerCase())
     .maybeSingle();
   if (!office) return null;
@@ -100,10 +108,18 @@ async function loadOffice(slug: string) {
   // comp activation — stays live.)
   const { live, expired } = siteLiveState(office.status, sub);
 
+  // Clinics render a separate, self-contained view from their own content model;
+  // plan-based media/template clamps don't apply.
+  if (office.kind === "clinic") {
+    const clinicContent = mergeClinicContent(row?.content);
+    clinicContent.contact.mapQuery = await resolveMapQuery(clinicContent.contact.mapQuery);
+    return { view: "clinic", office, clinic: clinicContent, live, expired };
+  }
+
   const caps = await getPlanCaps(expired ? undefined : sub?.plan);
   const content = clampModels(clampTemplate(clampMedia(mergeContent(row?.content), caps), caps), caps);
   content.contact.mapQuery = await resolveMapQuery(content.contact.mapQuery);
-  return { office, content, live, expired, caps };
+  return { view: "engineering", office, content, live, expired, caps };
 }
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
@@ -111,10 +127,12 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   const data = await loadOffice(subdomain);
   if (!data) return { title: "موقع غير موجود", robots: { index: false, follow: false } };
 
+  // brand/hero/seo are common to both the engineering and clinic content models.
+  const presentation = data.view === "clinic" ? data.clinic : data.content;
   const url = tenantUrl(data.office.slug);
-  const title = `${data.content.brand.ar} · ${data.office.name}`;
-  const description = data.content.hero.subtitle;
-  const logo = data.content.brand.logo;
+  const title = `${presentation.brand.ar} · ${data.office.name}`;
+  const description = presentation.hero.subtitle;
+  const logo = presentation.brand.logo;
   const indexable = data.live;
 
   return {
@@ -122,7 +140,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
     description,
     alternates: { canonical: url },
     robots: indexable ? { index: true, follow: true } : { index: false, follow: false },
-    verification: data.content.seo.googleVerification ? { google: data.content.seo.googleVerification } : undefined,
+    verification: presentation.seo.googleVerification ? { google: presentation.seo.googleVerification } : undefined,
     icons: logo ? { icon: logo, apple: logo } : undefined,
     openGraph: {
       title,
@@ -150,6 +168,18 @@ export default async function TenantSite({ params }: { params: Params }) {
   if (!data.live) {
     const variant = data.expired ? "expired" : data.office.status === "pending" ? "pending" : "suspended";
     return <NotLive variant={variant} slug={subdomain} name={data.office.name} />;
+  }
+
+  // Clinic vertical: self-contained medical template.
+  if (data.view === "clinic") {
+    const clinic: ClinicContent = data.clinic;
+    const fontLink = googleFontsHref([clinic.theme.font || "readex"]);
+    return (
+      <>
+        <link rel="stylesheet" href={fontLink} precedence="high" />
+        <ClinicSiteView content={clinic} slug={data.office.slug} />
+      </>
+    );
   }
 
   const template = resolveTemplate(data.content.theme.layout);
