@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import type { Vertical } from "@/lib/vertical";
 
 // Only these emails may access the super-admin area (in addition to having the
 // super_admin role). Configurable via SUPER_ADMIN_EMAILS (comma-separated).
@@ -20,6 +21,7 @@ export type Office = {
   slug: string;
   status: "pending" | "active" | "suspended";
   owner_id: string;
+  kind: Vertical;
 };
 
 export type Profile = {
@@ -56,7 +58,7 @@ export async function getSessionContext(): Promise<SessionContext | null> {
   if (profile?.office_id) {
     const { data } = await supabase
       .from("offices")
-      .select("id, name, slug, status, owner_id")
+      .select("id, name, slug, status, owner_id, kind")
       .eq("id", profile.office_id)
       .single();
     office = data as Office | null;

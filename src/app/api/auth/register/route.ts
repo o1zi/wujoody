@@ -3,6 +3,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { rateLimit, clientIp } from "@/lib/rate-limit";
 import { normalizePhone } from "@/lib/phone";
+import { asVertical } from "@/lib/vertical";
 
 export const runtime = "nodejs";
 
@@ -28,6 +29,7 @@ export async function POST(req: NextRequest) {
     email?: string;
     phone?: string;
     password?: string;
+    kind?: string;
   };
   try {
     body = await req.json();
@@ -41,6 +43,8 @@ export async function POST(req: NextRequest) {
   const password = body.password ?? "";
   const slug = normalizeSlug(body.slug ?? "");
   const phone = normalizePhone(body.phone);
+  // Unknown/missing values fall back to engineering — never rejected.
+  const kind = asVertical(body.kind);
 
   // Throttle to stop scripted abuse from spinning up offices/auth users.
   if (!rateLimit(`register:ip:${clientIp(req)}`, 5, 15 * 60_000).ok) {
@@ -76,7 +80,7 @@ export async function POST(req: NextRequest) {
     email,
     password,
     email_confirm: true,
-    user_metadata: { full_name: fullName, office_name: officeName, office_slug: slug, phone },
+    user_metadata: { full_name: fullName, office_name: officeName, office_slug: slug, phone, office_kind: kind },
   });
   if (createErr) {
     const already = /registered|already|exists/i.test(createErr.message);

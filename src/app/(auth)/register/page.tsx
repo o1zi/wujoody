@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { normalizePhone } from "@/lib/phone";
 import { Field, Input, Button, Alert } from "@/components/ui";
+import { VERTICALS, VERTICAL_CONFIG, type Vertical } from "@/lib/vertical";
 
 const ROOT_DOMAIN = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "localhost:3000";
 
@@ -19,6 +20,7 @@ function normalizeSlug(v: string) {
 
 export default function RegisterPage() {
   const router = useRouter();
+  const [kind, setKind] = useState<Vertical>("engineering");
   const [officeName, setOfficeName] = useState("");
   const [slug, setSlug] = useState("");
   const [fullName, setFullName] = useState("");
@@ -57,6 +59,7 @@ export default function RegisterPage() {
         email,
         phone: cleanPhone,
         password,
+        kind,
       }),
     });
     const data = (await res.json().catch(() => ({ ok: false }))) as { ok?: boolean; signedIn?: boolean; error?: string };
@@ -70,15 +73,46 @@ export default function RegisterPage() {
     else router.push("/login");
   }
 
+  const cfg = VERTICAL_CONFIG[kind];
+
   return (
     <div>
-      <h1 className="text-2xl font-bold">أنشئ مكتبك</h1>
-      <p className="mt-1 text-sm text-muted">دقائق معدودة ويصبح موقعك جاهزاً.</p>
+      <h1 className="text-2xl font-bold">{cfg.registerTitle}</h1>
+      <p className="mt-1 text-sm text-muted">{cfg.registerSubtitle}</p>
 
-      <form onSubmit={onSubmit} className="mt-7 space-y-4">
+      {/* Vertical picker — what kind of business is this? */}
+      <div className="mt-6">
+        <div className="mb-2 text-xs font-medium text-muted">نوع النشاط — ACTIVITY TYPE</div>
+        <div className="grid grid-cols-2 gap-3">
+          {VERTICALS.map((v) => {
+            const vc = VERTICAL_CONFIG[v];
+            const active = v === kind;
+            return (
+              <button
+                key={v}
+                type="button"
+                onClick={() => setKind(v)}
+                className={`rounded-xl border p-3.5 text-right transition ${
+                  active
+                    ? "border-accent bg-accent/10 ring-1 ring-accent"
+                    : "border-border hover:bg-surface-2"
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">{vc.icon}</span>
+                  <span className="text-sm font-medium">{vc.label}</span>
+                </div>
+                <div className="mt-1.5 text-xs leading-5 text-muted">{vc.pickerHint}</div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <form onSubmit={onSubmit} className="mt-6 space-y-4">
         {error && <Alert>{error}</Alert>}
-        <Field label="اسم المكتب — OFFICE NAME">
-          <Input required value={officeName} onChange={(e) => setOfficeName(e.target.value)} placeholder="مكتب أوتاد الهندسي" />
+        <Field label={cfg.nameFieldLabel}>
+          <Input required value={officeName} onChange={(e) => setOfficeName(e.target.value)} placeholder={cfg.namePlaceholder} />
         </Field>
         <Field label="النطاق الفرعي — SUBDOMAIN" hint={`موقعك سيكون: ${normalizeSlug(slug) || "اسم-المكتب"}.${ROOT_DOMAIN}`}>
           <div className="flex items-center gap-2" dir="ltr">
