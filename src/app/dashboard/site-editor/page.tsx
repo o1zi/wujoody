@@ -2,9 +2,11 @@ import { redirect } from "next/navigation";
 import { getSessionContext } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { mergeContent } from "@/lib/site-content";
+import { mergeClinicContent } from "@/lib/clinic-content";
 import { getPlanCaps } from "@/lib/plans-server";
 import { tenantUrl } from "@/lib/urls";
 import Editor from "./Editor";
+import ClinicEditor from "./ClinicEditor";
 
 export default async function SiteEditorPage() {
   const ctx = await getSessionContext();
@@ -24,6 +26,21 @@ export default async function SiteEditorPage() {
     .select("content")
     .eq("office_id", ctx.office.id)
     .maybeSingle();
+
+  // Clinics use a separate content model + editor; everything else is the
+  // engineering editor below.
+  if (ctx.office.kind === "clinic") {
+    const clinicContent = mergeClinicContent(row?.content);
+    const clinicSiteUrl = ctx.office.status === "active" ? tenantUrl(ctx.office.slug) : null;
+    return (
+      <ClinicEditor
+        officeId={ctx.office.id}
+        initial={clinicContent}
+        siteUrl={clinicSiteUrl}
+        slug={ctx.office.slug}
+      />
+    );
+  }
 
   const { data: sub } = await supabase
     .from("subscriptions")

@@ -23,3 +23,30 @@ export const SECTION_KEYS = SITE_SECTIONS.map((s) => s.key);
 export const STANDARD_SECTIONS = [
   "about", "services", "stats", "process", "projects", "team", "testimonials", "faq", "contact",
 ];
+
+// ---------- Clinic vertical ----------
+// Clinics get a different set of sections (own keys). Order = editor display order.
+export const CLINIC_SECTIONS: { key: string; label: string }[] = [
+  { key: "about", label: "عن العيادة" },
+  { key: "specialties", label: "التخصصات والخدمات" },
+  { key: "doctors", label: "الأطباء" },
+  { key: "results", label: "قبل وبعد" },
+  { key: "prices", label: "الأسعار" },
+  { key: "stats", label: "الأرقام" },
+  { key: "process", label: "رحلة المريض" },
+  { key: "testimonials", label: "آراء المرضى" },
+  { key: "credentials", label: "الاعتمادات" },
+  { key: "faq", label: "الأسئلة الشائعة" },
+  { key: "booking", label: "حجز موعد" },
+  { key: "contact", label: "التواصل" },
+];
+
+export const CLINIC_SECTION_KEYS = CLINIC_SECTIONS.map((s) => s.key);
+
+// Resolve the section list/keys for a given vertical.
+export function sectionsForKind(kind: string | null | undefined) {
+  return kind === "clinic" ? CLINIC_SECTIONS : SITE_SECTIONS;
+}
+export function sectionKeysForKind(kind: string | null | undefined) {
+  return kind === "clinic" ? CLINIC_SECTION_KEYS : SECTION_KEYS;
+}
