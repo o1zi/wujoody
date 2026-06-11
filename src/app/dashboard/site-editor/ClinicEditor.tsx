@@ -278,25 +278,14 @@ export default function ClinicEditor({
           </div>
         </Section>
 
-        {/* الأطباء */}
-        <Section title="الأطباء">
+        {/* الأطباء — العنوان فقط؛ الأطباء أنفسهم من صفحة «الأطباء» في اللوحة */}
+        <Section title="قسم الأطباء">
           {text("العنوان", "doctors.title")}
           {area("الوصف", "doctors.lead")}
-          <div className="space-y-3">
-            {c.doctors.items.map((_, i) => (
-              <div key={i} className="rounded-xl border border-border p-3 space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-muted">طبيب #{i + 1}</span>
-                  <button type="button" className="text-xs text-red-400" onClick={() => removeItem("doctors.items", i)}>حذف</button>
-                </div>
-                {imageField("الصورة", `doctors.items.${i}.image`)}
-                <input className={inputCls} placeholder="اسم الطبيب" value={c.doctors.items[i].name} onChange={(e) => set(`doctors.items.${i}.name`, e.target.value)} />
-                <input className={inputCls} placeholder="التخصص" value={c.doctors.items[i].specialty} onChange={(e) => set(`doctors.items.${i}.specialty`, e.target.value)} />
-                <input className={inputCls} dir="ltr" placeholder="SPECIALTY (EN)" value={c.doctors.items[i].specialtyEn} onChange={(e) => set(`doctors.items.${i}.specialtyEn`, e.target.value)} />
-              </div>
-            ))}
-            <button type="button" className="text-xs text-accent hover:underline" onClick={() => addItem("doctors.items", { name: "", specialty: "", specialtyEn: "", bio: "", image: null })}>+ إضافة طبيب</button>
-          </div>
+          <p className="rounded-lg border border-border bg-surface-2/40 p-3 text-xs text-muted">
+            👨‍⚕️ تُدار أسماء الأطباء وتخصصاتهم وصورهم من صفحة <a href="/dashboard/doctors" className="text-accent hover:underline">«الأطباء»</a> —
+            وتظهر تلقائياً هنا وفي خيارات الحجز. (مصدر واحد، بلا تكرار)
+          </p>
         </Section>
 
         {/* قبل وبعد */}

@@ -1,6 +1,7 @@
 import type { ClinicContent } from "@/lib/clinic-content";
+import type { PublicDoctor } from "@/lib/clinic-booking";
 import { fontByKey } from "@/lib/site-fonts";
-import ClinicBookingForm, { type BookingService, type BookingDoctor } from "./ClinicBookingForm";
+import ClinicBookingForm, { type BookingService } from "./ClinicBookingForm";
 
 const ACCENT_HEX: Record<string, string> = {
   azure: "#2563EB",
@@ -28,7 +29,7 @@ export default function ClinicSiteView({
   content: ClinicContent;
   slug: string;
   services?: BookingService[];
-  doctors?: BookingDoctor[];
+  doctors?: PublicDoctor[];
 }) {
   const c = content;
   const v = c.visible;
@@ -137,21 +138,20 @@ export default function ClinicSiteView({
       )}
 
       {/* Doctors */}
-      {v.doctors && c.doctors.items.length > 0 && (
+      {v.doctors && doctors.length > 0 && (
         <section id="doctors" className="cl-section">
           <div className="cl-container">
             <h2 className="cl-h2">{c.doctors.title}</h2>
             <p className="cl-sub">{c.doctors.lead}</p>
             <div className="cl-grid cl-grid-3">
-              {c.doctors.items.map((d, i) => (
-                <div key={i} className="cl-doctor">
+              {doctors.map((d) => (
+                <div key={d.id} className="cl-doctor">
                   <div className="cl-doctor-photo">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     {d.image ? <img src={d.image} alt={d.name} /> : <span className="cl-doctor-ph">🩺</span>}
                   </div>
                   <h3>{d.name}</h3>
-                  <p className="cl-doctor-spec">{d.specialty}</p>
-                  {d.specialtyEn && <p className="cl-doctor-en">{d.specialtyEn}</p>}
+                  {d.specialty && <p className="cl-doctor-spec">{d.specialty}</p>}
                 </div>
               ))}
             </div>
@@ -303,7 +303,7 @@ export default function ClinicSiteView({
             <h2 className="cl-h2 cl-center">{c.booking.title}</h2>
             <p className="cl-sub cl-center">{c.booking.lead}</p>
             <div className="cl-booking-card">
-              <ClinicBookingForm slug={slug} services={bookingServices} doctors={doctors} />
+              <ClinicBookingForm slug={slug} services={bookingServices} doctors={doctors.map((d) => ({ id: d.id, name: d.name }))} />
               <p className="cl-booking-note">{c.booking.note}</p>
             </div>
           </div>

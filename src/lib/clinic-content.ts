@@ -42,11 +42,12 @@ export type ClinicContent = {
     lead: string;
     items: { title: string; desc: string }[];
   };
-  // The clinic's doctors — name, specialty, optional bio + photo.
+  // Doctors section heading only — the actual doctors (name/specialty/photo)
+  // are managed in the dashboard (clinic_doctors table) so booking + the public
+  // site share one source of truth.
   doctors: {
     title: string;
     lead: string;
-    items: { name: string; specialty: string; specialtyEn: string; bio?: string; image: string | null }[];
   };
   // Before / after case gallery (image pairs).
   results: {
@@ -148,11 +149,6 @@ export const clinicDefaultContent: ClinicContent = {
   doctors: {
     title: "نخبة من الأطباء",
     lead: "فريق طبي معتمد، يضع راحتك وسلامتك أولاً.",
-    items: [
-      { name: "د. أحمد الزهراني", specialty: "استشاري طب وتجميل الأسنان", specialtyEn: "COSMETIC DENTISTRY", bio: "", image: null },
-      { name: "د. ليان الحربي", specialty: "أخصائية تقويم الأسنان", specialtyEn: "ORTHODONTICS", bio: "", image: null },
-      { name: "د. خالد العتيبي", specialty: "استشاري زراعة الأسنان", specialtyEn: "IMPLANTOLOGY", bio: "", image: null },
-    ],
   },
   results: {
     title: "قبل وبعد",

@@ -5,6 +5,10 @@
 // minute-of-day in that local time; appointments are stored as absolute
 // timestamptz built from `${date}T${HH:MM}:00+03:00`.
 
+// A doctor as shown publicly (and selectable in booking). Managed in the
+// dashboard (clinic_doctors); the public site + booking widget both read it.
+export type PublicDoctor = { id: string; name: string; specialty: string | null; image: string | null };
+
 export const RIYADH_OFFSET_MIN = 180; // UTC+3
 const DAY_MIN = 24 * 60;
 const MS_PER_MIN = 60_000;
