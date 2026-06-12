@@ -13,6 +13,7 @@ const STATUS: Record<string, { text: string; cls: string }> = {
 const KIND: Record<string, { text: string; cls: string }> = {
   clinic: { text: "🩺 عيادة", cls: "bg-sky-500/15 text-sky-300" },
   engineering: { text: "🏛️ مكتب هندسي", cls: "bg-violet-500/15 text-violet-300" },
+  law: { text: "⚖️ مكتب محاماة", cls: "bg-amber-500/15 text-amber-300" },
 };
 
 const TABS = [
@@ -57,7 +58,7 @@ export default function OfficesTable({
   );
   const [q, setQ] = useState("");
   const [sort, setSort] = useState<"new" | "ends" | "name">("new");
-  const [kind, setKind] = useState<"all" | "engineering" | "clinic">("all");
+  const [kind, setKind] = useState<"all" | "engineering" | "clinic" | "law">("all");
 
   const counts = useMemo(() => {
     const c: Record<string, number> = {};
@@ -68,7 +69,7 @@ export default function OfficesTable({
   const filtered = useMemo(() => {
     const s = q.trim().toLowerCase();
     let r = rows.filter((x) => inTab(x, tab));
-    if (kind !== "all") r = r.filter((x) => (kind === "clinic" ? x.kind === "clinic" : x.kind !== "clinic"));
+    if (kind !== "all") r = r.filter((x) => (kind === "engineering" ? x.kind !== "clinic" && x.kind !== "law" : x.kind === kind));
     if (s) r = r.filter((x) => x.name.toLowerCase().includes(s) || x.slug.toLowerCase().includes(s) || x.ownerEmail.toLowerCase().includes(s));
     r = [...r];
     if (sort === "name") r.sort((a, b) => a.name.localeCompare(b.name, "ar"));
@@ -105,6 +106,7 @@ export default function OfficesTable({
           <option value="all">كل القطاعات</option>
           <option value="engineering">🏛️ مكاتب هندسية</option>
           <option value="clinic">🩺 عيادات</option>
+          <option value="law">⚖️ مكاتب محاماة</option>
         </select>
         <select value={sort} onChange={(e) => setSort(e.target.value as typeof sort)} className="rounded-lg glass-panel-2 px-3 py-2 text-sm outline-none">
           <option value="new">الأحدث</option>

@@ -153,9 +153,36 @@ export const CLINIC_PLAN_FEATURES: Record<string, string[]> = {
   ],
 };
 
+// Law-firm marketing copy per plan tier.
+export const LAW_PLAN_FEATURES: Record<string, string[]> = {
+  basic: [
+    "موقع احترافي للمكتب بنطاق فرعي خاص",
+    "حجز استشارات أونلاين + إشعار فوري بكل طلب",
+    "نموذج «اعرض قضيتك بسرّية» لاستقبال القضايا",
+    "أقسام: مجالات الممارسة، المحامون، الأتعاب، الأسئلة",
+    "تحسين الظهور في جوجل + خريطة الموقع",
+    "أزرار تواصل (واتساب/لينكدإن)",
+  ],
+  pro: [
+    "كل مزايا الأساسية",
+    "الحاسبات القانونية (المواريث + نهاية الخدمة)",
+    "شارات الاعتماد (الهيئة السعودية للمحامين)",
+    "آراء العملاء + رحلة القضية",
+    "ربط نطاقك الخاص (.com/.sa)",
+    "تخصيص كامل للألوان والقالب (هيبة/عدالة)",
+  ],
+  premium: [
+    "كل مزايا الاحترافية",
+    "رفع صور الفريق والشعار بلا حدود",
+    "تقرير أداء شهري بالبريد",
+    "أولوية في الدعم الفني",
+  ],
+};
+
 // The feature bullets to display for a plan, tailored to the office vertical.
 export function planFeaturesFor(kind: string | null | undefined, plan: Plan): string[] {
   if (kind === "clinic") return CLINIC_PLAN_FEATURES[plan.code] ?? plan.features;
+  if (kind === "law") return LAW_PLAN_FEATURES[plan.code] ?? plan.features;
   return plan.features;
 }
 

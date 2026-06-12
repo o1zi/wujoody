@@ -36,6 +36,7 @@ export type AdminData = {
     expired: number;
     newThisMonth: number;
     clinics: number; // offices with kind = clinic
+    law: number; // offices with kind = law
     engineering: number; // offices with kind = engineering
   };
   planCounts: Record<string, number>; // active subs per plan code
@@ -113,7 +114,8 @@ export async function loadAdminData(): Promise<AdminData> {
       expired: rows.filter((r) => r.expired).length,
       newThisMonth: rows.filter((r) => new Date(r.createdAt) >= startOfMonth).length,
       clinics: rows.filter((r) => r.kind === "clinic").length,
-      engineering: rows.filter((r) => r.kind !== "clinic").length,
+      law: rows.filter((r) => r.kind === "law").length,
+      engineering: rows.filter((r) => r.kind !== "clinic" && r.kind !== "law").length,
     },
     planCounts,
   };

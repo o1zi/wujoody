@@ -87,6 +87,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
         { href: "/dashboard/hours", label: "أوقات العمل", badge: 0, icon: "hours" },
         { href: "/dashboard/notifications", label: "الإشعارات", badge: 0, icon: "notifs" },
         { href: "/dashboard/site-editor", label: "محرّر الموقع", badge: 0, icon: "editor" },
+        ...(caps.blog ? [{ href: "/dashboard/blog", label: "المدوّنة القانونية", badge: 0, icon: "blog" }] : []),
         ...(caps.customDomain ? [{ href: "/dashboard/domain", label: "النطاق الخاص", badge: 0, icon: "domain" }] : []),
         { href: "/dashboard/subscription", label: "الاشتراك", badge: 0, icon: "subscription" },
         { href: "/dashboard/settings", label: "الإعدادات", badge: 0, icon: "settings" },
