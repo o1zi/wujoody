@@ -8,6 +8,8 @@ import ClinicSiteLuxe from "@/components/site/ClinicSiteLuxe";
 import ClinicSiteYasmin from "@/components/site/ClinicSiteYasmin";
 import ClinicSiteAurora from "@/components/site/ClinicSiteAurora";
 import ClinicSiteWaqar from "@/components/site/ClinicSiteWaqar";
+import { mergeLawContent, type LawContent } from "@/lib/law-content";
+import LawSiteView from "@/components/site/LawSiteView";
 import type { BookingService } from "@/components/site/ClinicBookingForm";
 import type { PublicDoctor } from "@/lib/clinic-booking";
 import type { PlanCaps } from "@/lib/plans";
@@ -43,6 +45,7 @@ type Params = Promise<{ subdomain: string }>;
 type OfficeRow = { id: string; name: string; slug: string; status: string; kind: string };
 type LoadResult =
   | { view: "clinic"; office: OfficeRow; clinic: ClinicContent; services: BookingService[]; doctors: PublicDoctor[]; live: boolean; expired: boolean }
+  | { view: "law"; office: OfficeRow; law: LawContent; lawyers: PublicDoctor[]; live: boolean; expired: boolean }
   | { view: "engineering"; office: OfficeRow; content: SiteContent; caps: PlanCaps; live: boolean; expired: boolean };
 
 function extractCoords(s: string): string | null {
@@ -134,6 +137,25 @@ async function loadOffice(slug: string): Promise<LoadResult | null> {
     return { view: "clinic", office, clinic: clinicContent, services, doctors, live, expired };
   }
 
+  if (office.kind === "law") {
+    const lawContent = mergeLawContent(row?.content);
+    lawContent.contact.mapQuery = await resolveMapQuery(lawContent.contact.mapQuery);
+    // Lawyers are stored in the shared clinic_doctors table (operational data).
+    const { data: lw } = await supabase
+      .from("clinic_doctors")
+      .select("id, name, specialty, image")
+      .eq("office_id", office.id)
+      .eq("active", true)
+      .order("sort");
+    const lawyers: PublicDoctor[] = (lw ?? []).map((d) => ({
+      id: d.id as string,
+      name: d.name as string,
+      specialty: (d.specialty as string | null) ?? null,
+      image: (d.image as string | null) ?? null,
+    }));
+    return { view: "law", office, law: lawContent, lawyers, live, expired };
+  }
+
   const caps = await getPlanCaps(expired ? undefined : sub?.plan);
   const content = clampModels(clampTemplate(clampMedia(mergeContent(row?.content), caps), caps), caps);
   content.contact.mapQuery = await resolveMapQuery(content.contact.mapQuery);
@@ -146,7 +168,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   if (!data) return { title: "موقع غير موجود", robots: { index: false, follow: false } };
 
   // brand/hero/seo are common to both the engineering and clinic content models.
-  const presentation = data.view === "clinic" ? data.clinic : data.content;
+  const presentation = data.view === "clinic" ? data.clinic : data.view === "law" ? data.law : data.content;
   const url = tenantUrl(data.office.slug);
   const title = `${presentation.brand.ar} · ${data.office.name}`;
   const description = presentation.hero.subtitle;
@@ -210,6 +232,17 @@ export default async function TenantSite({ params }: { params: Params }) {
         ) : (
           <ClinicSiteView {...props} />
         )}
+      </>
+    );
+  }
+
+  if (data.view === "law") {
+    const law: LawContent = data.law;
+    const fontLink = googleFontsHref([law.theme.font || "markazi", "tajawal"]);
+    return (
+      <>
+        <link rel="stylesheet" href={fontLink} precedence="high" />
+        <LawSiteView content={law} slug={data.office.slug} lawyers={data.lawyers} />
       </>
     );
   }
