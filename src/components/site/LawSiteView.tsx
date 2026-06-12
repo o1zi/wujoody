@@ -4,6 +4,7 @@ import type { LawContent } from "@/lib/law-content";
 import type { PublicDoctor } from "@/lib/clinic-booking";
 import { fontByKey } from "@/lib/site-fonts";
 import LawIntakeForm from "./LawIntakeForm";
+import ClinicBookingForm, { type BookingService } from "./ClinicBookingForm";
 
 // "Hayba" law-firm template — authoritative navy + gold (maroon variant via the
 // accent). Serif headings. Built for law offices: practice areas, lawyers,
@@ -63,10 +64,12 @@ export default function LawSiteView({
   content,
   slug,
   lawyers = [],
+  services = [],
 }: {
   content: LawContent;
   slug: string;
   lawyers?: PublicDoctor[];
+  services?: BookingService[];
 }) {
   const c = content;
   const v = c.visible;
@@ -74,6 +77,8 @@ export default function LawSiteView({
   const fontFamily = `${fontByKey(c.theme.font).family}, serif`;
   const wa = waLink(c.contact.whatsapp);
   const areas = c.practiceAreas.items.map((a) => a.title).filter(Boolean);
+  const bookingServices: BookingService[] =
+    services.length > 0 ? services : areas.map((name) => ({ id: null, name }));
   const mapQ = c.contact.mapQuery?.trim();
   const mapSrc = mapQ ? `https://www.google.com/maps?q=${encodeURIComponent(mapQ)}&hl=ar&output=embed` : null;
   const two = (n: number) => String(n).padStart(2, "0");
@@ -228,6 +233,30 @@ export default function LawSiteView({
           <div className="lw-wrap lw-faq">
             <div className="lw-head lw-head-center"><span className="lw-kicker lw-kicker-d"><span className="lw-kicker-line lw-line-d" />الأسئلة الشائعة</span><h2 className="disp lw-h2">إجابات لما يهمّك</h2></div>
             {c.faq.items.map((f, i) => (<details key={i} className="lw-faq-item"><summary>{f.q}<span className="lw-faq-plus"><Svg d={I.plus} s={18} /></span></summary><p>{f.a}</p></details>))}
+          </div>
+        </section>
+      )}
+
+      {/* BOOKING — legal consultation (slot-based) */}
+      {v.booking && (
+        <section id="book" className="lw-sec lw-sec-soft">
+          <div className="lw-wrap lw-intake-wrap">
+            <div className="lw-intake">
+              <div className="lw-intake-head">
+                <span className="lw-kicker"><span className="lw-kicker-line" />{c.booking.title}</span>
+                <h2 className="disp lw-intake-h">{c.booking.lead}</h2>
+              </div>
+              <div className="lw-intake-body">
+                <ClinicBookingForm
+                  slug={slug}
+                  services={bookingServices}
+                  doctors={lawyers.map((d) => ({ id: d.id, name: d.name }))}
+                  providerLabel="المحامي"
+                  providerAnyLabel="أي محامٍ متاح"
+                />
+                <p className="lw-intake-note">{c.booking.note}</p>
+              </div>
+            </div>
           </div>
         </section>
       )}
@@ -424,6 +453,20 @@ const LW_CSS = `
 .lw-fld label{font-size:14px;font-weight:600;color:var(--ink)}
 .lw-fld input,.lw-fld select,.lw-fld textarea{width:100%;padding:13px 15px;border-radius:8px;border:1.5px solid var(--line);background:var(--bg);font:inherit;font-size:15px;color:var(--ink);outline:none;font-family:'Tajawal',sans-serif;transition:border-color .2s,box-shadow .2s}
 .lw-fld input:focus,.lw-fld select:focus,.lw-fld textarea:focus{border-color:var(--p);box-shadow:0 0 0 3px var(--p-soft);background:#fff}
+/* consultation booking form (ClinicBookingForm classes) */
+.lw .cl-form{display:flex;flex-direction:column;gap:16px}
+.lw .cl-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.lw .cl-fld{display:flex;flex-direction:column;gap:7px}
+.lw .cl-fld label{font-size:14px;font-weight:600;color:var(--ink)}
+.lw .cl-fld input,.lw .cl-fld select,.lw .cl-fld textarea{width:100%;padding:13px 15px;border-radius:8px;border:1.5px solid var(--line);background:var(--bg);font:inherit;font-size:15px;color:var(--ink);outline:none;transition:border-color .2s,box-shadow .2s}
+.lw .cl-fld input:focus,.lw .cl-fld select:focus,.lw .cl-fld textarea:focus{border-color:var(--p);box-shadow:0 0 0 3px var(--p-soft);background:#fff}
+.lw .cl-slots{display:flex;flex-wrap:wrap;gap:9px}
+.lw .cl-slot{padding:9px 15px;border-radius:6px;border:1.5px solid var(--line);background:var(--bg);font:inherit;cursor:pointer;color:var(--ink);font-size:14.5px;transition:all .18s}
+.lw .cl-slot:hover{border-color:var(--p)}
+.lw .cl-slot-on{background:var(--p);color:#fff;border-color:var(--p)}
+.lw .cl-slots-msg{color:var(--muted);font-size:14px;margin:0}
+.lw .cl-btn{margin-top:4px;width:100%;padding:15px;border-radius:8px;border:none;background:var(--gold);color:#1c1405;font-weight:700;font-size:16.5px;cursor:pointer;font-family:inherit;box-shadow:0 12px 26px -12px rgba(176,141,79,.55);transition:transform .22s,filter .22s}
+.lw .cl-btn:hover{transform:translateY(-2px);filter:brightness(1.05)}
 /* footer */
 .lw-footer{background:var(--p-d);color:#B7C0CE;padding:clamp(58px,7vw,88px) 0 34px;font-family:'Tajawal',sans-serif}
 .lw-foot-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:42px}

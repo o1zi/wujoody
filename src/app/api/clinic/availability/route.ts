@@ -32,8 +32,8 @@ export async function GET(request: NextRequest) {
     .select("id, status, kind")
     .eq("slug", slug)
     .maybeSingle();
-  if (!office || office.status !== "active" || office.kind !== "clinic") {
-    return NextResponse.json({ error: "clinic not available" }, { status: 404 });
+  if (!office || office.status !== "active" || !["clinic", "law"].includes(office.kind)) {
+    return NextResponse.json({ error: "not available" }, { status: 404 });
   }
 
   // Hours for the requested weekday (null → engine uses defaults).

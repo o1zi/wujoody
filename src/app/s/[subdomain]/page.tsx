@@ -45,7 +45,7 @@ type Params = Promise<{ subdomain: string }>;
 type OfficeRow = { id: string; name: string; slug: string; status: string; kind: string };
 type LoadResult =
   | { view: "clinic"; office: OfficeRow; clinic: ClinicContent; services: BookingService[]; doctors: PublicDoctor[]; live: boolean; expired: boolean }
-  | { view: "law"; office: OfficeRow; law: LawContent; lawyers: PublicDoctor[]; live: boolean; expired: boolean }
+  | { view: "law"; office: OfficeRow; law: LawContent; lawyers: PublicDoctor[]; services: BookingService[]; live: boolean; expired: boolean }
   | { view: "engineering"; office: OfficeRow; content: SiteContent; caps: PlanCaps; live: boolean; expired: boolean };
 
 function extractCoords(s: string): string | null {
@@ -140,20 +140,19 @@ async function loadOffice(slug: string): Promise<LoadResult | null> {
   if (office.kind === "law") {
     const lawContent = mergeLawContent(row?.content);
     lawContent.contact.mapQuery = await resolveMapQuery(lawContent.contact.mapQuery);
-    // Lawyers are stored in the shared clinic_doctors table (operational data).
-    const { data: lw } = await supabase
-      .from("clinic_doctors")
-      .select("id, name, specialty, image")
-      .eq("office_id", office.id)
-      .eq("active", true)
-      .order("sort");
+    // Lawyers + legal services reuse the shared clinic_doctors/clinic_services tables.
+    const [{ data: lw }, { data: lsvc }] = await Promise.all([
+      supabase.from("clinic_doctors").select("id, name, specialty, image").eq("office_id", office.id).eq("active", true).order("sort"),
+      supabase.from("clinic_services").select("id, name").eq("office_id", office.id).eq("active", true).order("sort"),
+    ]);
     const lawyers: PublicDoctor[] = (lw ?? []).map((d) => ({
       id: d.id as string,
       name: d.name as string,
       specialty: (d.specialty as string | null) ?? null,
       image: (d.image as string | null) ?? null,
     }));
-    return { view: "law", office, law: lawContent, lawyers, live, expired };
+    const lawServices: BookingService[] = (lsvc ?? []).map((s) => ({ id: s.id as string, name: s.name as string }));
+    return { view: "law", office, law: lawContent, lawyers, services: lawServices, live, expired };
   }
 
   const caps = await getPlanCaps(expired ? undefined : sub?.plan);
@@ -242,7 +241,7 @@ export default async function TenantSite({ params }: { params: Params }) {
     return (
       <>
         <link rel="stylesheet" href={fontLink} precedence="high" />
-        <LawSiteView content={law} slug={data.office.slug} lawyers={data.lawyers} />
+        <LawSiteView content={law} slug={data.office.slug} lawyers={data.lawyers} services={data.services} />
       </>
     );
   }

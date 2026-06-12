@@ -65,8 +65,8 @@ export async function POST(request: NextRequest) {
     .select("id, name, status, kind, owner_id")
     .eq("slug", slug)
     .maybeSingle();
-  if (!office || office.status !== "active" || office.kind !== "clinic") {
-    return NextResponse.json({ error: "clinic not available" }, { status: 404 });
+  if (!office || office.status !== "active" || !["clinic", "law"].includes(office.kind)) {
+    return NextResponse.json({ error: "not available" }, { status: 404 });
   }
 
   // ---- Re-validate the slot is still bookable (race-safe) ----

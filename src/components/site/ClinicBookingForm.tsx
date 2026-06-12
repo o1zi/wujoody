@@ -12,10 +12,14 @@ export default function ClinicBookingForm({
   slug,
   services,
   doctors,
+  providerLabel = "الطبيب",
+  providerAnyLabel = "أي طبيب متاح",
 }: {
   slug: string;
   services: BookingService[];
   doctors: BookingDoctor[];
+  providerLabel?: string;
+  providerAnyLabel?: string;
 }) {
   const [serviceIdx, setServiceIdx] = useState(-1);
   const [doctorId, setDoctorId] = useState("");
@@ -115,9 +119,9 @@ export default function ClinicBookingForm({
 
       {doctors.length > 0 && (
         <div className="cl-fld">
-          <label>الطبيب</label>
+          <label>{providerLabel}</label>
           <select value={doctorId} onChange={(e) => setDoctorId(e.target.value)}>
-            <option value="">أي طبيب متاح</option>
+            <option value="">{providerAnyLabel}</option>
             {doctors.map((d) => (
               <option key={d.id} value={d.id}>{d.name}</option>
             ))}
