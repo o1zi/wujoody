@@ -83,7 +83,7 @@ export default function RegisterPage() {
       {/* Vertical picker — what kind of business is this? */}
       <div className="mt-6">
         <div className="mb-2 text-xs font-medium text-muted">نوع النشاط — ACTIVITY TYPE</div>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           {VERTICALS.map((v) => {
             const vc = VERTICAL_CONFIG[v];
             const active = v === kind;

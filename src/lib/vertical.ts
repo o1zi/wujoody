@@ -4,9 +4,9 @@
 // per-vertical labels/copy and is import-safe from client components (no server
 // deps) so both the public registration form and server code can use it.
 
-export type Vertical = "engineering" | "clinic";
+export type Vertical = "engineering" | "clinic" | "law";
 
-export const VERTICALS: Vertical[] = ["engineering", "clinic"];
+export const VERTICALS: Vertical[] = ["engineering", "clinic", "law"];
 
 export const DEFAULT_VERTICAL: Vertical = "engineering";
 
@@ -59,10 +59,23 @@ export const VERTICAL_CONFIG: Record<Vertical, VerticalConfig> = {
     defaultName: "عيادة",
     pickerHint: "موقع للعيادة + حجز مواعيد + إدارة الأطباء",
   },
+  law: {
+    kind: "law",
+    label: "مكتب محاماة",
+    labelPlural: "مكاتب المحاماة",
+    entityLabel: "المكتب",
+    icon: "⚖️",
+    registerTitle: "أنشئ مكتب محاماتك",
+    registerSubtitle: "دقائق معدودة ويصبح موقع مكتبك جاهزاً لاستقبال الاستشارات.",
+    nameFieldLabel: "اسم المكتب — LAW FIRM NAME",
+    namePlaceholder: "مكتب العدالة للمحاماة",
+    defaultName: "مكتب محاماة",
+    pickerHint: "موقع للمكتب + حجز استشارات + حاسبات قانونية",
+  },
 };
 
 export function isVertical(v: unknown): v is Vertical {
-  return v === "engineering" || v === "clinic";
+  return v === "engineering" || v === "clinic" || v === "law";
 }
 
 /** Coerce an unknown/legacy value to a valid vertical config (defaults to engineering). */
