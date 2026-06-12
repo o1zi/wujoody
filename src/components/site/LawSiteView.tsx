@@ -4,6 +4,7 @@ import type { LawContent } from "@/lib/law-content";
 import type { PublicDoctor } from "@/lib/clinic-booking";
 import { fontByKey } from "@/lib/site-fonts";
 import LawIntakeForm from "./LawIntakeForm";
+import LawCalculators from "./LawCalculators";
 import ClinicBookingForm, { type BookingService } from "./ClinicBookingForm";
 
 // "Hayba" law-firm template — authoritative navy + gold (maroon variant via the
@@ -179,6 +180,16 @@ export default function LawSiteView({
             <div className="lw-grid-auto">
               {lawyers.map((d) => (<div key={d.id} className="lw-lawyer"><div className="lw-lawyer-img">{d.image ? <img src={d.image} alt={d.name} /> : <div className="lw-lawyer-ph"><Svg d={I.user} s={42} /></div>}</div><div className="lw-lawyer-body"><h3 className="disp">{d.name}</h3>{d.specialty && <span className="lw-lawyer-spec">{d.specialty}</span>}</div></div>))}
             </div>
+          </div>
+        </section>
+      )}
+
+      {/* LEGAL CALCULATORS */}
+      {v.calculators && (
+        <section id="calc" className="lw-sec">
+          <div className="lw-wrap lw-narrow">
+            <div className="lw-head lw-head-center"><span className="lw-kicker lw-kicker-d"><span className="lw-kicker-line lw-line-d" />أدوات مجانية</span><h2 className="disp lw-h2">حاسبات قانونية فورية</h2><p className="lw-lead">احسب مكافأة نهاية الخدمة أو تقسيم الميراث في ثوانٍ.</p></div>
+            <LawCalculators />
           </div>
         </section>
       )}
@@ -467,6 +478,29 @@ const LW_CSS = `
 .lw .cl-slots-msg{color:var(--muted);font-size:14px;margin:0}
 .lw .cl-btn{margin-top:4px;width:100%;padding:15px;border-radius:8px;border:none;background:var(--gold);color:#1c1405;font-weight:700;font-size:16.5px;cursor:pointer;font-family:inherit;box-shadow:0 12px 26px -12px rgba(176,141,79,.55);transition:transform .22s,filter .22s}
 .lw .cl-btn:hover{transform:translateY(-2px);filter:brightness(1.05)}
+/* legal calculators */
+.lw-calc{background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px;box-shadow:0 12px 30px -18px rgba(22,36,58,.2);font-family:'Tajawal',sans-serif}
+.lw-calc-tabs{display:flex;gap:6px;background:var(--bg2);border-radius:8px;padding:6px;margin-bottom:18px}
+.lw-calc-tab{flex:1;padding:12px;border:none;border-radius:6px;background:transparent;font:inherit;font-weight:700;font-size:15px;color:var(--muted);cursor:pointer;transition:.2s}
+.lw-calc-tab.on{background:var(--p);color:#fff}
+.lw-calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:0 12px}
+@media(max-width:540px){.lw-calc-grid{grid-template-columns:1fr}}
+.lw-calc-fld{display:flex;flex-direction:column;gap:7px}
+.lw-calc-fld span{font-size:13.5px;font-weight:600;color:var(--ink)}
+.lw-calc-fld input,.lw-calc-fld select{padding:12px 14px;border-radius:8px;border:1.5px solid var(--line);background:var(--bg);font:inherit;font-size:15px;color:var(--ink);outline:none;transition:border-color .2s,box-shadow .2s}
+.lw-calc-fld input:focus,.lw-calc-fld select:focus{border-color:var(--p);box-shadow:0 0 0 3px var(--p-soft);background:#fff}
+.lw-calc-check{display:flex;align-items:center;gap:9px;font-size:14.5px;color:var(--ink);padding-top:6px}
+.lw-calc-result{margin:18px 12px 0;border-top:1px solid var(--line);padding-top:16px;display:flex;flex-direction:column;gap:10px}
+.lw-calc-total{display:flex;align-items:center;justify-content:space-between;background:var(--p-soft);border:1px solid color-mix(in srgb,var(--p) 22%,#fff);border-radius:8px;padding:14px 16px}
+.lw-calc-total span{font-weight:600;color:var(--ink)}
+.lw-calc-total strong{font-size:1.5rem;color:var(--p)}
+.lw-calc-total small{font-size:.8rem;color:var(--muted);font-weight:500}
+.lw-calc-row{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:14.5px;color:var(--muted)}
+.lw-calc-row strong{color:var(--ink)}
+.lw-calc-row small{color:var(--gold);font-weight:600}
+.lw-calc-note{background:var(--gold-soft);color:var(--p);border-radius:8px;padding:10px 14px;font-size:13.5px;justify-content:center}
+.lw-calc-disc{margin:16px 12px 0;font-size:13px;color:var(--muted);text-align:center}
+.lw-calc-cta{display:block;margin:14px 12px 8px;text-align:center}
 /* footer */
 .lw-footer{background:var(--p-d);color:#B7C0CE;padding:clamp(58px,7vw,88px) 0 34px;font-family:'Tajawal',sans-serif}
 .lw-foot-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:42px}

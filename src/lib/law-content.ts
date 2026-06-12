@@ -40,7 +40,7 @@ export type LawContent = {
   };
   visible: {
     about: boolean; practiceAreas: boolean; lawyers: boolean; fees: boolean; stats: boolean; process: boolean;
-    testimonials: boolean; credentials: boolean; faq: boolean; booking: boolean; intake: boolean; contact: boolean;
+    calculators: boolean; testimonials: boolean; credentials: boolean; faq: boolean; booking: boolean; intake: boolean; contact: boolean;
   };
 };
 
@@ -148,7 +148,7 @@ export const lawDefaultContent: LawContent = {
   },
   visible: {
     about: true, practiceAreas: true, lawyers: true, fees: true, stats: true, process: true,
-    testimonials: true, credentials: true, faq: true, booking: true, intake: true, contact: true,
+    calculators: true, testimonials: true, credentials: true, faq: true, booking: true, intake: true, contact: true,
   },
 };
 

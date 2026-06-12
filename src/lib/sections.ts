@@ -51,6 +51,7 @@ export const LAW_SECTIONS: { key: string; label: string }[] = [
   { key: "fees", label: "الأتعاب" },
   { key: "stats", label: "الأرقام" },
   { key: "process", label: "رحلة القضية" },
+  { key: "calculators", label: "الحاسبات القانونية" },
   { key: "testimonials", label: "آراء العملاء" },
   { key: "credentials", label: "التراخيص" },
   { key: "faq", label: "الأسئلة الشائعة" },
