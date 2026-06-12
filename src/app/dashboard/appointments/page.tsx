@@ -7,7 +7,7 @@ export default async function AppointmentsPage() {
   const ctx = await getSessionContext();
   if (!ctx) redirect("/login");
   if (!ctx.office) redirect("/dashboard");
-  if (ctx.office.kind !== "clinic") redirect("/dashboard");
+  if (!["clinic", "law"].includes(ctx.office.kind)) redirect("/dashboard");
 
   const supabase = await createClient();
   // Show recent + all upcoming (last 14 days onward), soonest first.
@@ -22,5 +22,5 @@ export default async function AppointmentsPage() {
     .order("starts_at", { ascending: true })
     .limit(300);
 
-  return <AppointmentsBoard officeId={ctx.office.id} initial={(data as Appointment[]) ?? []} />;
+  return <AppointmentsBoard officeId={ctx.office.id} initial={(data as Appointment[]) ?? []} kind={ctx.office.kind} />;
 }

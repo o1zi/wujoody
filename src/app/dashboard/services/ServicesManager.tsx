@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Button, Alert } from "@/components/ui";
+import { providerLabels } from "@/lib/provider-labels";
 
 export type ClinicService = {
   id: string;
@@ -15,7 +16,8 @@ export type ClinicService = {
 
 const inputCls = "w-full rounded-lg glass-panel-2 px-3 py-2 text-sm outline-none focus:border-accent";
 
-export default function ServicesManager({ officeId, initial }: { officeId: string; initial: ClinicService[] }) {
+export default function ServicesManager({ officeId, initial, kind }: { officeId: string; initial: ClinicService[]; kind?: string }) {
+  const L = providerLabels(kind);
   const [rows, setRows] = useState<ClinicService[]>(initial);
   const [removed, setRemoved] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
@@ -70,8 +72,8 @@ export default function ServicesManager({ officeId, initial }: { officeId: strin
 
   return (
     <div className="mx-auto max-w-3xl pb-28">
-      <h1 className="text-2xl font-bold">الخدمات والأسعار</h1>
-      <p className="mt-1 text-sm text-muted">الخدمات التي تظهر للمريض عند الحجز. المدة تحدّد طول الموعد.</p>
+      <h1 className="text-2xl font-bold">{L.servicesTitle}</h1>
+      <p className="mt-1 text-sm text-muted">{L.servicesSub}</p>
 
       <div className="mt-6 space-y-3">
         {rows.length === 0 && <p className="text-sm text-muted">لا توجد خدمات بعد — أضف أول خدمة.</p>}
@@ -90,7 +92,7 @@ export default function ServicesManager({ officeId, initial }: { officeId: strin
             <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-[1fr_120px_120px]">
               <label className="block">
                 <span className="mb-1 block text-xs text-muted">اسم الخدمة</span>
-                <input className={inputCls} value={r.name} onChange={(e) => update(i, { name: e.target.value })} placeholder="تنظيف الأسنان" />
+                <input className={inputCls} value={r.name} onChange={(e) => update(i, { name: e.target.value })} placeholder={L.serviceNamePlaceholder} />
               </label>
               <label className="block">
                 <span className="mb-1 block text-xs text-muted">السعر (ر.س)</span>

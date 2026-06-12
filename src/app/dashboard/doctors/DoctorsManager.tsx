@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Button, Alert } from "@/components/ui";
+import { providerLabels } from "@/lib/provider-labels";
 
 export type ClinicDoctor = {
   id: string;
@@ -15,7 +16,8 @@ export type ClinicDoctor = {
 
 const inputCls = "w-full rounded-lg glass-panel-2 px-3 py-2 text-sm outline-none focus:border-accent";
 
-export default function DoctorsManager({ officeId, initial }: { officeId: string; initial: ClinicDoctor[] }) {
+export default function DoctorsManager({ officeId, initial, kind }: { officeId: string; initial: ClinicDoctor[]; kind?: string }) {
+  const L = providerLabels(kind);
   const [rows, setRows] = useState<ClinicDoctor[]>(initial);
   const [removed, setRemoved] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
@@ -79,15 +81,15 @@ export default function DoctorsManager({ officeId, initial }: { officeId: string
 
   return (
     <div className="mx-auto max-w-3xl pb-28">
-      <h1 className="text-2xl font-bold">الأطباء</h1>
-      <p className="mt-1 text-sm text-muted">عدد الأطباء النشطين يحدّد كم موعداً يمكن حجزه في نفس الوقت.</p>
+      <h1 className="text-2xl font-bold">{L.providersTitle}</h1>
+      <p className="mt-1 text-sm text-muted">{L.providersSub}</p>
 
       <div className="mt-6 space-y-3">
-        {rows.length === 0 && <p className="text-sm text-muted">لا يوجد أطباء بعد — أضف أول طبيب.</p>}
+        {rows.length === 0 && <p className="text-sm text-muted">لا يوجد بعد — أضف أول {L.providerItem}.</p>}
         {rows.map((r, i) => (
           <div key={r.id} className="rounded-2xl glass-panel p-4">
             <div className="flex items-center justify-between">
-              <span className="text-xs text-muted">طبيب #{i + 1}</span>
+              <span className="text-xs text-muted">{L.providerItem} #{i + 1}</span>
               <div className="flex items-center gap-3">
                 <label className="flex items-center gap-1.5 text-xs text-muted">
                   <input type="checkbox" checked={r.active} onChange={(e) => update(i, { active: e.target.checked })} />
@@ -101,7 +103,7 @@ export default function DoctorsManager({ officeId, initial }: { officeId: string
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={r.image} alt="" className="h-12 w-12 rounded-full object-cover" />
               ) : (
-                <div className="grid h-12 w-12 place-items-center rounded-full glass-panel-2 text-sm text-muted">🩺</div>
+                <div className="grid h-12 w-12 place-items-center rounded-full glass-panel-2 text-sm text-muted">{kind === "law" ? "⚖️" : "🩺"}</div>
               )}
               <input
                 type="file"
@@ -115,23 +117,23 @@ export default function DoctorsManager({ officeId, initial }: { officeId: string
             </div>
             <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
               <label className="block">
-                <span className="mb-1 block text-xs text-muted">اسم الطبيب</span>
-                <input className={inputCls} value={r.name} onChange={(e) => update(i, { name: e.target.value })} placeholder="د. أحمد الزهراني" />
+                <span className="mb-1 block text-xs text-muted">{L.providerName}</span>
+                <input className={inputCls} value={r.name} onChange={(e) => update(i, { name: e.target.value })} placeholder={L.providerNamePlaceholder} />
               </label>
               <label className="block">
                 <span className="mb-1 block text-xs text-muted">التخصص</span>
-                <input className={inputCls} value={r.specialty ?? ""} onChange={(e) => update(i, { specialty: e.target.value })} placeholder="استشاري أسنان" />
+                <input className={inputCls} value={r.specialty ?? ""} onChange={(e) => update(i, { specialty: e.target.value })} placeholder={L.providerSpecialtyPlaceholder} />
               </label>
             </div>
           </div>
         ))}
-        <button type="button" className="text-sm text-accent hover:underline" onClick={addRow}>+ إضافة طبيب</button>
+        <button type="button" className="text-sm text-accent hover:underline" onClick={addRow}>+ إضافة {L.providerItem}</button>
       </div>
 
       <div className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-white/85 backdrop-blur">
         <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-6 py-3">
           {msg ? <Alert kind={msg.kind}>{msg.text}</Alert> : <span className="text-xs text-muted">عدّل ثم احفظ</span>}
-          <Button onClick={save} loading={saving} className="shrink-0">حفظ الأطباء</Button>
+          <Button onClick={save} loading={saving} className="shrink-0">حفظ {L.providersTitle}</Button>
         </div>
       </div>
     </div>

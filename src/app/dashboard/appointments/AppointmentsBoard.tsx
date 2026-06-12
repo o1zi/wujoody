@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Alert } from "@/components/ui";
+import { providerLabels } from "@/lib/provider-labels";
 
 export type Appointment = {
   id: string;
@@ -35,7 +36,8 @@ function dayKey(iso: string) {
   return new Date(iso).toLocaleDateString("en-CA", { timeZone: TZ }); // YYYY-MM-DD
 }
 
-export default function AppointmentsBoard({ officeId, initial }: { officeId: string; initial: Appointment[] }) {
+export default function AppointmentsBoard({ officeId, initial, kind }: { officeId: string; initial: Appointment[]; kind?: string }) {
+  const L = providerLabels(kind);
   const [rows, setRows] = useState<Appointment[]>(initial);
   const [msg, setMsg] = useState<{ kind: "success" | "error"; text: string } | null>(null);
 
@@ -65,8 +67,8 @@ export default function AppointmentsBoard({ officeId, initial }: { officeId: str
 
   return (
     <div className="mx-auto max-w-3xl">
-      <h1 className="text-2xl font-bold">المواعيد</h1>
-      <p className="mt-1 text-sm text-muted">حجوزات مرضاك — اضغط الحالة لتغييرها. تصلك إشعارات فورية عند كل حجز جديد.</p>
+      <h1 className="text-2xl font-bold">{L.apptTitle}</h1>
+      <p className="mt-1 text-sm text-muted">{L.apptSub}</p>
 
       {msg && <div className="mt-4"><Alert kind={msg.kind}>{msg.text}</Alert></div>}
 

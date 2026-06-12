@@ -23,6 +23,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const office = ctx.office;
   const status = office ? STATUS[office.status] : null;
   const isClinic = office?.kind === "clinic";
+  const isLaw = office?.kind === "law";
+  const usesBooking = isClinic || isLaw;
 
   let newLeads = 0;
   let newSupport = 0;
@@ -36,7 +38,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
     newLeads = leadsCount ?? 0;
     newSupport = supportCount ?? 0;
 
-    if (isClinic) {
+    if (usesBooking) {
       const { count: apptCount } = await supabase
         .from("appointments")
         .select("id", { count: "exact", head: true })
@@ -67,6 +69,21 @@ export default async function DashboardLayout({ children }: { children: React.Re
         { href: "/dashboard/appointments", label: "المواعيد", badge: upcomingAppointments, icon: "requests" },
         { href: "/dashboard/doctors", label: "الأطباء", badge: 0, icon: "clients" },
         { href: "/dashboard/services", label: "الخدمات", badge: 0, icon: "services" },
+        { href: "/dashboard/hours", label: "أوقات العمل", badge: 0, icon: "hours" },
+        { href: "/dashboard/notifications", label: "الإشعارات", badge: 0, icon: "notifs" },
+        { href: "/dashboard/site-editor", label: "محرّر الموقع", badge: 0, icon: "editor" },
+        ...(caps.customDomain ? [{ href: "/dashboard/domain", label: "النطاق الخاص", badge: 0, icon: "domain" }] : []),
+        { href: "/dashboard/subscription", label: "الاشتراك", badge: 0, icon: "subscription" },
+        { href: "/dashboard/settings", label: "الإعدادات", badge: 0, icon: "settings" },
+        { href: "/dashboard/support", label: "الدعم الفني", badge: newSupport, icon: "support" },
+      ]
+    : isLaw
+    ? [
+        { href: "/dashboard", label: "نظرة عامة", badge: 0, icon: "overview" },
+        { href: "/dashboard/appointments", label: "الاستشارات", badge: upcomingAppointments, icon: "requests" },
+        { href: "/dashboard/leads", label: "طلبات القضايا", badge: newLeads, icon: "blog" },
+        { href: "/dashboard/doctors", label: "المحامون", badge: 0, icon: "clients" },
+        { href: "/dashboard/services", label: "الخدمات القانونية", badge: 0, icon: "services" },
         { href: "/dashboard/hours", label: "أوقات العمل", badge: 0, icon: "hours" },
         { href: "/dashboard/notifications", label: "الإشعارات", badge: 0, icon: "notifs" },
         { href: "/dashboard/site-editor", label: "محرّر الموقع", badge: 0, icon: "editor" },

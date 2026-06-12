@@ -7,7 +7,7 @@ export default async function HoursPage() {
   const ctx = await getSessionContext();
   if (!ctx) redirect("/login");
   if (!ctx.office) redirect("/dashboard");
-  if (ctx.office.kind !== "clinic") redirect("/dashboard");
+  if (!["clinic", "law"].includes(ctx.office.kind)) redirect("/dashboard");
 
   const supabase = await createClient();
   const { data } = await supabase

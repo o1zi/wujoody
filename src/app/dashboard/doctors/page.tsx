@@ -7,7 +7,7 @@ export default async function DoctorsPage() {
   const ctx = await getSessionContext();
   if (!ctx) redirect("/login");
   if (!ctx.office) redirect("/dashboard");
-  if (ctx.office.kind !== "clinic") redirect("/dashboard");
+  if (!["clinic", "law"].includes(ctx.office.kind)) redirect("/dashboard");
 
   const supabase = await createClient();
   const { data } = await supabase
@@ -16,5 +16,5 @@ export default async function DoctorsPage() {
     .eq("office_id", ctx.office.id)
     .order("sort");
 
-  return <DoctorsManager officeId={ctx.office.id} initial={(data as ClinicDoctor[]) ?? []} />;
+  return <DoctorsManager officeId={ctx.office.id} initial={(data as ClinicDoctor[]) ?? []} kind={ctx.office.kind} />;
 }
