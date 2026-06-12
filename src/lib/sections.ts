@@ -43,10 +43,32 @@ export const CLINIC_SECTIONS: { key: string; label: string }[] = [
 
 export const CLINIC_SECTION_KEYS = CLINIC_SECTIONS.map((s) => s.key);
 
+// ---------- Law vertical ----------
+export const LAW_SECTIONS: { key: string; label: string }[] = [
+  { key: "about", label: "عن المكتب" },
+  { key: "practiceAreas", label: "مجالات الممارسة" },
+  { key: "lawyers", label: "المحامون" },
+  { key: "fees", label: "الأتعاب" },
+  { key: "stats", label: "الأرقام" },
+  { key: "process", label: "رحلة القضية" },
+  { key: "testimonials", label: "آراء العملاء" },
+  { key: "credentials", label: "التراخيص" },
+  { key: "faq", label: "الأسئلة الشائعة" },
+  { key: "booking", label: "حجز استشارة" },
+  { key: "intake", label: "اعرض قضيتك" },
+  { key: "contact", label: "التواصل" },
+];
+
+export const LAW_SECTION_KEYS = LAW_SECTIONS.map((s) => s.key);
+
 // Resolve the section list/keys for a given vertical.
 export function sectionsForKind(kind: string | null | undefined) {
-  return kind === "clinic" ? CLINIC_SECTIONS : SITE_SECTIONS;
+  if (kind === "clinic") return CLINIC_SECTIONS;
+  if (kind === "law") return LAW_SECTIONS;
+  return SITE_SECTIONS;
 }
 export function sectionKeysForKind(kind: string | null | undefined) {
-  return kind === "clinic" ? CLINIC_SECTION_KEYS : SECTION_KEYS;
+  if (kind === "clinic") return CLINIC_SECTION_KEYS;
+  if (kind === "law") return LAW_SECTION_KEYS;
+  return SECTION_KEYS;
 }

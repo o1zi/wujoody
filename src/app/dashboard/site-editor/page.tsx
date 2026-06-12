@@ -3,10 +3,12 @@ import { getSessionContext } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { mergeContent } from "@/lib/site-content";
 import { mergeClinicContent } from "@/lib/clinic-content";
+import { mergeLawContent } from "@/lib/law-content";
 import { getPlanCaps } from "@/lib/plans-server";
 import { tenantUrl } from "@/lib/urls";
 import Editor from "./Editor";
 import ClinicEditor from "./ClinicEditor";
+import LawEditor from "./LawEditor";
 
 export default async function SiteEditorPage() {
   const ctx = await getSessionContext();
@@ -27,19 +29,13 @@ export default async function SiteEditorPage() {
     .eq("office_id", ctx.office.id)
     .maybeSingle();
 
-  // Clinics use a separate content model + editor; everything else is the
-  // engineering editor below.
+  // Each vertical has its own content model + editor; engineering is the default.
+  const vSiteUrl = ctx.office.status === "active" ? tenantUrl(ctx.office.slug) : null;
   if (ctx.office.kind === "clinic") {
-    const clinicContent = mergeClinicContent(row?.content);
-    const clinicSiteUrl = ctx.office.status === "active" ? tenantUrl(ctx.office.slug) : null;
-    return (
-      <ClinicEditor
-        officeId={ctx.office.id}
-        initial={clinicContent}
-        siteUrl={clinicSiteUrl}
-        slug={ctx.office.slug}
-      />
-    );
+    return <ClinicEditor officeId={ctx.office.id} initial={mergeClinicContent(row?.content)} siteUrl={vSiteUrl} slug={ctx.office.slug} />;
+  }
+  if (ctx.office.kind === "law") {
+    return <LawEditor officeId={ctx.office.id} initial={mergeLawContent(row?.content)} siteUrl={vSiteUrl} slug={ctx.office.slug} />;
   }
 
   const { data: sub } = await supabase
