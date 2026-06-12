@@ -106,7 +106,7 @@ export default function ServicesManager({ officeId, initial }: { officeId: strin
         <button type="button" className="text-sm text-accent hover:underline" onClick={addRow}>+ إضافة خدمة</button>
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 z-20 border-t border-white/10 bg-[#0b0d10]/80 backdrop-blur">
+      <div className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-white/85 backdrop-blur">
         <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-6 py-3">
           {msg ? <Alert kind={msg.kind}>{msg.text}</Alert> : <span className="text-xs text-muted">عدّل ثم احفظ</span>}
           <Button onClick={save} loading={saving} className="shrink-0">حفظ الخدمات</Button>

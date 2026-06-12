@@ -4,11 +4,12 @@ import { getSessionContext, isAllowedSuperAdmin } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { getPlanCaps } from "@/lib/plans-server";
 import { tenantLabel } from "@/lib/urls";
+import DashboardNav, { type NavItem } from "./DashboardNav";
 
-const STATUS_LABEL: Record<string, { text: string; cls: string }> = {
-  active: { text: "مُفعّل", cls: "bg-emerald-500/15 text-emerald-300" },
-  pending: { text: "بانتظار الاشتراك", cls: "bg-amber-500/15 text-amber-300" },
-  suspended: { text: "موقوف", cls: "bg-red-500/15 text-red-300" },
+const STATUS: Record<string, { text: string; fg: string; bg: string; dot: string }> = {
+  active: { text: "مُفعّل", fg: "#0f766e", bg: "rgba(13,148,136,0.12)", dot: "#0d9488" },
+  pending: { text: "بانتظار الاشتراك", fg: "#b45309", bg: "rgba(245,158,11,0.14)", dot: "#f59e0b" },
+  suspended: { text: "موقوف", fg: "#b91c1c", bg: "rgba(220,38,38,0.12)", dot: "#dc2626" },
 };
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -16,13 +17,11 @@ export default async function DashboardLayout({ children }: { children: React.Re
   if (!ctx) redirect("/login");
 
   // An office that isn't active yet (pending activation, or suspended) can't use
-  // the dashboard — send it to the contact-to-activate page. Once activated the
-  // gate lifts automatically. Super-admins without an office are unaffected.
+  // the dashboard — send it to the contact-to-activate page.
   if (ctx.office && ctx.office.status !== "active") redirect("/activate");
 
   const office = ctx.office;
-  const status = office ? STATUS_LABEL[office.status] : null;
-
+  const status = office ? STATUS[office.status] : null;
   const isClinic = office?.kind === "clinic";
 
   let newLeads = 0;
@@ -31,17 +30,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
   if (office) {
     const supabase = await createClient();
     const [{ count: leadsCount }, { count: supportCount }] = await Promise.all([
-      supabase
-        .from("leads")
-        .select("id", { count: "exact", head: true })
-        .eq("office_id", office.id)
-        .eq("status", "new"),
-      supabase
-        .from("support_messages")
-        .select("id", { count: "exact", head: true })
-        .eq("office_id", office.id)
-        .eq("sender", "admin")
-        .eq("read", false),
+      supabase.from("leads").select("id", { count: "exact", head: true }).eq("office_id", office.id).eq("status", "new"),
+      supabase.from("support_messages").select("id", { count: "exact", head: true }).eq("office_id", office.id).eq("sender", "admin").eq("read", false),
     ]);
     newLeads = leadsCount ?? 0;
     newSupport = supportCount ?? 0;
@@ -71,81 +61,79 @@ export default async function DashboardLayout({ children }: { children: React.Re
     caps = await getPlanCaps(sub?.plan);
   }
 
-  const nav = isClinic
+  const nav: NavItem[] = isClinic
     ? [
-        { href: "/dashboard", label: "نظرة عامة", badge: 0 },
-        { href: "/dashboard/appointments", label: "المواعيد", badge: upcomingAppointments },
-        { href: "/dashboard/doctors", label: "الأطباء", badge: 0 },
-        { href: "/dashboard/services", label: "الخدمات", badge: 0 },
-        { href: "/dashboard/hours", label: "أوقات العمل", badge: 0 },
-        { href: "/dashboard/notifications", label: "الإشعارات", badge: 0 },
-        { href: "/dashboard/site-editor", label: "محرّر الموقع", badge: 0 },
-        ...(caps.customDomain ? [{ href: "/dashboard/domain", label: "النطاق الخاص", badge: 0 }] : []),
-        { href: "/dashboard/subscription", label: "الاشتراك", badge: 0 },
-        { href: "/dashboard/settings", label: "الإعدادات", badge: 0 },
-        { href: "/dashboard/support", label: "الدعم الفني", badge: newSupport },
+        { href: "/dashboard", label: "نظرة عامة", badge: 0, icon: "overview" },
+        { href: "/dashboard/appointments", label: "المواعيد", badge: upcomingAppointments, icon: "requests" },
+        { href: "/dashboard/doctors", label: "الأطباء", badge: 0, icon: "clients" },
+        { href: "/dashboard/services", label: "الخدمات", badge: 0, icon: "services" },
+        { href: "/dashboard/hours", label: "أوقات العمل", badge: 0, icon: "hours" },
+        { href: "/dashboard/notifications", label: "الإشعارات", badge: 0, icon: "notifs" },
+        { href: "/dashboard/site-editor", label: "محرّر الموقع", badge: 0, icon: "editor" },
+        ...(caps.customDomain ? [{ href: "/dashboard/domain", label: "النطاق الخاص", badge: 0, icon: "domain" }] : []),
+        { href: "/dashboard/subscription", label: "الاشتراك", badge: 0, icon: "subscription" },
+        { href: "/dashboard/settings", label: "الإعدادات", badge: 0, icon: "settings" },
+        { href: "/dashboard/support", label: "الدعم الفني", badge: newSupport, icon: "support" },
       ]
     : [
-        { href: "/dashboard", label: "نظرة عامة", badge: 0 },
-        { href: "/dashboard/leads", label: "الرسائل", badge: newLeads },
-        { href: "/dashboard/notifications", label: "الإشعارات", badge: 0 },
-        ...(caps.upload ? [{ href: "/dashboard/analytics", label: "التحليلات", badge: 0 }] : []),
-        { href: "/dashboard/site-editor", label: "محرّر الموقع", badge: 0 },
-        ...(caps.blog ? [{ href: "/dashboard/blog", label: "المدوّنة", badge: 0 }] : []),
-        ...(caps.customDomain ? [{ href: "/dashboard/domain", label: "النطاق الخاص", badge: 0 }] : []),
-        { href: "/dashboard/subscription", label: "الاشتراك", badge: 0 },
-        { href: "/dashboard/settings", label: "الإعدادات", badge: 0 },
-        { href: "/dashboard/support", label: "الدعم الفني", badge: newSupport },
+        { href: "/dashboard", label: "نظرة عامة", badge: 0, icon: "overview" },
+        { href: "/dashboard/leads", label: "الرسائل", badge: newLeads, icon: "requests" },
+        { href: "/dashboard/notifications", label: "الإشعارات", badge: 0, icon: "notifs" },
+        ...(caps.upload ? [{ href: "/dashboard/analytics", label: "التحليلات", badge: 0, icon: "analytics" }] : []),
+        { href: "/dashboard/site-editor", label: "محرّر الموقع", badge: 0, icon: "editor" },
+        ...(caps.blog ? [{ href: "/dashboard/blog", label: "المدوّنة", badge: 0, icon: "blog" }] : []),
+        ...(caps.customDomain ? [{ href: "/dashboard/domain", label: "النطاق الخاص", badge: 0, icon: "domain" }] : []),
+        { href: "/dashboard/subscription", label: "الاشتراك", badge: 0, icon: "subscription" },
+        { href: "/dashboard/settings", label: "الإعدادات", badge: 0, icon: "settings" },
+        { href: "/dashboard/support", label: "الدعم الفني", badge: newSupport, icon: "support" },
       ];
 
   return (
-    <div className="admin-shell grid min-h-dvh md:grid-cols-[260px_1fr]">
-      <aside className="glass-panel flex flex-col border-0 border-l border-white/10 p-5">
-        <Link href="/dashboard" className="text-lg font-bold">
-          لوحة التحكم<span className="text-accent">.</span>
+    <div className="admin-shell grid min-h-dvh md:grid-cols-[282px_1fr]">
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" precedence="high" />
+
+      <aside className="flex flex-col gap-2.5 border-0 border-l border-border bg-surface p-5 md:sticky md:top-0 md:h-dvh md:overflow-y-auto">
+        {/* logo */}
+        <Link href="/dashboard" className="flex items-center gap-3 px-1.5 pb-3">
+          <span
+            className="grid h-[38px] w-[38px] place-items-center rounded-xl text-white"
+            style={{ background: "linear-gradient(140deg,#14b8a6,#0d9488)", boxShadow: "0 8px 18px -8px rgba(13,148,136,0.7)" }}
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 2 2 7l10 5 10-5-10-5z" /><path d="M2 17l10 5 10-5" /><path d="M2 12l10 5 10-5" /></svg>
+          </span>
+          <div>
+            <div className="text-[19px] font-bold leading-none text-[#152229]" style={{ fontFamily: "'El Messiri',serif" }}>لوحة التحكم</div>
+            <div className="mt-1 text-[11px] text-[#8a97a0]">إدارة موقع نشاطك</div>
+          </div>
         </Link>
 
+        {/* published site card */}
         {office && (
-          <div className="mt-5 rounded-xl border border-border p-3.5">
-            <div className="text-sm font-medium">{office.name}</div>
-            <div className="mono mt-1 text-xs text-muted" dir="ltr">
-              {tenantLabel(office.slug)}
+          <div className="rounded-2xl border border-border bg-surface-2 p-[14px]">
+            <div className="mb-2 flex items-center justify-between">
+              <span className="text-[11px] font-semibold tracking-wide text-[#7c8a93]">الموقع المنشور</span>
+              {status && (
+                <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-bold" style={{ color: status.fg, background: status.bg, border: `1px solid ${status.fg}33` }}>
+                  <span className="h-1.5 w-1.5 rounded-full" style={{ background: status.dot }} />
+                  {status.text}
+                </span>
+              )}
             </div>
-            {status && (
-              <span className={`mt-2 inline-block rounded-full px-2.5 py-0.5 text-xs ${status.cls}`}>
-                {status.text}
-              </span>
-            )}
+            <div className="text-[17px] font-bold text-[#16242b]" style={{ fontFamily: "'El Messiri',serif" }}>{office.name}</div>
+            <div dir="ltr" className="mt-0.5 text-left text-xs text-muted">{tenantLabel(office.slug)}</div>
           </div>
         )}
 
-        <nav className="mt-6 flex flex-col gap-1">
-          {nav.map((n) => (
-            <Link
-              key={n.href}
-              href={n.href}
-              className="flex items-center justify-between rounded-lg px-3 py-2 text-sm text-muted transition hover:bg-surface-2 hover:text-foreground"
-            >
-              <span>{n.label}</span>
-              {n.badge > 0 && (
-                <span className="rounded-full bg-accent px-2 py-0.5 text-xs font-medium text-[#0b0d10]">
-                  {n.badge}
-                </span>
-              )}
-            </Link>
-          ))}
-          {isAllowedSuperAdmin(ctx.email, ctx.profile?.role) && (
-            <Link
-              href="/super-admin"
-              className="mt-1 rounded-lg px-3 py-2 text-sm text-accent transition hover:bg-surface-2"
-            >
-              إدارة المنصة ←
-            </Link>
-          )}
-        </nav>
+        <DashboardNav items={nav} />
 
-        <form action="/auth/signout" method="post" className="mt-auto pt-6">
-          <button className="w-full rounded-lg border border-border px-3 py-2 text-sm text-muted hover:text-foreground">
+        {isAllowedSuperAdmin(ctx.email, ctx.profile?.role) && (
+          <Link href="/super-admin" className="rounded-xl px-3.5 py-2.5 text-[15px] font-medium text-accent transition hover:bg-accent/10">
+            إدارة المنصة ←
+          </Link>
+        )}
+
+        <form action="/auth/signout" method="post" className="mt-auto pt-4">
+          <button className="w-full rounded-xl border border-border px-3 py-2.5 text-sm font-medium text-muted transition hover:border-accent hover:text-foreground">
             تسجيل الخروج
           </button>
         </form>

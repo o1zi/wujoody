@@ -44,7 +44,7 @@ export default async function SuperAdminSupport() {
               <div className="flex items-center gap-2">
                 <span className="font-semibold">{officeName.get(officeId) || "مكتب"}</span>
                 {t.unread > 0 && (
-                  <span className="rounded-full bg-accent px-2 py-0.5 text-xs font-medium text-[#0b0d10]">
+                  <span className="rounded-full bg-accent px-2 py-0.5 text-xs font-medium text-white">
                     {t.unread} جديدة
                   </span>
                 )}

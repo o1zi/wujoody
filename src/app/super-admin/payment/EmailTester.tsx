@@ -45,7 +45,7 @@ export default function EmailTester({ defaultTo = "" }: { defaultTo?: string }) 
         <button
           onClick={send}
           disabled={loading}
-          className="rounded-lg bg-accent px-5 py-2.5 text-sm font-medium text-[#0b0d10] hover:bg-accent-soft disabled:opacity-60"
+          className="rounded-lg bg-accent px-5 py-2.5 text-sm font-medium text-white hover:bg-accent-soft disabled:opacity-60"
         >
           {loading ? "…" : "إرسال تجريبي"}
         </button>

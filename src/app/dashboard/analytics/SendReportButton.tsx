@@ -24,7 +24,7 @@ export default function SendReportButton() {
       <button
         onClick={send}
         disabled={pending}
-        className="rounded-xl bg-accent px-5 py-2.5 text-sm font-medium text-[#0b0d10] hover:bg-accent-soft disabled:opacity-60"
+        className="rounded-xl bg-accent px-5 py-2.5 text-sm font-medium text-white hover:bg-accent-soft disabled:opacity-60"
       >
         {pending ? "جارٍ الإرسال…" : "أرسل تقريري الآن"}
       </button>

@@ -99,7 +99,7 @@ export default function BlogManager({ officeId, posts, siteUrl }: { officeId: st
           </div>
         </div>
         <div className="mt-5 flex flex-wrap gap-3">
-          <button onClick={() => save(true)} disabled={pending} className="rounded-lg bg-accent px-5 py-2 text-sm font-medium text-[#0b0d10] hover:bg-accent-soft disabled:opacity-60">{pending ? "…" : "نشر"}</button>
+          <button onClick={() => save(true)} disabled={pending} className="rounded-lg bg-accent px-5 py-2 text-sm font-medium text-white hover:bg-accent-soft disabled:opacity-60">{pending ? "…" : "نشر"}</button>
           <button onClick={() => save(false)} disabled={pending} className="rounded-lg border border-border px-4 py-2 text-sm hover:bg-surface-2">حفظ كمسودة</button>
           <button onClick={() => setEditing(null)} className="rounded-lg border border-border px-4 py-2 text-sm text-muted">إلغاء</button>
         </div>
@@ -110,7 +110,7 @@ export default function BlogManager({ officeId, posts, siteUrl }: { officeId: st
   return (
     <div className="mt-6">
       <div className="flex items-center justify-between">
-        <button onClick={openNew} className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-[#0b0d10] hover:bg-accent-soft">+ مقال جديد</button>
+        <button onClick={openNew} className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent-soft">+ مقال جديد</button>
         {siteUrl && <a href={`${siteUrl}/blog`} target="_blank" rel="noreferrer" className="text-sm text-accent hover:underline">عرض المدوّنة ↗</a>}
       </div>
       {msg && <div className={`mt-3 rounded-lg px-3 py-2 text-sm ${msg.kind === "ok" ? "bg-emerald-500/10 text-emerald-300" : "bg-red-500/10 text-red-300"}`}>{msg.text}</div>}

@@ -79,7 +79,7 @@ export default function AppointmentsBoard({ officeId, initial }: { officeId: str
           <div key={key}>
             <div className="mb-2 flex items-center gap-2 text-sm font-semibold">
               {fmtDay(items[0].starts_at)}
-              {key === todayKey && <span className="rounded-full bg-accent px-2 py-0.5 text-xs text-[#0b0d10]">اليوم</span>}
+              {key === todayKey && <span className="rounded-full bg-accent px-2 py-0.5 text-xs text-white">اليوم</span>}
             </div>
             <div className="space-y-2">
               {items.map((a) => {

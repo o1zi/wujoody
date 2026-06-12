@@ -141,7 +141,7 @@ export default async function SubscriptionPage() {
                   href={wa}
                   target="_blank"
                   rel="noreferrer"
-                  className="mt-6 block rounded-xl bg-accent py-3 text-center font-medium text-[#0b0d10] hover:bg-accent-soft"
+                  className="mt-6 block rounded-xl bg-accent py-3 text-center font-medium text-white hover:bg-accent-soft"
                 >
                   اطلب الاشتراك عبر واتساب
                 </a>

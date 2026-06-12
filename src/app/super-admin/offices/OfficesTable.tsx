@@ -85,7 +85,7 @@ export default function OfficesTable({
           <button
             key={t.key}
             onClick={() => setTab(t.key)}
-            className={`rounded-lg px-3 py-1.5 text-sm transition ${tab === t.key ? "bg-accent text-[#0b0d10]" : "glass-panel-2 text-muted hover:text-foreground"}`}
+            className={`rounded-lg px-3 py-1.5 text-sm transition ${tab === t.key ? "bg-accent text-white" : "glass-panel-2 text-muted hover:text-foreground"}`}
           >
             {t.label}
             <span className={`mr-1.5 text-xs ${tab === t.key ? "opacity-70" : "opacity-60"}`}>{counts[t.key]}</span>

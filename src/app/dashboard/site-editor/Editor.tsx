@@ -918,7 +918,7 @@ export default function Editor({
                 type="button"
                 onClick={generateAi}
                 disabled={aiBusy || aiRemaining <= 0}
-                className="shrink-0 rounded-lg bg-accent px-4 text-sm font-medium text-[#0b0d10] hover:bg-accent-soft disabled:opacity-60"
+                className="shrink-0 rounded-lg bg-accent px-4 text-sm font-medium text-white hover:bg-accent-soft disabled:opacity-60"
               >
                 {aiBusy ? "…" : aiRemaining <= 0 ? "انتهى الحدّ" : "اكتب لي"}
               </button>

@@ -84,7 +84,7 @@ export default function PlanEditor({ plan }: { plan: PlanRow }) {
         <button
           onClick={save}
           disabled={pending}
-          className="ml-auto rounded-lg bg-accent px-4 py-2 text-sm font-medium text-[#0b0d10] hover:bg-accent-soft disabled:opacity-60"
+          className="ml-auto rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent-soft disabled:opacity-60"
         >
           {pending ? "…" : saved ? "تم الحفظ ✓" : "حفظ"}
         </button>

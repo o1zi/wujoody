@@ -17,7 +17,7 @@ export default async function OfficesPage({ searchParams }: { searchParams: Prom
             {data.rows.length} مكتب · {data.metrics.activeOffices} مُفعّل · {data.metrics.pending} بانتظار التفعيل
           </p>
         </div>
-        <Link href="/super-admin/offices/new" className="shrink-0 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-[#0b0d10] hover:bg-accent-soft">
+        <Link href="/super-admin/offices/new" className="shrink-0 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent-soft">
           + مكتب جديد
         </Link>
       </div>

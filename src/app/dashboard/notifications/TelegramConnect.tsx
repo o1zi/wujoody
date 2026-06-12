@@ -73,7 +73,7 @@ export default function TelegramConnect({ connected, configured }: { connected: 
             <li>٣. ارجع هنا واضغط «تحقّق».</li>
           </ol>
           <div className="flex flex-wrap gap-3">
-            <button onClick={connect} disabled={pending} className="rounded-lg bg-accent px-5 py-2 text-sm font-medium text-[#0b0d10] hover:bg-accent-soft disabled:opacity-60">اربط تيليجرام</button>
+            <button onClick={connect} disabled={pending} className="rounded-lg bg-accent px-5 py-2 text-sm font-medium text-white hover:bg-accent-soft disabled:opacity-60">اربط تيليجرام</button>
             <button onClick={refresh} disabled={pending} className="rounded-lg border border-border px-4 py-2 text-sm hover:bg-surface-2">تحقّق</button>
           </div>
         </div>

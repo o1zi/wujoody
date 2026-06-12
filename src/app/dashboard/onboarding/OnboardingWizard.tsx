@@ -96,7 +96,7 @@ export default function OnboardingWizard({
       <div className="mb-6 flex items-center gap-2">
         {steps.map((s, i) => (
           <div key={i} className="flex flex-1 items-center gap-2">
-            <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs ${i <= step ? "bg-accent text-[#0b0d10]" : "border border-border text-muted"}`}>{i + 1}</div>
+            <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs ${i <= step ? "bg-accent text-white" : "border border-border text-muted"}`}>{i + 1}</div>
             <span className={`text-xs ${i === step ? "text-foreground" : "text-muted"}`}>{s}</span>
             {i < steps.length - 1 && <div className="h-px flex-1 bg-border" />}
           </div>
@@ -138,7 +138,7 @@ export default function OnboardingWizard({
           <div className="space-y-4">
             <h2 className="text-lg font-semibold">عن مكتبك</h2>
             {caps.aiContent && (
-              <button type="button" onClick={aiFill} disabled={aiBusy} className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-[#0b0d10] hover:bg-accent-soft disabled:opacity-60">
+              <button type="button" onClick={aiFill} disabled={aiBusy} className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent-soft disabled:opacity-60">
                 {aiBusy ? "…" : "✨ اكتب لي النصوص تلقائياً"}
               </button>
             )}
@@ -200,9 +200,9 @@ export default function OnboardingWizard({
         <div className="mt-6 flex items-center justify-between">
           <button type="button" onClick={() => setStep((s) => Math.max(0, s - 1))} disabled={step === 0} className="rounded-lg border border-border px-4 py-2 text-sm text-muted disabled:opacity-40">السابق</button>
           {step < steps.length - 1 ? (
-            <button type="button" onClick={() => setStep((s) => s + 1)} className="rounded-lg bg-accent px-6 py-2 text-sm font-medium text-[#0b0d10] hover:bg-accent-soft">التالي</button>
+            <button type="button" onClick={() => setStep((s) => s + 1)} className="rounded-lg bg-accent px-6 py-2 text-sm font-medium text-white hover:bg-accent-soft">التالي</button>
           ) : (
-            <button type="button" onClick={finish} disabled={busy} className="rounded-lg bg-accent px-6 py-2 text-sm font-medium text-[#0b0d10] hover:bg-accent-soft disabled:opacity-60">{busy ? "جارٍ الحفظ…" : "إنهاء والذهاب للاشتراك"}</button>
+            <button type="button" onClick={finish} disabled={busy} className="rounded-lg bg-accent px-6 py-2 text-sm font-medium text-white hover:bg-accent-soft disabled:opacity-60">{busy ? "جارٍ الحفظ…" : "إنهاء والذهاب للاشتراك"}</button>
           )}
         </div>
       </div>

@@ -45,7 +45,7 @@ export default async function DashboardHome() {
             <div className="text-lg font-semibold">✨ جهّز موقعك في دقائق</div>
             <p className="mt-1 text-sm text-muted">أكمل خطوات الإعداد السريع (الهوية، النصوص، التواصل) لإطلاق موقع مكتبك.</p>
           </div>
-          <span className="shrink-0 rounded-xl bg-accent px-5 py-2.5 text-sm font-medium text-[#0b0d10]">ابدأ الإعداد ←</span>
+          <span className="shrink-0 rounded-xl bg-accent px-5 py-2.5 text-sm font-medium text-white">ابدأ الإعداد ←</span>
         </Link>
       )}
 
@@ -90,7 +90,7 @@ export default async function DashboardHome() {
           </div>
           <Link
             href="/dashboard/site-editor"
-            className="rounded-xl bg-accent px-5 py-2.5 text-sm font-medium text-[#0b0d10] hover:bg-accent-soft"
+            className="rounded-xl bg-accent px-5 py-2.5 text-sm font-medium text-white hover:bg-accent-soft"
           >
             افتح المحرّر
           </Link>

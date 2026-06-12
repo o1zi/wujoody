@@ -48,7 +48,7 @@ export default function NewOfficeForm({ plans }: { plans: { code: string; name: 
         </div>
         <div className="mt-5 flex flex-wrap gap-3">
           {done.officeId && (
-            <Link href={`/super-admin/offices/${done.officeId}`} className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-[#0b0d10] hover:bg-accent-soft">
+            <Link href={`/super-admin/offices/${done.officeId}`} className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent-soft">
               فتح صفحة المكتب
             </Link>
           )}
@@ -121,7 +121,7 @@ export default function NewOfficeForm({ plans }: { plans: { code: string; name: 
         </div>
       </section>
 
-      <button type="submit" disabled={pending} className="w-full rounded-lg bg-accent px-5 py-3 text-sm font-medium text-[#0b0d10] hover:bg-accent-soft disabled:opacity-60">
+      <button type="submit" disabled={pending} className="w-full rounded-lg bg-accent px-5 py-3 text-sm font-medium text-white hover:bg-accent-soft disabled:opacity-60">
         {pending ? "جارٍ الإنشاء…" : "إنشاء المكتب"}
       </button>
     </form>

@@ -68,7 +68,7 @@ export default function DomainManager({ initialDomain, initialStatus }: { initia
           <button
             onClick={save}
             disabled={pending || !domain.trim()}
-            className="shrink-0 rounded-lg bg-accent px-5 py-2 text-sm font-medium text-[#0b0d10] hover:bg-accent-soft disabled:opacity-60"
+            className="shrink-0 rounded-lg bg-accent px-5 py-2 text-sm font-medium text-white hover:bg-accent-soft disabled:opacity-60"
           >
             {pending ? "…" : "حفظ النطاق"}
           </button>

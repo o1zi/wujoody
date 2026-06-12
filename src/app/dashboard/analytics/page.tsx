@@ -52,7 +52,7 @@ export default async function AnalyticsPage() {
         <div className="mt-5 glass-panel rounded-2xl p-8 text-center">
           <div className="text-lg font-semibold text-accent">ميزة بريميوم</div>
           <p className="mt-2 text-muted">التحليلات الشاملة (الزيارات والنقرات) متاحة في باقة بريميوم.</p>
-          <Link href="/dashboard/subscription" className="mt-5 inline-block rounded-xl bg-accent px-6 py-3 font-medium text-[#0b0d10] hover:bg-accent-soft">
+          <Link href="/dashboard/subscription" className="mt-5 inline-block rounded-xl bg-accent px-6 py-3 font-medium text-white hover:bg-accent-soft">
             ترقية الباقة
           </Link>
         </div>

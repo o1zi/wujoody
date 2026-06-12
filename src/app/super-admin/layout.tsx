@@ -26,7 +26,8 @@ export default async function SuperAdminLayout({ children }: { children: React.R
 
   return (
     <div className="admin-shell min-h-dvh">
-      <header className="glass-panel sticky top-0 z-30 border-x-0 border-t-0 border-b border-white/10">
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" precedence="high" />
+      <header className="glass-panel sticky top-0 z-30 border-x-0 border-t-0 border-b border-border">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="flex items-center justify-between gap-4 py-3.5">
             <div className="flex items-center gap-5">
@@ -38,7 +39,7 @@ export default async function SuperAdminLayout({ children }: { children: React.R
                 {links.map((l) => (
                   <Link key={l.href} href={l.href} className="flex items-center gap-1.5 text-sm text-muted hover:text-foreground">
                     {l.label}
-                    {l.badge ? <span className="rounded-full bg-accent px-1.5 text-xs font-medium text-[#0b0d10]">{l.badge}</span> : null}
+                    {l.badge ? <span className="rounded-full bg-accent px-1.5 text-xs font-medium text-white">{l.badge}</span> : null}
                   </Link>
                 ))}
               </nav>
@@ -59,7 +60,7 @@ export default async function SuperAdminLayout({ children }: { children: React.R
                 className="flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg glass-panel-2 px-3 py-1.5 text-sm text-muted"
               >
                 {l.label}
-                {l.badge ? <span className="rounded-full bg-accent px-1.5 text-xs font-medium text-[#0b0d10]">{l.badge}</span> : null}
+                {l.badge ? <span className="rounded-full bg-accent px-1.5 text-xs font-medium text-white">{l.badge}</span> : null}
               </Link>
             ))}
           </nav>
