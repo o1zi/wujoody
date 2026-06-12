@@ -38,6 +38,7 @@ const ACCENTS: { key: ClinicContent["theme"]["accent"]; label: string; hex: stri
 const LAYOUTS: { key: NonNullable<ClinicContent["theme"]["layout"]>; label: string; hint: string }[] = [
   { key: "safa", label: "صَفا", hint: "دافئ · كريمي وأخضر وذهبي · كلاسيكي راقٍ" },
   { key: "luxe", label: "لُمى", hint: "فاخر · أسود وذهبي · إحساس سينمائي" },
+  { key: "yasmin", label: "ياسمين", hint: "ناعم · كريمي ووردي · إحساس سبا راقٍ" },
 ];
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
@@ -196,7 +197,7 @@ export default function ClinicEditor({
           </div>
           <div>
             <span className="mb-1 block text-xs text-muted">قالب التصميم</span>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 gap-2">
               {LAYOUTS.map((l) => (
                 <button
                   key={l.key}

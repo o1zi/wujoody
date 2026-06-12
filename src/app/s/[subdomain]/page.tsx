@@ -5,6 +5,7 @@ import { mergeContent, clampMedia, clampTemplate, clampModels, type SiteContent 
 import { mergeClinicContent, type ClinicContent } from "@/lib/clinic-content";
 import ClinicSiteView from "@/components/site/ClinicSiteView";
 import ClinicSiteLuxe from "@/components/site/ClinicSiteLuxe";
+import ClinicSiteYasmin from "@/components/site/ClinicSiteYasmin";
 import type { BookingService } from "@/components/site/ClinicBookingForm";
 import type { PublicDoctor } from "@/lib/clinic-booking";
 import type { PlanCaps } from "@/lib/plans";
@@ -188,16 +189,20 @@ export default async function TenantSite({ params }: { params: Params }) {
   // Clinic vertical: self-contained medical template.
   if (data.view === "clinic") {
     const clinic: ClinicContent = data.clinic;
-    const isLuxe = clinic.theme.layout === "luxe";
+    const layout = clinic.theme.layout;
     // Each template loads its own font pairing.
-    const fontLink = googleFontsHref(isLuxe ? ["markazi", "tajawal"] : ["elmessiri", "ibmar"]);
+    const fonts: Record<string, string[]> = { luxe: ["markazi", "tajawal"], yasmin: ["reemkufi", "tajawal"] };
+    const fontLink = googleFontsHref(fonts[layout ?? ""] ?? ["elmessiri", "ibmar"]);
+    const props = { content: clinic, slug: data.office.slug, services: data.services, doctors: data.doctors };
     return (
       <>
         <link rel="stylesheet" href={fontLink} precedence="high" />
-        {isLuxe ? (
-          <ClinicSiteLuxe content={clinic} slug={data.office.slug} services={data.services} doctors={data.doctors} />
+        {layout === "luxe" ? (
+          <ClinicSiteLuxe {...props} />
+        ) : layout === "yasmin" ? (
+          <ClinicSiteYasmin {...props} />
         ) : (
-          <ClinicSiteView content={clinic} slug={data.office.slug} services={data.services} doctors={data.doctors} />
+          <ClinicSiteView {...props} />
         )}
       </>
     );
