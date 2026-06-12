@@ -7,6 +7,7 @@ import ClinicSiteView from "@/components/site/ClinicSiteView";
 import ClinicSiteLuxe from "@/components/site/ClinicSiteLuxe";
 import ClinicSiteYasmin from "@/components/site/ClinicSiteYasmin";
 import ClinicSiteAurora from "@/components/site/ClinicSiteAurora";
+import ClinicSiteWaqar from "@/components/site/ClinicSiteWaqar";
 import type { BookingService } from "@/components/site/ClinicBookingForm";
 import type { PublicDoctor } from "@/lib/clinic-booking";
 import type { PlanCaps } from "@/lib/plans";
@@ -192,7 +193,7 @@ export default async function TenantSite({ params }: { params: Params }) {
     const clinic: ClinicContent = data.clinic;
     const layout = clinic.theme.layout;
     // Each template loads its own font pairing.
-    const fonts: Record<string, string[]> = { luxe: ["markazi", "tajawal"], yasmin: ["reemkufi", "tajawal"], aurora: ["cairo", "tajawal"] };
+    const fonts: Record<string, string[]> = { luxe: ["markazi", "tajawal"], yasmin: ["reemkufi", "tajawal"], aurora: ["cairo", "tajawal"], waqar: ["almarai", "tajawal"] };
     const fontLink = googleFontsHref(fonts[layout ?? ""] ?? ["elmessiri", "ibmar"]);
     const props = { content: clinic, slug: data.office.slug, services: data.services, doctors: data.doctors };
     return (
@@ -204,6 +205,8 @@ export default async function TenantSite({ params }: { params: Params }) {
           <ClinicSiteYasmin {...props} />
         ) : layout === "aurora" ? (
           <ClinicSiteAurora {...props} />
+        ) : layout === "waqar" ? (
+          <ClinicSiteWaqar {...props} />
         ) : (
           <ClinicSiteView {...props} />
         )}

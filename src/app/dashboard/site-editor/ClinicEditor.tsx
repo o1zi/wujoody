@@ -40,6 +40,7 @@ const LAYOUTS: { key: NonNullable<ClinicContent["theme"]["layout"]>; label: stri
   { key: "luxe", label: "لُمى", hint: "فاخر · أسود وذهبي · إحساس سينمائي" },
   { key: "yasmin", label: "ياسمين", hint: "ناعم · كريمي ووردي · إحساس سبا راقٍ" },
   { key: "aurora", label: "أُفُق", hint: "عصري · تدرّجات بنفسجية وزجاج · جريء" },
+  { key: "waqar", label: "وقار", hint: "مؤسّسي راقٍ · كحلي ومرجاني · كتل لونية" },
 ];
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
