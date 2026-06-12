@@ -39,6 +39,7 @@ const LAYOUTS: { key: NonNullable<ClinicContent["theme"]["layout"]>; label: stri
   { key: "safa", label: "صَفا", hint: "دافئ · كريمي وأخضر وذهبي · كلاسيكي راقٍ" },
   { key: "luxe", label: "لُمى", hint: "فاخر · أسود وذهبي · إحساس سينمائي" },
   { key: "yasmin", label: "ياسمين", hint: "ناعم · كريمي ووردي · إحساس سبا راقٍ" },
+  { key: "aurora", label: "أُفُق", hint: "عصري · تدرّجات بنفسجية وزجاج · جريء" },
 ];
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {

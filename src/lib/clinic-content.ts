@@ -15,7 +15,7 @@ export type ClinicContent = {
     cardStyle?: "glass" | "solid" | "outline";
     cardRadius?: "sharp" | "soft" | "round";
     cardTint?: string | null;
-    layout?: "safa" | "luxe" | "yasmin"; // clinic page template
+    layout?: "safa" | "luxe" | "yasmin" | "aurora"; // clinic page template
   };
   seo: { googleVerification: string };
   media: {
